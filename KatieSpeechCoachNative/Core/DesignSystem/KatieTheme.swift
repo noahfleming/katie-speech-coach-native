@@ -22,10 +22,18 @@ enum KatieColors {
 }
 
 struct KatieCardModifier: ViewModifier {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     func body(content: Content) -> some View {
         content
             .padding(18)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            // KAT-199: in a vertical ScrollView, `.frame(maxWidth: .infinity)`
+            // resolves to the content's intrinsic width (460+pt for a long
+            // Text + fixed-size child), which clipped the right edge on
+            // iPhone. Capping to a hard value on compact forces the card
+            // to fit the visible width. On iPad (.regular) the larger cap
+            // keeps the existing centered layout.
+            .frame(maxWidth: horizontalSizeClass == .compact ? 380 : 720, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .fill(

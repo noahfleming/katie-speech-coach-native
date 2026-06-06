@@ -158,20 +158,28 @@ struct FirstBaselineView: View {
 
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 10) {
+                    // KAT-199: removed .fixedSize(vertical: true) so the text
+                    // can wrap to fit the available card width on compact
+                    // iPhone. The 'vertical: true' modifier fixes the text
+                    // height to a single line, which prevented wrapping and
+                    // forced the card to widen past the screen edge.
                     Text(appViewModel.firstBaselineHeadline)
                         .font(usesWideBaselineLayout ? .system(size: 38, weight: .bold, design: .rounded) : .largeTitle.bold())
                         .foregroundStyle(KatieColors.textPrimary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: false)
 
                     Text(firstBaselineHeroSupportLine)
                         .font(usesWideBaselineLayout ? .title3.weight(.semibold) : .title2.bold())
                         .foregroundStyle(KatieColors.textPrimary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: false)
 
                     Text(appViewModel.firstBaselineBody)
                         .font(.body)
                         .foregroundStyle(KatieColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: false)
                 }
 
                 if usesWideBaselineLayout {
