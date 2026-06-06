@@ -1,0 +1,21 @@
+# Xcode
+*.xcodeproj/
+build_dd/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# CocoaPods (not used but defensive)
+Pods/
+
+# Fastlane
+fastlane/report.xml
+fastlane/screenshots/
+fastlane/test_output/

@@ -1,0 +1,40 @@
+name: KatieSpeechCoachNative
+options:
+  deploymentTarget:
+    iOS: 17.0
+configs:
+  Debug: debug
+  Release: release
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.noah.katiespeechcoach.native
+    PRODUCT_NAME: Katie Speech Coach
+    SWIFT_VERSION: 5.10
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_CFBundleDisplayName: Katie
+    INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+    INFOPLIST_KEY_UIBackgroundModes:
+      - audio
+    INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+    INFOPLIST_KEY_NSMicrophoneUsageDescription: Katie uses your microphone to record speech practice and compare retakes.
+    INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Katie uses speech recognition to detect filler words in real-time during practice sessions.
+    INFOPLIST_KEY_NSUserNotificationsUsageDescription: Katie sends gentle practice reminders tied to your current mission.
+packages: {}
+targets:
+  KatieSpeechCoachNative:
+    type: application
+    platform: iOS
+    sources:
+      - path: KatieSpeechCoachNative
+        excludes:
+          - Resources/Preview Content
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.noah.katiespeechcoach.native
+    scheme:
+      gatherCoverageData: false
+      testTargets: []
