@@ -17,6 +17,26 @@ struct TodayMissionView: View {
         var id: String { title }
     }
 
+    private enum Layout {
+        static let compactSectionSpacing: CGFloat = 40
+        static let regularSectionSpacing: CGFloat = 24
+        static let screenHorizontalPadding: CGFloat = 20
+        static let screenTopPadding: CGFloat = 20
+        static let screenBottomPaddingCompact: CGFloat = 32
+        static let screenBottomPaddingRegular: CGFloat = 24
+        static let railSpacing: CGFloat = 16
+        static let cardSpacing: CGFloat = 12
+        static let heroSpacing: CGFloat = 14
+        static let headerSpacingRegular: CGFloat = 12
+        static let inlineSpacing: CGFloat = 10
+        static let chipSpacing: CGFloat = 8
+        static let chipHorizontalPadding: CGFloat = 10
+        static let chipVerticalPadding: CGFloat = 6
+        static let cardCornerRadius: CGFloat = 18
+        static let innerCardCornerRadius: CGFloat = 16
+        static let editorCornerRadius: CGFloat = 14
+    }
+
     @EnvironmentObject private var appViewModel: AppViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.openURL) private var openURL
@@ -91,12 +111,13 @@ struct TodayMissionView: View {
     var body: some View {
         GeometryReader { proxy in
             let isCompactPhoneLayout = !usesWideTodayLayout && proxy.size.width < 430
-            let contentSpacing: CGFloat = isCompactPhoneLayout ? 40 : 24
-            let horizontalPadding: CGFloat = 20
+            let contentSpacing: CGFloat = isCompactPhoneLayout ? Layout.compactSectionSpacing : Layout.regularSectionSpacing
+            let horizontalPadding: CGFloat = Layout.screenHorizontalPadding
+            let headerSpacing: CGFloat = isCompactPhoneLayout ? Layout.inlineSpacing : Layout.headerSpacingRegular
 
             ScrollView {
                 VStack(alignment: .leading, spacing: contentSpacing) {
-                    HStack(alignment: .center, spacing: isCompactPhoneLayout ? 10 : 12) {
+                    HStack(alignment: .center, spacing: headerSpacing) {
                         Image(systemName: "sun.max.fill")
                             .katieIconBadge(background: KatieColors.cardSecondary, foreground: KatieColors.gold, size: isCompactPhoneLayout ? 30 : 34)
                         VStack(alignment: .leading, spacing: 2) {
@@ -111,7 +132,7 @@ struct TodayMissionView: View {
                     }
 
                     todayBoardCard
-                        .padding(.bottom, 32)
+                        .padding(.bottom, isCompactPhoneLayout ? Layout.screenBottomPaddingCompact : Layout.screenBottomPaddingRegular)
 
                     if appViewModel.hasEarnedFirstWin {
                         if usesWideTodayLayout {
@@ -151,8 +172,8 @@ struct TodayMissionView: View {
                     }
                 }
                 .padding(.horizontal, horizontalPadding)
-                .padding(.top, 20)
-                .padding(.bottom, isCompactPhoneLayout ? 32 : 24)
+                .padding(.top, Layout.screenTopPadding)
+                .padding(.bottom, isCompactPhoneLayout ? Layout.screenBottomPaddingCompact : Layout.screenBottomPaddingRegular)
                 .katieContentFrame(maxWidth: todayContentMaxWidth)
             }
         }
@@ -162,14 +183,14 @@ struct TodayMissionView: View {
     @ViewBuilder
     private var todayHeroRail: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 16) {
+            HStack(alignment: .top, spacing: Layout.railSpacing) {
                 missionHero
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 firstWinHero
                     .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Layout.railSpacing) {
                 missionHero
                 firstWinHero
             }
@@ -179,14 +200,14 @@ struct TodayMissionView: View {
     @ViewBuilder
     private var todayStarterRail: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 16) {
+            HStack(alignment: .top, spacing: Layout.railSpacing) {
                 firstSpeakingScanCard
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 todayQueueCard
                     .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Layout.railSpacing) {
                 firstSpeakingScanCard
                 todayQueueCard
             }
@@ -220,14 +241,14 @@ struct TodayMissionView: View {
         @ViewBuilder secondary: () -> Secondary
     ) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 16) {
+            HStack(alignment: .top, spacing: Layout.railSpacing) {
                 primary()
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 secondary()
                     .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Layout.railSpacing) {
                 primary()
                 secondary()
             }
@@ -306,9 +327,9 @@ struct TodayMissionView: View {
     }
 
     private var missionHero: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 14) {
-                VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+            HStack(alignment: .top, spacing: Layout.heroSpacing) {
+                VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                     KatieSectionEyebrow(title: "Today’s focus", systemImage: "target")
 
                     Text(appViewModel.currentMission.title)
@@ -319,7 +340,7 @@ struct TodayMissionView: View {
                         .font(.subheadline)
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    HStack(spacing: 10) {
+                    HStack(spacing: Layout.inlineSpacing) {
                         KatieReplayBadge(title: appViewModel.currentMission.categoryLabel, systemImage: "square.grid.2x2.fill", accent: KatieColors.gold)
                         KatieReplayBadge(title: appViewModel.currentScenarioSnapshot.bestStreakLabel, systemImage: "sparkles", accent: KatieColors.mint)
                     }
@@ -336,7 +357,7 @@ struct TodayMissionView: View {
     }
 
     private var firstWinHero: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
             KatieSectionEyebrow(
                 title: appViewModel.firstWinHeadline,
                 systemImage: appViewModel.isPremiumUnlocked ? "checkmark.seal.fill" : appViewModel.activeScenarioUserRepCount > 0 ? "mic.circle.fill" : "sparkles",
@@ -359,7 +380,7 @@ struct TodayMissionView: View {
             .buttonStyle(.katiePrimary())
 
             if appViewModel.activeScenarioUserRepCount == 1 {
-                KatieWrap(spacing: 8, rowSpacing: 8) {
+                KatieWrap(spacing: Layout.chipSpacing, rowSpacing: Layout.chipSpacing) {
                     Text("First benchmark saved")
                         .modifier(KatieCapsuleLabelStyle())
 
@@ -372,9 +393,9 @@ struct TodayMissionView: View {
             }
 
             if let featured = appViewModel.featuredWin {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                     if appViewModel.hasEarnedCompare {
-                        HStack(spacing: 10) {
+                        HStack(spacing: Layout.inlineSpacing) {
                             proofColumn(title: "Before", body: featured.beforeText)
                             proofColumn(title: "After", body: featured.afterText)
                         }
@@ -386,7 +407,7 @@ struct TodayMissionView: View {
                     }
 
                     if appViewModel.hasEarnedCompare {
-                        KatieWrap(spacing: 8, rowSpacing: 8) {
+                        KatieWrap(spacing: Layout.chipSpacing, rowSpacing: Layout.chipSpacing) {
                             Text(featured.sourceTag)
                                 .modifier(KatieCapsuleLabelStyle())
 
@@ -417,7 +438,7 @@ struct TodayMissionView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    KatieWrap(spacing: 8, rowSpacing: 8) {
+                    KatieWrap(spacing: Layout.chipSpacing, rowSpacing: Layout.chipSpacing) {
                         Button(featured.anchorSession == nil ? "Open proof" : "Open compare") {
                             appViewModel.openReview(for: featured.scenario, anchor: featured.anchorSession)
                         }
@@ -447,7 +468,7 @@ struct TodayMissionView: View {
     }
 
     private var momentumRail: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: KatieSpacing.base) {
             Text("Progress right now")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -456,9 +477,9 @@ struct TodayMissionView: View {
                 .font(.subheadline)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            HStack(spacing: 10) {
+            HStack(spacing: Layout.inlineSpacing) {
                 ForEach(appViewModel.momentumRail) { milestone in
-                    VStack(spacing: 6) {
+                    VStack(spacing: Layout.chipVerticalPadding) {
                         Circle()
                             .fill(milestone.isActive ? KatieColors.mint : KatieColors.cardSecondary)
                             .frame(width: 10, height: 10)
@@ -472,10 +493,10 @@ struct TodayMissionView: View {
                             .font(.caption2)
                             .foregroundStyle(KatieColors.textSecondary)
                     }
-                    .padding(10)
+                    .padding(Layout.cardSpacing)
                     .frame(maxWidth: .infinity)
                     .background(milestone.isActive ? KatieColors.cardBackground.opacity(0.8) : KatieColors.cardSecondary.opacity(0.35))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
                 }
             }
         }
@@ -491,16 +512,16 @@ struct TodayMissionView: View {
         if let prompt = highlightedQuickRepPrompt {
             let reminderProtected = appViewModel.reminderPlan?.scenario == prompt.scenario
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .top, spacing: 12) {
+                    HStack(alignment: .top, spacing: Layout.cardSpacing) {
                         Image(systemName: "bolt.fill")
                             .font(.headline.weight(.semibold))
                             .foregroundStyle(KatieColors.accent)
-                            .padding(10)
+                            .padding(Layout.cardSpacing)
                             .background(KatieColors.accent.opacity(0.14), in: Circle())
 
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                             Text("Tonight’s best quick rep")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.textSecondary)
@@ -516,20 +537,20 @@ struct TodayMissionView: View {
                         Text(prompt.durationLabel)
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(KatieColors.textSecondary)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
+                            .padding(.horizontal, Layout.chipHorizontalPadding)
+                            .padding(.vertical, Layout.chipVerticalPadding)
                             .background(KatieColors.cardSecondary, in: Capsule())
                     }
 
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
+                        HStack(alignment: .top, spacing: Layout.cardSpacing) {
                             Image(systemName: "bolt.fill")
                                 .font(.headline.weight(.semibold))
                                 .foregroundStyle(KatieColors.accent)
-                                .padding(10)
+                                .padding(Layout.cardSpacing)
                                 .background(KatieColors.accent.opacity(0.14), in: Circle())
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                                 Text("Tonight’s best quick rep")
                                     .font(.caption.weight(.semibold))
                                     .foregroundStyle(KatieColors.textSecondary)
@@ -544,8 +565,8 @@ struct TodayMissionView: View {
                         Text(prompt.durationLabel)
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(KatieColors.textSecondary)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
+                            .padding(.horizontal, Layout.chipHorizontalPadding)
+                            .padding(.vertical, Layout.chipVerticalPadding)
                             .background(KatieColors.cardSecondary, in: Capsule())
                     }
                 }
@@ -555,7 +576,7 @@ struct TodayMissionView: View {
                     .foregroundStyle(KatieColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                KatieWrap(spacing: 8, rowSpacing: 8) {
+                KatieWrap(spacing: Layout.chipSpacing, rowSpacing: Layout.chipSpacing) {
                     Text(prompt.statusLabel)
                         .modifier(KatieCapsuleLabelStyle(accent: reminderProtected ? KatieColors.mint : KatieColors.gold))
 
@@ -578,14 +599,14 @@ struct TodayMissionView: View {
                     .foregroundStyle(KatieColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                     Label("What stays in sync after this rep", systemImage: "point.3.filled.connected.trianglepath.dotted")
                         .font(.callout.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                         ForEach(quickRepRunwaySteps(for: prompt)) { step in
-                            HStack(alignment: .top, spacing: 10) {
+                            HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                                 Image(systemName: step.systemImage)
                                     .font(.caption.weight(.semibold))
                                     .foregroundStyle(step.accent)
@@ -603,16 +624,16 @@ struct TodayMissionView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
-                            .padding(10)
+                            .padding(Layout.cardSpacing)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(KatieColors.cardSecondary.opacity(0.9))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                         }
                     }
                 }
 
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .center, spacing: 8) {
+                    HStack(alignment: .center, spacing: Layout.chipSpacing) {
                         Label("What you’ll say first", systemImage: "quote.bubble")
                             .font(.callout.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -625,7 +646,7 @@ struct TodayMissionView: View {
                             .lineLimit(1)
                     }
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                         Label("What you’ll say first", systemImage: "quote.bubble")
                             .font(.callout.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -645,7 +666,7 @@ struct TodayMissionView: View {
                 }
                 .buttonStyle(.katiePrimary())
             }
-            .padding(16)
+            .padding(Layout.cardSpacing + KatieSpacing.xxs)
             .frame(maxWidth: .infinity, alignment: .leading)
             .katieCard()
         }
@@ -674,9 +695,9 @@ struct TodayMissionView: View {
     }
 
     private var focusedToolsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+            HStack(alignment: .top, spacing: Layout.cardSpacing) {
+                VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                     Label("Focused tools", systemImage: "slider.horizontal.3")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -694,14 +715,14 @@ struct TodayMissionView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Layout.chipHorizontalPadding)
+                .padding(.vertical, Layout.chipVerticalPadding + KatieSpacing.xxs)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
             }
 
-            KatieWrap(spacing: 8, rowSpacing: 8) {
+            KatieWrap(spacing: Layout.chipSpacing, rowSpacing: Layout.chipSpacing) {
                 Text(appViewModel.firstSpeakingScan.savedLine)
                     .modifier(KatieCapsuleLabelStyle())
                 Text(appViewModel.momentumSummaryLine)
@@ -713,7 +734,7 @@ struct TodayMissionView: View {
             audioCaptureLaneCard
 
             if isFocusedToolsExpanded {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                     firstSpeakingScanCard
                     momentumRail
                     quickRepRail
@@ -725,12 +746,12 @@ struct TodayMissionView: View {
     }
 
     private var audioCaptureLaneCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 10) {
+        VStack(alignment: .leading, spacing: Layout.chipSpacing) {
+            HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                 Image(systemName: appViewModel.audioCaptureLane.systemImage)
                     .katieIconBadge(background: KatieColors.cardBackground, foreground: KatieColors.mint, size: 28)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                     Text(appViewModel.audioCaptureLane.title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -744,10 +765,10 @@ struct TodayMissionView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
         }
-        .padding(12)
+        .padding(Layout.cardSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private var compactHomeControlsCard: some View {
@@ -757,9 +778,9 @@ struct TodayMissionView: View {
             ? "Reminder protecting \(appViewModel.currentMission.packTitle)"
             : "\(appViewModel.currentMission.packTitle) in focus"
 
-        return VStack(alignment: .leading, spacing: 14) {
+        return VStack(alignment: .leading, spacing: Layout.heroSpacing) {
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: KatieSpacing.base) {
                     compactHomeControlsSummary
 
                     Spacer(minLength: 0)
@@ -767,19 +788,19 @@ struct TodayMissionView: View {
                     compactHomeStatusChip(activeReminder: activeReminder, focusLabel: focusLabel)
                 }
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                     compactHomeControlsSummary
                     compactHomeStatusChip(activeReminder: activeReminder, focusLabel: focusLabel)
                 }
             }
 
-            KatieWrap(spacing: 8, rowSpacing: 8) {
+            KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                 queueSummaryChip(title: "Active packs", value: activeQueueCount, accent: KatieColors.mint)
                 queueSummaryChip(title: "Replay-ready", value: appViewModel.activeScenarioReplayReadyCount, accent: KatieColors.gold)
                 queueSummaryChip(title: activeReminder ? "Reminder on" : "Reminder off", value: activeReminder ? 1 : 0, accent: KatieColors.accent)
             }
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: KatieSpacing.xs) {
                 Text("Reminder handoff for \(appViewModel.currentMission.packTitle)")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -791,33 +812,33 @@ struct TodayMissionView: View {
                     .foregroundStyle(KatieColors.textSecondary)
             }
 
-            KatieWrap(spacing: 8, rowSpacing: 8) {
+            KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                 Button(isSecondaryPanelExpanded(.context) ? "Hide context" : "Open context") {
                     toggleSecondaryPanel(.context)
                 }
-                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
 
                 Button(isSecondaryPanelExpanded(.activePacks) ? "Hide active packs" : "Open active packs") {
                     toggleSecondaryPanel(.activePacks)
                 }
-                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
 
                 Button(isSecondaryPanelExpanded(.allPacks) ? "Hide all packs" : "Browse all packs") {
                     toggleSecondaryPanel(.allPacks)
                 }
-                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
 
                 Button(isSecondaryPanelExpanded(.reminder) ? "Close reminder handoff" : "Tune reminder handoff") {
                     toggleSecondaryPanel(.reminder)
                 }
-                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
             }
         }
         .katieCard()
     }
 
     private var compactHomeControlsSummary: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: KatieSpacing.xs) {
             Label("\(appViewModel.currentMission.packTitle) in focus", systemImage: "square.stack.3d.up")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -832,16 +853,16 @@ struct TodayMissionView: View {
         Text(activeSecondaryPanelLabel ?? focusLabel)
             .font(.caption.weight(.semibold))
             .foregroundStyle(activeSecondaryPanelLabel == nil ? (activeReminder ? KatieColors.accent : KatieColors.mint) : KatieColors.gold)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, KatieSpacing.md)
+            .padding(.vertical, KatieSpacing.xs)
             .background(KatieColors.cardSecondary)
             .clipShape(Capsule())
     }
 
     private var deeperCoachingCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: KatieSpacing.base) {
+            HStack(alignment: .top, spacing: KatieSpacing.base) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xs) {
                     Label("Deeper coaching", systemImage: "waveform.path.ecg.rectangle")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -859,14 +880,14 @@ struct TodayMissionView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, KatieSpacing.base)
+                .padding(.vertical, KatieSpacing.sm)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
             }
 
-            KatieWrap(spacing: 8, rowSpacing: 8) {
+            KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                 KatieReplayBadge(title: appViewModel.currentSoundPatternRadar.title, systemImage: "waveform.path", accent: KatieColors.mint)
                 KatieReplayBadge(title: appViewModel.currentConversationTransferPlan.title, systemImage: "arrow.triangle.branch", accent: KatieColors.gold)
                 if appViewModel.currentMission == .managerOneOnOne {
@@ -879,7 +900,7 @@ struct TodayMissionView: View {
     }
 
     private var firstSpeakingScanCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: KatieSpacing.base) {
             Label("Quick read", systemImage: "waveform.path.ecg.rectangle")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -889,32 +910,32 @@ struct TodayMissionView: View {
             scanRow(title: "First proof path", body: appViewModel.firstSpeakingScan.firstWinPlan)
 
             if usesCompactTodayLayout {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                     Label("Saved line: \(appViewModel.firstSpeakingScan.savedLine)", systemImage: "lock.fill")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(KatieColors.mint)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    KatieWrap(spacing: 8, rowSpacing: 8) {
+                    KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                         Label(appViewModel.compactCaptureSourceLabel(for: appViewModel.latestSession), systemImage: appViewModel.latestSession.captureSource.systemImage)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.textSecondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, KatieSpacing.sm)
+                            .padding(.vertical, KatieSpacing.xxs)
                             .background(KatieColors.cardSecondary)
                             .clipShape(Capsule())
 
                         Text(appViewModel.freshnessLabel(for: appViewModel.latestSession))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.textSecondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, KatieSpacing.sm)
+                            .padding(.vertical, KatieSpacing.xxs)
                             .background(KatieColors.cardSecondary)
                             .clipShape(Capsule())
                     }
                 }
             } else {
-                HStack(spacing: 8) {
+                HStack(spacing: KatieSpacing.sm) {
                     Label("Saved line: \(appViewModel.firstSpeakingScan.savedLine)", systemImage: "lock.fill")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(KatieColors.mint)
@@ -922,16 +943,16 @@ struct TodayMissionView: View {
                     Label(appViewModel.compactCaptureSourceLabel(for: appViewModel.latestSession), systemImage: appViewModel.latestSession.captureSource.systemImage)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, KatieSpacing.sm)
+                        .padding(.vertical, KatieSpacing.xxs)
                         .background(KatieColors.cardSecondary)
                         .clipShape(Capsule())
 
                     Text(appViewModel.freshnessLabel(for: appViewModel.latestSession))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, KatieSpacing.sm)
+                        .padding(.vertical, KatieSpacing.xxs)
                         .background(KatieColors.cardSecondary)
                         .clipShape(Capsule())
                 }
@@ -943,9 +964,9 @@ struct TodayMissionView: View {
     private var todaysLensCard: some View {
         let keepsCompactHome = appViewModel.hasEarnedFirstWin
 
-        return VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: Layout.heroSpacing) {
+            HStack(alignment: .top, spacing: KatieSpacing.base) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                     Label("Today’s lens", systemImage: "scope")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
