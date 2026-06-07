@@ -87,4 +87,21 @@ final class ReminderState: ObservableObject, Codable {
 
         return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: candidate) ?? candidate
     }
+
+    // MARK: - UI helpers (state-dependent)
+
+    /// The date the reminder card should show in the editor — either the
+    /// existing plan's fire date or the default (tomorrow 9 AM).
+    var draftDate: Date {
+        reminderPlan?.fireDate ?? Self.defaultReminderDate(from: .now)
+    }
+
+    /// Pre-baked preset options for the reminder card's "quick pick" UI.
+    var quickPresets: [ReminderQuickPreset] {
+        [
+            ReminderQuickPreset(title: "In 2 hours", fireDate: reminderDate(hoursFromNow: 2)),
+            ReminderQuickPreset(title: "Tomorrow 9 AM", fireDate: reminderDateTomorrow(hour: 9, minute: 0)),
+            ReminderQuickPreset(title: "Next workday 9 AM", fireDate: reminderDateNextWorkday(hour: 9, minute: 0))
+        ]
+    }
 }

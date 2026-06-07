@@ -418,7 +418,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var reminderDraftDate: Date {
-        reminderPlan?.fireDate ?? Self.defaultReminderDate(from: .now)
+        reminderState.draftDate
     }
 
     var reminderDraftTimeLabel: String {
@@ -426,11 +426,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var reminderQuickPresets: [ReminderQuickPreset] {
-        [
-            ReminderQuickPreset(title: "In 2 hours", fireDate: reminderDate(hoursFromNow: 2)),
-            ReminderQuickPreset(title: "Tomorrow 9 AM", fireDate: reminderDateTomorrow(hour: 9, minute: 0)),
-            ReminderQuickPreset(title: "Next workday 9 AM", fireDate: reminderDateNextWorkday(hour: 9, minute: 0))
-        ]
+        reminderState.quickPresets
     }
 
     var localReplayCount: Int {
