@@ -113,8 +113,7 @@ final class AppViewModel: ObservableObject {
     @Published var availableScenarios: [PracticeScenario] = PracticeScenario.allCases
     @Published var premiumAccessState: PremiumAccessState = .locked
     @Published private(set) var premiumStoreStatus: PremiumStoreStatus = .idle
-    @Published private(set) var reminderPlan: ReminderPlan?
-    @Published private(set) var reminderPermissionState: ReminderPermissionState = .unknown
+    @Published private(set) var reminderState = ReminderState()
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
     @Published private(set) var scenarioHistories: [PracticeScenario: [PracticeSession]] = [:]
     @Published private var selectedAnchorByScenario: [PracticeScenario: UUID] = [:]
@@ -130,11 +129,9 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var currentlyPlayingSessionID: UUID?
     @Published var isPremiumPreviewPresented = false
     @Published var isReviewPresented = false
-    @Published var reminderTone: ReminderTone = .workday
     @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
     @Published private(set) var pocketCopyStatusLine: String?
     @Published private(set) var practiceReturnCue: PracticeReturnCue?
-    @Published private(set) var reminderFlowMessage: ReminderFlowMessage?
 
     private var audioRecorder: AVAudioRecorder?
     private var audioPlayer: AVAudioPlayer?
@@ -146,6 +143,7 @@ final class AppViewModel: ObservableObject {
     private var fillerBreakdownCancellable: AnyCancellable?
     private var appSessionStateCancellable: AnyCancellable?
     private var learnerProfileCancellable: AnyCancellable?
+    private var reminderStateCancellable: AnyCancellable?
     private let appSessionState = AppSessionState()
 
     @Published var fillerWordCount: Int = 0
@@ -175,6 +173,7 @@ final class AppViewModel: ObservableObject {
         }
         bindAppSessionStateChanges()
         bindLearnerProfileChanges()
+        bindReminderStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -207,6 +206,34 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindReminderStateChanges() {
+        reminderStateCancellable?.cancel()
+        reminderStateCancellable = reminderState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var reminderPlan: ReminderPlan? {
+        get { reminderState.reminderPlan }
+        set { reminderState.reminderPlan = newValue }
+    }
+
+    var reminderPermissionState: ReminderPermissionState {
+        get { reminderState.reminderPermissionState }
+        set { reminderState.reminderPermissionState = newValue }
+    }
+
+    var reminderTone: ReminderTone {
+        get { reminderState.reminderTone }
+        set { reminderState.reminderTone = newValue }
+    }
+
+    var reminderFlowMessage: ReminderFlowMessage? {
+        get { reminderState.reminderFlowMessage }
+        set { reminderState.reminderFlowMessage = newValue }
     }
 
     var hasCompletedOnboarding: Bool {
