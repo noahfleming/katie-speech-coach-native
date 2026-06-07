@@ -175,4 +175,28 @@ final class ScenarioState: ObservableObject, Codable {
             .filter(hasPlayback)
             .count
     }
+
+    // MARK: - Per-scenario status strings (pure reads, cross-VM data passed in)
+
+    /// Human-readable rep-count status for a scenario: "First proof",
+    /// "Benchmark saved", "Live compare", "Warm".
+    func statusLabel(ownedCount: Int) -> String {
+        switch ownedCount {
+        case 0: return "First proof"
+        case 1: return "Benchmark saved"
+        case 2: return "Live compare"
+        default: return "Warm"
+        }
+    }
+
+    /// "Today" / "Yesterday" / "This week" / "Older" label for a session.
+    func freshnessLabel(for date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) { return "Today" }
+        if calendar.isDateInYesterday(date) { return "Yesterday" }
+        if let weekAgo = calendar.date(byAdding: .day, value: -7, to: Date()), date >= weekAgo {
+            return "This week"
+        }
+        return "Older"
+    }
 }

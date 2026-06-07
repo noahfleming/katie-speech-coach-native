@@ -3491,17 +3491,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func scenarioStatusLabel(for scenario: PracticeScenario) -> String {
-        let ownedCount = userOwnedSessionCount(for: scenario)
-        switch ownedCount {
-        case 0:
-            return "First proof"
-        case 1:
-            return "Benchmark saved"
-        case 2:
-            return "Live compare"
-        default:
-            return "Warm"
-        }
+        scenarioState.statusLabel(ownedCount: userOwnedSessionCount(for: scenario))
     }
 
     func scenarioStatusDetail(for scenario: PracticeScenario) -> String {
@@ -3662,17 +3652,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func freshnessLabel(for session: PracticeSession) -> String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(session.date) {
-            return "Today"
-        }
-        if calendar.isDateInYesterday(session.date) {
-            return "Yesterday"
-        }
-        if let weekAgo = calendar.date(byAdding: .day, value: -7, to: Date()), session.date >= weekAgo {
-            return "This week"
-        }
-        return "Older"
+        scenarioState.freshnessLabel(for: session.date)
     }
 
     func hasPlayback(for session: PracticeSession) -> Bool {
