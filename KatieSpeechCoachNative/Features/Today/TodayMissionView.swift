@@ -1436,7 +1436,7 @@ struct TodayMissionView: View {
     }
 
     private func queueSummaryChip(title: String, value: Int, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -1444,20 +1444,20 @@ struct TodayMissionView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(.horizontal, KatieSpacing.md)
+        .padding(.vertical, KatieSpacing.sm)
         .background(accent.opacity(0.14))
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous)
                 .stroke(accent.opacity(0.2), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
     }
 
     private var coachReadoutCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: KatieSpacing.base) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                     Text("Coach readout")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1466,7 +1466,7 @@ struct TodayMissionView: View {
                 }
                 Spacer()
                 Button(isCoachReadoutExpanded ? "Hide scan" : "Open scan") {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(KatieMotion.quick) {
                         isCoachReadoutExpanded.toggle()
                     }
                 }
@@ -1474,7 +1474,7 @@ struct TodayMissionView: View {
                 .foregroundStyle(KatieColors.mint)
             }
 
-            KatieWrap(spacing: 8, rowSpacing: 8) {
+            KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                 Text("Sound pattern · \(appViewModel.currentSoundPatternRadar.title)")
                     .modifier(KatieCapsuleLabelStyle())
                 Text("Transfer plan · \(appViewModel.currentConversationTransferPlan.title)")
@@ -1482,7 +1482,7 @@ struct TodayMissionView: View {
             }
 
             if isCoachReadoutExpanded {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: KatieSpacing.base) {
                     firstSpeakingScanCard
                     carryoverCard
                 }
@@ -1510,7 +1510,7 @@ struct TodayMissionView: View {
     private var coachReadoutContinuitySummary: some View {
         let strip = appViewModel.currentContinuityStrip
 
-        return VStack(alignment: .leading, spacing: 6) {
+        return VStack(alignment: .leading, spacing: KatieSpacing.xs) {
             Label(strip.title, systemImage: strip.systemImage)
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(coachReadoutContinuityAccent)
@@ -1525,7 +1525,7 @@ struct TodayMissionView: View {
     private var soundRadarCard: some View {
         let radar = appViewModel.currentSoundPatternRadar
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: KatieSpacing.base) {
             Label(radar.title, systemImage: "scope")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1537,7 +1537,7 @@ struct TodayMissionView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.mint)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: Layout.heroSpacing) {
                 ForEach(radar.bullets, id: \.self) { bullet in
                     Label(bullet, systemImage: "checkmark.circle.fill")
                         .font(.footnote)
@@ -1551,7 +1551,7 @@ struct TodayMissionView: View {
     private var transferPlanCard: some View {
         let plan = appViewModel.currentConversationTransferPlan
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: KatieSpacing.base) {
             Label(plan.title, systemImage: "arrow.triangle.branch")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1559,7 +1559,7 @@ struct TodayMissionView: View {
             Text(plan.summary)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: Layout.heroSpacing) {
                 Label(plan.beforeYouSpeak, systemImage: "1.circle.fill")
                 Label(plan.whileSpeaking, systemImage: "2.circle.fill")
                 Label(plan.repairMove, systemImage: "3.circle.fill")
@@ -1571,9 +1571,9 @@ struct TodayMissionView: View {
     }
 
     private var languageFocusCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: KatieSpacing.base) {
+            HStack(alignment: .top, spacing: KatieSpacing.base) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                     Text("Sound focus")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1581,13 +1581,13 @@ struct TodayMissionView: View {
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
-                Spacer(minLength: 12)
+                Spacer(minLength: KatieSpacing.base)
 
                 Text(appViewModel.learnerProfile.firstGoal)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, KatieSpacing.md)
+                    .padding(.vertical, KatieSpacing.xs)
                     .background(KatieColors.cardSecondary)
                     .clipShape(Capsule())
             }
