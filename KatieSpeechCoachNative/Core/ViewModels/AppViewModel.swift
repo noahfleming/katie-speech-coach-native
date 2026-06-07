@@ -110,16 +110,12 @@ final class AppViewModel: ObservableObject {
 
     @Published var learnerProfile = LearnerProfile()
     @Published private(set) var scenarioState = ScenarioState()
-    @Published var premiumAccessState: PremiumAccessState = .locked
-    @Published private(set) var premiumStoreStatus: PremiumStoreStatus = .idle
+    @Published private(set) var premiumState = PremiumState()
     @Published private(set) var reminderState = ReminderState()
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
     @Published private(set) var recordingState = RecordingState()
     @Published private(set) var reflectionState = ReflectionState()
     @Published private(set) var modalState = ModalState()
-    @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
-    @Published private(set) var pocketCopyStatusLine: String?
-    @Published private(set) var practiceReturnCue: PracticeReturnCue?
 
     private var audioRecorder: AVAudioRecorder?
     private var audioPlayer: AVAudioPlayer?
@@ -133,6 +129,7 @@ final class AppViewModel: ObservableObject {
     private var learnerProfileCancellable: AnyCancellable?
     private var reminderStateCancellable: AnyCancellable?
     private var scenarioStateCancellable: AnyCancellable?
+    private var premiumStateCancellable: AnyCancellable?
     private var recordingStateCancellable: AnyCancellable?
     private var reflectionStateCancellable: AnyCancellable?
     private var modalStateCancellable: AnyCancellable?
@@ -167,6 +164,7 @@ final class AppViewModel: ObservableObject {
         bindLearnerProfileChanges()
         bindReminderStateChanges()
         bindScenarioStateChanges()
+        bindPremiumStateChanges()
         bindRecordingStateChanges()
         bindReflectionStateChanges()
         bindModalStateChanges()
@@ -218,6 +216,39 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindPremiumStateChanges() {
+        premiumStateCancellable?.cancel()
+        premiumStateCancellable = premiumState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var premiumAccessState: PremiumAccessState {
+        get { premiumState.premiumAccessState }
+        set { premiumState.premiumAccessState = newValue }
+    }
+
+    private(set) var premiumStoreStatus: PremiumStoreStatus {
+        get { premiumState.premiumStoreStatus }
+        set { premiumState.premiumStoreStatus = newValue }
+    }
+
+    private(set) var premiumRestoreMessage: PremiumRestoreMessage? {
+        get { premiumState.premiumRestoreMessage }
+        set { premiumState.premiumRestoreMessage = newValue }
+    }
+
+    private(set) var pocketCopyStatusLine: String? {
+        get { premiumState.pocketCopyStatusLine }
+        set { premiumState.pocketCopyStatusLine = newValue }
+    }
+
+    private(set) var practiceReturnCue: PracticeReturnCue? {
+        get { premiumState.practiceReturnCue }
+        set { premiumState.practiceReturnCue = newValue }
     }
 
     private func bindRecordingStateChanges() {
