@@ -48,4 +48,10 @@ final class ReminderState: ObservableObject, Codable {
         try container.encode(reminderPermissionState, forKey: .reminderPermissionState)
         try container.encode(reminderTone, forKey: .reminderTone)
     }
+
+    // MARK: - Mutators (state-local)
+
+    func clearReminderFlowMessage() {
+        reminderFlowMessage = nil
+    }
 }

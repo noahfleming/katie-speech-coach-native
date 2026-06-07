@@ -2571,16 +2571,16 @@ final class AppViewModel: ObservableObject {
         await syncPremiumAccessFromStore()
     }
 
+    func clearReminderFlowMessage() {
+        reminderState.clearReminderFlowMessage()
+    }
+
     func clearPremiumRestoreMessage() {
-        premiumRestoreMessage = nil
+        premiumState.clearPremiumRestoreMessage()
     }
 
     func clearPocketCopyStatusLine() {
-        pocketCopyStatusLine = nil
-    }
-
-    func clearReminderFlowMessage() {
-        reminderFlowMessage = nil
+        premiumState.clearPocketCopyStatusLine()
     }
 
     func importPocketCopy(from url: URL) async {

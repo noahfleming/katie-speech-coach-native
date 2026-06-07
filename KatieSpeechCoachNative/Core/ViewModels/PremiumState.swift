@@ -64,4 +64,14 @@ final class PremiumState: ObservableObject, Codable {
         try container.encode(premiumAccessState, forKey: .premiumAccessState)
         try container.encodeIfPresent(pocketCopyStatusLine, forKey: .pocketCopyStatusLine)
     }
+
+    // MARK: - Mutators (state-local)
+
+    func clearPremiumRestoreMessage() {
+        premiumRestoreMessage = nil
+    }
+
+    func clearPocketCopyStatusLine() {
+        pocketCopyStatusLine = nil
+    }
 }
