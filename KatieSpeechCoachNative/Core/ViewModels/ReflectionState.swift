@@ -134,4 +134,21 @@ final class ReflectionState: ObservableObject, Codable {
         let options = Self.stickyMomentOptions(for: currentMission)
         draftReflectionStickyMoment = options.contains(defaults.stickyMoment) ? defaults.stickyMoment : (options.first ?? "Opening line")
     }
+
+    // MARK: - Draft mutations (used by the practice flow)
+
+    /// Apply a starter line as the new draft transcript. The recording card
+    /// status line is updated to confirm the load.
+    func applyRetakeDraftStarter(_ starter: String) -> String {
+        draftTranscript = starter
+        return "Loaded a step starter into the draft. Shape it into your own calmer rep before saving."
+    }
+
+    /// Clear the draft so a fresh rep can be recorded.
+    func clearDraft() {
+        draftTranscript = ""
+    }
+
+    /// Mark a "draft cleared" status update.
+    var draftClearedStatusLine: String { "Draft cleared. Ready to record another rep." }
 }

@@ -2895,8 +2895,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func applyRetakeDraftStarter(_ starter: String) {
-        draftTranscript = starter
-        recorderStatusLine = "Loaded a step starter into the draft. Shape it into your own calmer rep before saving."
+        recorderStatusLine = reflectionState.applyRetakeDraftStarter(starter)
         KatieHaptic.selection.play()
     }
 
@@ -2958,12 +2957,12 @@ final class AppViewModel: ObservableObject {
     }
 
     func clearDraftRetake() {
-        draftTranscript = ""
+        reflectionState.clearDraft()
         latestScratchRecordingDuration = nil
         scratchRecordingURL.flatMap { try? FileManager.default.removeItem(at: $0) }
         scratchRecordingURL = nil
         prepareDraftReflection(resetScores: false)
-        recorderStatusLine = "Draft cleared. Ready to record another rep."
+        recorderStatusLine = reflectionState.draftClearedStatusLine
     }
 
     func dismissPracticeReturnCue() {
