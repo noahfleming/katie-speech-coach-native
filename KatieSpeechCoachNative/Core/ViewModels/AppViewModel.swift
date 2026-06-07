@@ -147,6 +147,7 @@ final class AppViewModel: ObservableObject {
     private var audioCaptureEngine: AudioCaptureEngine?
     private var fillerCountCancellable: AnyCancellable?
     private var fillerBreakdownCancellable: AnyCancellable?
+    private var learnerProfileCancellable: AnyCancellable?
 
     @Published var fillerWordCount: Int = 0
     @Published var fillerWordBreakdown: [String: Int] = [:]
@@ -173,6 +174,7 @@ final class AppViewModel: ObservableObject {
         if let visualTab {
             selectedTab = visualTab
         }
+        bindLearnerProfileChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -189,6 +191,14 @@ final class AppViewModel: ObservableObject {
         if let reminderNotificationObserver {
             NotificationCenter.default.removeObserver(reminderNotificationObserver)
         }
+    }
+
+    private func bindLearnerProfileChanges() {
+        learnerProfileCancellable?.cancel()
+        learnerProfileCancellable = learnerProfile.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
     }
 
     var isPremiumUnlocked: Bool {
@@ -2407,6 +2417,7 @@ final class AppViewModel: ObservableObject {
             clearAllLocalRecordings()
 
             learnerProfile = bundle.learnerProfile
+            bindLearnerProfileChanges()
             currentMission = bundle.currentMission
             availableScenarios = PracticeScenario.allCases
             scenarioHistories = normalizedImportedHistories(from: bundle.scenarioHistories)
@@ -3617,6 +3628,7 @@ final class AppViewModel: ObservableObject {
         hasCompletedOnboarding = false
         hasDismissedFirstBaselineGate = false
         learnerProfile = LearnerProfile()
+        bindLearnerProfileChanges()
         currentMission = .weeklyUpdate
         availableScenarios = PracticeScenario.allCases
         premiumAccessState = .locked
@@ -3907,6 +3919,7 @@ final class AppViewModel: ObservableObject {
         hasCompletedOnboarding = decoded.hasCompletedOnboarding
         hasDismissedFirstBaselineGate = decoded.hasDismissedFirstBaselineGate
         learnerProfile = decoded.learnerProfile
+        bindLearnerProfileChanges()
         currentMission = decoded.currentMission
         selectedTab = decoded.selectedTab
         premiumAccessState = decoded.premiumAccessState
