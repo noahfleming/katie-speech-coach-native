@@ -215,6 +215,11 @@ struct KatieGlanceBoard: View {
     var metrics: [KatieGlanceMetric]
     var footnote: String? = nil
 
+    // KAT-201: when the user has Reduce Motion enabled (Settings →
+    // Accessibility → Reduce Motion), skip the 2.4s pulse entirely.
+    // The icon is rendered in its "breathing" final state — no animation,
+    // no `withAnimation` call, no repeatForever.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isBreathing = false
 
     private var boardColumns: [GridItem] {
@@ -297,10 +302,18 @@ struct KatieGlanceBoard: View {
         }
         .katieCard()
         .onAppear {
+            // KAT-201: skip the pulse entirely when Reduce Motion is on.
+            // We still set `isBreathing = true` so the icon renders in its
+            // "breathing" final state (slightly larger + softer blur), but
+            // we don't kick off a `withAnimation` repeatForever cycle.
             guard !isBreathing else { return }
 
-            withAnimation(KatieMotion.breathe) {
+            if reduceMotion {
                 isBreathing = true
+            } else {
+                withAnimation(KatieMotion.breathe) {
+                    isBreathing = true
+                }
             }
         }
     }
