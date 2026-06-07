@@ -114,16 +114,13 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var premiumStoreStatus: PremiumStoreStatus = .idle
     @Published private(set) var reminderState = ReminderState()
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
-    @Published private(set) var isRecording = false
+    @Published private(set) var recordingState = RecordingState()
     @Published var draftTranscript = ""
     @Published var draftReflectionListenerCatchScore = 3
     @Published var draftReflectionPaceControlScore = 3
     @Published var draftReflectionConfidenceScore = 3
     @Published var draftReflectionStickyMoment = "Opening line"
     @Published private(set) var activePracticeStep = 0
-    @Published private(set) var recorderStatusLine = "Ready to record one real rep on this iPhone."
-    @Published private(set) var latestScratchRecordingDuration: TimeInterval?
-    @Published private(set) var currentlyPlayingSessionID: UUID?
     @Published var isPremiumPreviewPresented = false
     @Published var isReviewPresented = false
     @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
@@ -142,6 +139,7 @@ final class AppViewModel: ObservableObject {
     private var learnerProfileCancellable: AnyCancellable?
     private var reminderStateCancellable: AnyCancellable?
     private var scenarioStateCancellable: AnyCancellable?
+    private var recordingStateCancellable: AnyCancellable?
     private let appSessionState = AppSessionState()
 
     @Published var fillerWordCount: Int = 0
@@ -173,6 +171,7 @@ final class AppViewModel: ObservableObject {
         bindLearnerProfileChanges()
         bindReminderStateChanges()
         bindScenarioStateChanges()
+        bindRecordingStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -221,6 +220,34 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindRecordingStateChanges() {
+        recordingStateCancellable?.cancel()
+        recordingStateCancellable = recordingState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    private(set) var isRecording: Bool {
+        get { recordingState.isRecording }
+        set { recordingState.isRecording = newValue }
+    }
+
+    var recorderStatusLine: String {
+        get { recordingState.recorderStatusLine }
+        set { recordingState.recorderStatusLine = newValue }
+    }
+
+    private(set) var latestScratchRecordingDuration: TimeInterval? {
+        get { recordingState.latestScratchRecordingDuration }
+        set { recordingState.latestScratchRecordingDuration = newValue }
+    }
+
+    private(set) var currentlyPlayingSessionID: UUID? {
+        get { recordingState.currentlyPlayingSessionID }
+        set { recordingState.currentlyPlayingSessionID = newValue }
     }
 
     var currentMission: PracticeScenario {
