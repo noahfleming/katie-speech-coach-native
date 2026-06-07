@@ -326,7 +326,7 @@ struct ProgressView: View {
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, Layout.mediumChipHorizontalPadding)
         .padding(.vertical, 10)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
@@ -352,7 +352,7 @@ struct ProgressView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, Layout.mediumChipHorizontalPadding)
         .padding(.vertical, 10)
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
@@ -490,7 +490,7 @@ struct ProgressView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, Layout.mediumChipHorizontalPadding)
         .padding(.vertical, 10)
         .background(isComplete ? KatieColors.mint.opacity(0.14) : KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
@@ -544,8 +544,8 @@ struct ProgressView: View {
                     Text(achievement.isUnlocked ? "Live" : "Locked")
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(achievement.isUnlocked ? accent : KatieColors.textSecondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, Layout.tightChipHorizontalPadding)
+                        .padding(.vertical, Layout.tightChipVerticalPadding)
                         .background(KatieColors.cardBackground.opacity(0.9))
                         .clipShape(Capsule())
                 }
@@ -836,8 +836,8 @@ struct ProgressView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                .padding(.vertical, Layout.mediumChipVerticalPadding)
                 .background(KatieColors.accent)
                 .foregroundStyle(.black)
                 .clipShape(Capsule())
@@ -846,8 +846,8 @@ struct ProgressView: View {
                     appViewModel.selectedTab = .today
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                .padding(.vertical, Layout.mediumChipVerticalPadding)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -961,16 +961,16 @@ struct ProgressView: View {
                         Text(latestCompareEntry.scenario.packTitle)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.mint)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
+                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                            .padding(.vertical, Layout.smallChipVerticalPadding)
                             .background(KatieColors.mint.opacity(0.14))
                             .clipShape(Capsule())
 
                         Text(appViewModel.freshnessLabel(for: latestCompareEntry.latest))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.accent)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
+                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                            .padding(.vertical, Layout.smallChipVerticalPadding)
                             .background(KatieColors.accent.opacity(0.14))
                             .clipShape(Capsule())
                     }
@@ -1070,8 +1070,8 @@ struct ProgressView: View {
                         appViewModel.openReview(for: latestCompareEntry.scenario, anchor: latestCompareEntry.anchor)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
@@ -1082,8 +1082,8 @@ struct ProgressView: View {
                         appViewModel.openProgress(for: protectedScenario)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
@@ -1094,8 +1094,8 @@ struct ProgressView: View {
                         appViewModel.openPractice(for: replayReadyScenario)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(Capsule())
@@ -1104,8 +1104,8 @@ struct ProgressView: View {
                         appViewModel.openPractice(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(Capsule())
@@ -1140,8 +1140,8 @@ struct ProgressView: View {
                 Text(appViewModel.transferHypothesisStatusTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                    .padding(.vertical, Layout.smallChipVerticalPadding)
                     .background(KatieColors.cardSecondary)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.trailing)
@@ -1356,8 +1356,8 @@ struct ProgressView: View {
                     Text(appViewModel.freshnessLabel(for: featured.latestSession))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, Layout.tightChipHorizontalPadding)
+                        .padding(.vertical, Layout.tightChipVerticalPadding)
                         .background(KatieColors.cardSecondary)
                         .clipShape(Capsule())
                 }
@@ -1390,8 +1390,8 @@ struct ProgressView: View {
                                 }
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                            .padding(.vertical, Layout.mediumChipVerticalPadding)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -1407,8 +1407,8 @@ struct ProgressView: View {
                                 }
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                            .padding(.vertical, Layout.mediumChipVerticalPadding)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -1481,8 +1481,8 @@ struct ProgressView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
+                .padding(.vertical, Layout.mediumChipVerticalPadding)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -1601,8 +1601,8 @@ struct ProgressView: View {
                             appViewModel.openReview(for: appViewModel.currentMission)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                        .padding(.vertical, Layout.mediumChipVerticalPadding)
                         .background(KatieColors.cardSecondary)
                         .foregroundStyle(KatieColors.textPrimary)
                         .clipShape(Capsule())
@@ -1611,8 +1611,8 @@ struct ProgressView: View {
                             appViewModel.openPractice(for: appViewModel.currentMission)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                        .padding(.vertical, Layout.mediumChipVerticalPadding)
                         .background(KatieColors.accent)
                         .foregroundStyle(.black)
                         .clipShape(Capsule())
@@ -1688,8 +1688,8 @@ struct ProgressView: View {
                         Text(appViewModel.freshnessLabel(for: entry.latest))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.textSecondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, Layout.tightChipHorizontalPadding)
+                            .padding(.vertical, Layout.tightChipVerticalPadding)
                             .background(KatieColors.cardBackground.opacity(0.85))
                             .clipShape(Capsule())
 
@@ -1697,8 +1697,8 @@ struct ProgressView: View {
                             Text("Active compare")
                                 .font(.caption2.weight(.semibold))
                                 .foregroundStyle(.black)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
+                                .padding(.horizontal, Layout.tightChipHorizontalPadding)
+                                .padding(.vertical, Layout.tightChipVerticalPadding)
                                 .background(KatieColors.accent)
                                 .clipShape(Capsule())
                         }
@@ -1801,7 +1801,7 @@ struct ProgressView: View {
                 Label(theme, systemImage: "sparkles")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
-                    .padding(.horizontal, 12)
+                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
@@ -1848,8 +1848,8 @@ struct ProgressView: View {
                             }
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                        .padding(.vertical, Layout.mediumChipVerticalPadding)
                         .background(KatieColors.cardSecondary)
                         .foregroundStyle(KatieColors.textPrimary)
                         .clipShape(Capsule())
@@ -1859,8 +1859,8 @@ struct ProgressView: View {
                         appViewModel.openReview(for: appViewModel.currentMission, anchor: anchor)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
@@ -1869,8 +1869,8 @@ struct ProgressView: View {
                         handleCompareReminderAction(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(compareReminderActionBackground(for: appViewModel.currentMission))
                     .foregroundStyle(compareReminderActionForeground(for: appViewModel.currentMission))
                     .clipShape(Capsule())
@@ -1879,8 +1879,8 @@ struct ProgressView: View {
                         appViewModel.openPractice(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(Capsule())
@@ -1889,8 +1889,8 @@ struct ProgressView: View {
                         appViewModel.openProgress(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                    .padding(.vertical, Layout.mediumChipVerticalPadding)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
@@ -1998,8 +1998,8 @@ struct ProgressView: View {
                                     }
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                                .padding(.vertical, Layout.mediumChipVerticalPadding)
                                 .background(KatieColors.cardBackground.opacity(0.85))
                                 .foregroundStyle(KatieColors.textPrimary)
                                 .clipShape(Capsule())
@@ -2014,8 +2014,8 @@ struct ProgressView: View {
                                     }
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                                .padding(.vertical, Layout.mediumChipVerticalPadding)
                                 .background(KatieColors.cardBackground.opacity(0.85))
                                 .foregroundStyle(KatieColors.textPrimary)
                                 .clipShape(Capsule())
@@ -2025,8 +2025,8 @@ struct ProgressView: View {
                                 appViewModel.openReview(for: scenario, anchor: anchor)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                            .padding(.vertical, Layout.mediumChipVerticalPadding)
                             .background(KatieColors.cardBackground.opacity(0.85))
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -2035,8 +2035,8 @@ struct ProgressView: View {
                                 handleFollowThroughReminderAction(for: scenario)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                            .padding(.vertical, Layout.mediumChipVerticalPadding)
                             .background(followThroughReminderActionBackground(for: scenario))
                             .foregroundStyle(followThroughReminderActionForeground(for: scenario))
                             .clipShape(Capsule())
@@ -2045,8 +2045,8 @@ struct ProgressView: View {
                                 handlePrimaryScenarioAction(for: scenario, latest: latest)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                            .padding(.vertical, Layout.mediumChipVerticalPadding)
                             .background(primaryScenarioActionBackground(for: scenario))
                             .foregroundStyle(primaryScenarioActionForeground(for: scenario))
                             .clipShape(Capsule())
@@ -2055,8 +2055,8 @@ struct ProgressView: View {
                                 appViewModel.openProgress(for: scenario)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+                            .padding(.vertical, Layout.mediumChipVerticalPadding)
                             .background(KatieColors.cardBackground.opacity(0.85))
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -2227,8 +2227,8 @@ struct ProgressView: View {
                 appViewModel.openPractice(for: latest.scenario)
             }
             .font(.caption.weight(.semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+            .padding(.vertical, Layout.mediumChipVerticalPadding)
             .background(KatieColors.accent)
             .foregroundStyle(.black)
             .clipShape(Capsule())
@@ -2243,8 +2243,8 @@ struct ProgressView: View {
         Label(title, systemImage: systemImage)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(KatieColors.textSecondary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+            .padding(.vertical, Layout.mediumChipVerticalPadding)
             .background(KatieColors.cardSecondary)
             .clipShape(Capsule())
     }
@@ -2344,8 +2344,8 @@ struct ProgressView: View {
                 Text(compareScoreDeltaLabel(delta))
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(delta >= 0 ? accent : KatieColors.textSecondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, Layout.tightChipHorizontalPadding)
+                    .padding(.vertical, Layout.tightChipVerticalPadding)
                     .background(KatieColors.cardBackground.opacity(0.9))
                     .clipShape(Capsule())
             }
@@ -2429,8 +2429,8 @@ struct ProgressView: View {
         Text(title)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(foreground)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, Layout.tightChipHorizontalPadding)
+            .padding(.vertical, Layout.tightChipVerticalPadding)
             .background(background)
             .clipShape(Capsule())
     }
@@ -2473,7 +2473,7 @@ struct ProgressView: View {
         } label: {
             Label(label, systemImage: "ellipsis.circle")
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
+                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
                 .padding(.vertical, 10)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2552,8 +2552,8 @@ struct ProgressView: View {
                 appViewModel.openPractice(for: latest.scenario)
             }
             .font(.caption.weight(.semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .padding(.horizontal, Layout.smallChipHorizontalPadding)
+            .padding(.vertical, Layout.mediumChipVerticalPadding)
             .background(KatieColors.accent)
             .foregroundStyle(.black)
             .clipShape(Capsule())
