@@ -143,8 +143,8 @@ struct ProgressView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
+                HStack(spacing: Layout.gridSpacing) {
                     Image(systemName: "chart.line.uptrend.xyaxis")
                         .katieIconBadge(background: KatieColors.cardSecondary, foreground: KatieColors.mint, size: 34)
                     Text("Progress")
@@ -282,19 +282,19 @@ struct ProgressView: View {
         @ViewBuilder secondary: () -> Secondary
     ) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
                     primary()
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
 
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
                     secondary()
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: Layout.gridSpacing) {
                 primary()
                 secondary()
             }
@@ -302,7 +302,7 @@ struct ProgressView: View {
     }
 
     private func snapshotPulseChip(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Layout.subSpacing) {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -362,7 +362,7 @@ struct ProgressView: View {
     private var evidenceLadderCard: some View {
         let pulse = appViewModel.coachingEvidencePulse
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Label(pulse.title, systemImage: "list.clipboard")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -386,7 +386,7 @@ struct ProgressView: View {
         let importedCount = appViewModel.importedHistoryCount
         let seededCount = appViewModel.seededHistoryCount
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Label("Proof provenance", systemImage: "checkmark.shield.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -425,8 +425,8 @@ struct ProgressView: View {
     private var goalFocusCard: some View {
         let snapshot = appViewModel.currentGoalProgressSnapshot
 
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+            HStack(alignment: .top, spacing: Layout.gridSpacing) {
                 VStack(alignment: .leading, spacing: 4) {
                     Label("Goal focus", systemImage: "target")
                         .font(.headline)
@@ -499,7 +499,7 @@ struct ProgressView: View {
     private var achievementsCard: some View {
         let achievements = appViewModel.progressAchievements
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Label("Achievements", systemImage: "rosette")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -527,7 +527,7 @@ struct ProgressView: View {
     private func achievementTile(_ achievement: ProgressAchievement) -> some View {
         let accent = achievementAccent(for: achievement)
 
-        return HStack(alignment: .top, spacing: 12) {
+        return HStack(alignment: .top, spacing: Layout.gridSpacing) {
             Image(systemName: achievement.systemImage)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(achievement.isUnlocked ? accent : KatieColors.textSecondary)
@@ -582,9 +582,9 @@ struct ProgressView: View {
     private var analyticsOverviewCard: some View {
         let analytics = appViewModel.currentScenarioAnalyticsSummary
 
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+            HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                VStack(alignment: .leading, spacing: Layout.subSpacing) {
                     Label(analytics.title, systemImage: "chart.xyaxis.line")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -771,7 +771,7 @@ struct ProgressView: View {
         let radar = appViewModel.currentSoundPatternRadar
         let transfer = appViewModel.currentConversationTransferPlan
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Label("Clinician lens", systemImage: "stethoscope")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -857,7 +857,7 @@ struct ProgressView: View {
     }
 
     private var progressUnlocksCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Text("What Progress unlocks next")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -882,7 +882,7 @@ struct ProgressView: View {
     }
 
     private func progressDetailRow(title: String, body: String, systemImage: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: Layout.gridSpacing) {
             Image(systemName: systemImage)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -903,7 +903,7 @@ struct ProgressView: View {
     }
 
     private var currentPackRunwayRows: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             progressDetailRow(
                 title: appViewModel.transferHypothesisStatusTitle,
                 body: appViewModel.transferHypothesisFollowThroughLine,
@@ -950,14 +950,14 @@ struct ProgressView: View {
     private var compareStoryCard: some View {
         if let latestCompareEntry {
             VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: Layout.gridSpacing) {
                     Label("Latest compare story", systemImage: "arrow.triangle.2.circlepath")
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
 
                     Spacer(minLength: 0)
 
-                    VStack(alignment: .trailing, spacing: 6) {
+                    VStack(alignment: .trailing, spacing: Layout.subSpacing) {
                         Text(latestCompareEntry.scenario.packTitle)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.mint)
@@ -1118,8 +1118,8 @@ struct ProgressView: View {
     private var startingHypothesisSummaryCard: some View {
         let snapshot = appViewModel.languageAssessmentSnapshot
 
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+            HStack(alignment: .top, spacing: Layout.gridSpacing) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Starting hypothesis")
                         .font(.subheadline.weight(.semibold))
@@ -1159,7 +1159,7 @@ struct ProgressView: View {
                 systemImage: "arrow.triangle.branch"
             )
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: Layout.subSpacing) {
                 Text("Self-check in this pack")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
@@ -1185,9 +1185,9 @@ struct ProgressView: View {
         let trendSessions = Array(appViewModel.currentScenarioUserHistory.prefix(3))
         let replayReadyCount = trendSessions.filter { appViewModel.hasPlayback(for: $0) }.count
 
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+            HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                VStack(alignment: .leading, spacing: Layout.subSpacing) {
                     Label("Recent confidence trend", systemImage: "chart.line.uptrend.xyaxis")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1327,7 +1327,7 @@ struct ProgressView: View {
 
             KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: Layout.subSpacing) {
                 Label("Next grounded move", systemImage: "arrow.forward.circle.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -1342,7 +1342,7 @@ struct ProgressView: View {
     }
 
     private var featuredWinSummary: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Text("First-win continuity")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1462,8 +1462,8 @@ struct ProgressView: View {
 
     private var scenarioLanesCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                VStack(alignment: .leading, spacing: Layout.subSpacing) {
                     Text("Pack library")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1512,12 +1512,12 @@ struct ProgressView: View {
                         Button {
                             appViewModel.selectScenario(scenario)
                         } label: {
-                            HStack(alignment: .top, spacing: 12) {
+                            HStack(alignment: .top, spacing: Layout.gridSpacing) {
                                 Image(systemName: scenario == appViewModel.currentMission ? "checkmark.circle.fill" : "circle")
                                     .foregroundStyle(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.textSecondary)
                                     .padding(.top, 2)
 
-                                VStack(alignment: .leading, spacing: 6) {
+                                VStack(alignment: .leading, spacing: Layout.subSpacing) {
                                     HStack {
                                         Text(scenario.packTitle)
                                             .font(.subheadline.weight(.semibold))
@@ -1588,7 +1588,7 @@ struct ProgressView: View {
             if !appViewModel.compareLibraryEntries.isEmpty {
                 compareLibraryEntriesRail
             } else {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: Layout.gridSpacing) {
                     Text("Starter and demo reps still show up in the proof/provenance cards above. The compare library only opens once a pack has two user-owned saves from this iPhone.")
                     .foregroundStyle(KatieColors.textSecondary)
 
@@ -1630,7 +1630,7 @@ struct ProgressView: View {
     @ViewBuilder
     private var compareLibraryEntriesRail: some View {
         if usesWideProgressLayout {
-            LazyVGrid(columns: compareLibraryGridColumns, alignment: .leading, spacing: 12) {
+            LazyVGrid(columns: compareLibraryGridColumns, alignment: .leading, spacing: Layout.gridSpacing) {
                 ForEach(appViewModel.compareLibraryEntries) { entry in
                     compareLibraryEntryCard(for: entry)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -1638,7 +1638,7 @@ struct ProgressView: View {
             }
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: Layout.gridSpacing) {
                     ForEach(appViewModel.compareLibraryEntries) { entry in
                         compareLibraryEntryCard(for: entry)
                             .frame(width: compareLibraryCardWidth, alignment: .leading)
@@ -1792,7 +1792,7 @@ struct ProgressView: View {
     }
 
     private var growthThemesCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Text("What’s getting stronger")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1815,7 +1815,7 @@ struct ProgressView: View {
         let latest = appViewModel.currentScenarioHistory.first(where: \.isUserOwned) ?? appViewModel.currentScenarioHistory.first
         let anchor = Array(appViewModel.currentScenarioHistory.filter(\.isUserOwned).dropFirst()).first
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Text("Consistency")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1901,7 +1901,7 @@ struct ProgressView: View {
     }
 
     private var premiumContinuityCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Text("Keep the thread going")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1912,7 +1912,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             ForEach(appViewModel.premiumExperimentSurfaces) { experiment in
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: Layout.subSpacing) {
                     HStack {
                         Text(experiment.title)
                             .font(.caption.weight(.semibold))
@@ -1937,7 +1937,7 @@ struct ProgressView: View {
     }
 
     private var scenarioPackFollowThroughCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
             Text("Pack follow-through")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1951,12 +1951,12 @@ struct ProgressView: View {
                 let seedCount = history.filter { $0.captureSource == .seeded }.count
                 let continuityStrip = appViewModel.continuityTruthStrip(for: scenario)
 
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: Layout.gridSpacing) {
                     Image(systemName: scenario == appViewModel.currentMission ? "checkmark.circle.fill" : "circle.dashed")
                         .foregroundStyle(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.textSecondary)
                         .padding(.top, 2)
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: Layout.subSpacing) {
                         HStack {
                             Text(scenario.packTitle)
                                 .font(.subheadline.weight(.semibold))
@@ -2250,7 +2250,7 @@ struct ProgressView: View {
     }
 
     private func snapshotMetric(title: String, value: String, detail: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Layout.subSpacing) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -2360,7 +2360,7 @@ struct ProgressView: View {
     }
 
     private func compareScoreTrack(label: String, score: Int, fill: Color) -> some View {
-        HStack(alignment: .center, spacing: 6) {
+        HStack(alignment: .center, spacing: Layout.subSpacing) {
             Text(label)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
