@@ -51,6 +51,8 @@ struct TodayMissionView: View {
     @State private var isContinuityExpanded = false
     @State private var isTodayQueueExpanded = false
 
+    // MARK: - Layout (size class + adaptive metrics)
+
     private var usesWideTodayLayout: Bool {
         horizontalSizeClass == .regular
     }
@@ -93,6 +95,8 @@ struct TodayMissionView: View {
             )
         ]
     }
+
+    // MARK: - Subviews (rails, boards, hero cards)
 
     private var todayBoardCard: some View {
         KatieGlanceBoard(
@@ -267,6 +271,8 @@ struct TodayMissionView: View {
             continuityCard
         }
     }
+
+    // MARK: - Secondary panel state (one-open-at-a-time helpers)
 
     private var activeSecondaryPanelLabel: String? {
         if isLanguageFocusExpanded {
@@ -1435,6 +1441,8 @@ struct TodayMissionView: View {
         .katieCard()
     }
 
+    // MARK: - Reusable subviews (chips, rows, menus, action helpers)
+
     private func queueSummaryChip(title: String, value: Int, accent: Color) -> some View {
         VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
             Text(title)
@@ -2555,6 +2563,8 @@ struct TodayMissionView: View {
         }
         .preferredColorScheme(.dark)
     }
+
+    // MARK: - Premium flow + reminder presets
 
     private func handlePremiumAction() {
         switch appViewModel.premiumAccessState {
