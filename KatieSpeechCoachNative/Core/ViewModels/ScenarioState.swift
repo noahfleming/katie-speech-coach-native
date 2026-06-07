@@ -120,4 +120,29 @@ final class ScenarioState: ObservableObject, Codable {
         guard let anchorID = selectedAnchorByScenario[currentMission] else { return nil }
         return scenarioHistories[currentMission]?.first { $0.id == anchorID }
     }
+
+    // MARK: - History aggregations (pure scenario-domain)
+
+    /// Total number of session entries across all scenarios, by capture source.
+    func count(where predicate: (PracticeSession) -> Bool) -> Int {
+        scenarioHistories.values
+            .flatMap { $0 }
+            .filter(predicate)
+            .count
+    }
+
+    /// Count of sessions that were recorded on this device.
+    var recordedHistoryCount: Int {
+        count(where: { $0.captureSource == .recorded })
+    }
+
+    /// Count of sessions that were imported from a pocket-copy export.
+    var importedHistoryCount: Int {
+        count(where: { $0.captureSource == .imported })
+    }
+
+    /// Count of sessions that came from the seeded starter histories.
+    var seededHistoryCount: Int {
+        count(where: { $0.captureSource == .seeded })
+    }
 }

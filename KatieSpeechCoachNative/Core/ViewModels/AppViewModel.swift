@@ -437,24 +437,15 @@ final class AppViewModel: ObservableObject {
     }
 
     var recordedHistoryCount: Int {
-        scenarioHistories.values
-            .flatMap { $0 }
-            .filter { $0.captureSource == .recorded }
-            .count
+        scenarioState.recordedHistoryCount
     }
 
     var importedHistoryCount: Int {
-        scenarioHistories.values
-            .flatMap { $0 }
-            .filter { $0.captureSource == .imported }
-            .count
+        scenarioState.importedHistoryCount
     }
 
     var seededHistoryCount: Int {
-        scenarioHistories.values
-            .flatMap { $0 }
-            .filter { $0.captureSource == .seeded }
-            .count
+        scenarioState.seededHistoryCount
     }
 
     var exportSummaryLine: String {
