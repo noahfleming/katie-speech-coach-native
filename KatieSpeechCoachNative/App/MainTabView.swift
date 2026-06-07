@@ -43,7 +43,7 @@ struct MainTabView: View {
         .tint(KatieColors.accent)
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .onChange(of: appViewModel.selectedTab) { _ in
+        .onChange(of: appViewModel.selectedTab) { _, _ in
             appViewModel.persistSelectedTab()
         }
         .sheet(isPresented: $appViewModel.isReviewPresented) {

@@ -1848,9 +1848,9 @@ struct PracticeRecordView: View {
                 .clipShape(Capsule())
                 .disabled(!appViewModel.canMoveToNextPracticeStep)
             }
-            .onChange(of: appViewModel.practiceReturnCue) { cue in
+            .onChange(of: appViewModel.practiceReturnCue) { _, cue in
                 guard cue != nil else { return }
-                withAnimation(.easeOut(duration: 0.25)) {
+                withAnimation(KatieMotion.quick) {
                     proxy.scrollTo("practice-top", anchor: .top)
                 }
             }
@@ -1866,11 +1866,11 @@ struct PracticeRecordView: View {
         }
 
         if isMicrophoneDenied {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(KatieMotion.quick) {
                 isRetakeDraftExpanded = true
             }
             DispatchQueue.main.async {
-                withAnimation(.easeOut(duration: 0.25)) {
+                withAnimation(KatieMotion.quick) {
                     proxy.scrollTo(practiceDraftAnchor, anchor: .center)
                 }
             }

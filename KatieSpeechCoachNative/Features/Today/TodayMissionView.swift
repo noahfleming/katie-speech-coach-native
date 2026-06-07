@@ -1637,7 +1637,7 @@ struct TodayMissionView: View {
             }
 
             Button(isLanguageFocusExpanded ? "Hide deeper scan" : "Show deeper scan") {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                withAnimation(KatieMotion.quick) {
                     isLanguageFocusExpanded.toggle()
                 }
             }
@@ -2084,7 +2084,7 @@ struct TodayMissionView: View {
                 }
                 Spacer()
                 Button(isScenarioSwitcherExpanded ? "Close" : "Browse") {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(KatieMotion.quick) {
                         isScenarioSwitcherExpanded.toggle()
                     }
                 }
@@ -2588,7 +2588,7 @@ struct TodayMissionView: View {
                 }
                 Spacer()
                 Button(isContinuityExpanded ? "Close" : "Tune") {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(KatieMotion.quick) {
                         isContinuityExpanded.toggle()
                     }
                 }
