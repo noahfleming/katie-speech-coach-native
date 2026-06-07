@@ -108,6 +108,13 @@ final class RecordingState: ObservableObject, Codable {
         audioURL(for: session) != nil
     }
 
+    // MARK: - Practice screen status lines (read by AppViewModel)
+
+    /// True if a scratch recording has been captured and not yet saved or discarded.
+    var hasScratchRecording: Bool {
+        scratchRecordingURL != nil
+    }
+
     /// Remove every file in the recordings directory. Used by
     /// `deleteAllOnDeviceData`.
     func clearAllLocalRecordings() {
@@ -117,5 +124,35 @@ final class RecordingState: ObservableObject, Codable {
                 try? FileManager.default.removeItem(at: file)
             }
         }
+    }
+
+    // MARK: - Practice screen status lines (read by AppViewModel)
+
+    /// Truth line for the Practice screen, given the current recording state.
+    /// `hasSavedReplay` is whether any prior rep has a backing audio file
+    /// (caller supplies the predicate to keep this VM file-URL-free).
+    func replayTruthLine(hasSavedReplay: Bool, savedReplayFreshnessLabel: String?) -> String {
+        if isRecording {
+            return "Local audio is recording on this iPhone now. Release and save when you want replay-ready proof."
+        }
+        if hasScratchRecording, let latestScratchRecordingDuration {
+            return "A \(Int(latestScratchRecordingDuration.rounded())) second scratch clip is waiting on this iPhone. Save it to keep replay attached in Review and Progress."
+        }
+        if hasSavedReplay, let label = savedReplayFreshnessLabel {
+            return "Your latest saved proof can replay here from \(label.lowercased()), but this draft still needs a fresh local clip if you want the next compare to stay listenable."
+        }
+        return "No fresh local clip is attached to this draft yet. Katie keeps the transcript path visible instead of implying replay exists."
+    }
+
+    /// Honesty line about whether saving will attach replay or stay text-only.
+    /// `hasSavedReplay` is whether any prior rep has a backing audio file.
+    func captureHonestyLine(hasSavedReplay: Bool) -> String {
+        if hasScratchRecording {
+            return "Save now to keep transcript + local replay together."
+        }
+        if hasSavedReplay {
+            return "You already have saved replay in this pack, but the next compare stays transcript-first until you record again."
+        }
+        return "First wins still count without audio, but replay only appears after a real on-device recording."
     }
 }

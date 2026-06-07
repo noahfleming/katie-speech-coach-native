@@ -2246,7 +2246,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var hasScratchRecording: Bool {
-        scratchRecordingURL != nil
+        recordingState.hasScratchRecording
     }
 
     var quickRepHintLine: String {
@@ -2274,41 +2274,20 @@ final class AppViewModel: ObservableObject {
     }
 
     var practiceTranscriptTruthLine: String {
-        let transcript = draftTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if !transcript.isEmpty {
-            return "Transcript draft is live for this rep. Katie will keep the wording visible even if you do not save audio yet."
-        }
-
-        return "No fresh transcript draft yet. Katie will fall back to your latest saved wording until you edit or record a new pass."
+        reflectionState.transcriptTruthLine
     }
 
     var practiceReplayTruthLine: String {
-        if isRecording {
-            return "Local audio is recording on this iPhone now. Release and save when you want replay-ready proof."
-        }
-
-        if hasScratchRecording, let latestScratchRecordingDuration {
-            return "A \(Int(latestScratchRecordingDuration.rounded())) second scratch clip is waiting on this iPhone. Save it to keep replay attached in Review and Progress."
-        }
-
-        if let latestRecorded = currentScenarioUserHistory.first(where: { hasPlayback(for: $0) }) {
-            return "Your latest saved proof can replay here from \(freshnessLabel(for: latestRecorded).lowercased()), but this draft still needs a fresh local clip if you want the next compare to stay listenable."
-        }
-
-        return "No fresh local clip is attached to this draft yet. Katie keeps the transcript path visible instead of implying replay exists."
+        let latestRecorded = currentScenarioUserHistory.first(where: { recordingState.hasPlayback(for: $0) })
+        return recordingState.replayTruthLine(
+            hasSavedReplay: latestRecorded != nil,
+            savedReplayFreshnessLabel: latestRecorded.map { scenarioState.freshnessLabel(for: $0.date) }
+        )
     }
 
     var practiceCaptureHonestyLine: String {
-        if hasScratchRecording {
-            return "Save now to keep transcript + local replay together."
-        }
-
-        if currentScenarioUserHistory.contains(where: { hasPlayback(for: $0) }) {
-            return "You already have saved replay in this pack, but the next compare stays transcript-first until you record again."
-        }
-
-        return "First wins still count without audio, but replay only appears after a real on-device recording."
+        let hasSavedReplay = currentScenarioUserHistory.contains(where: { recordingState.hasPlayback(for: $0) })
+        return recordingState.captureHonestyLine(hasSavedReplay: hasSavedReplay)
     }
 
     var practiceSaveOutcomeTitle: String {

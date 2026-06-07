@@ -151,4 +151,15 @@ final class ReflectionState: ObservableObject, Codable {
 
     /// Mark a "draft cleared" status update.
     var draftClearedStatusLine: String { "Draft cleared. Ready to record another rep." }
+
+    // MARK: - Practice screen status lines (read by AppViewModel)
+
+    /// Truth line about the live draft transcript.
+    var transcriptTruthLine: String {
+        let transcript = draftTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !transcript.isEmpty {
+            return "Transcript draft is live for this rep. Katie will keep the wording visible even if you do not save audio yet."
+        }
+        return "No fresh transcript draft yet. Katie will fall back to your latest saved wording until you edit or record a new pass."
+    }
 }
