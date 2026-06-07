@@ -154,9 +154,24 @@ final class AppViewModel: ObservableObject {
 
     init(premiumStore: PremiumStore? = nil) {
         self.premiumStore = premiumStore ?? PremiumStore.shared
+        // KATIE_VISUAL_SAMPLE (presence-only, like Steady's STEADY_VISUAL_SAMPLE):
+        // dev affordance to skip onboarding + first-baseline gate for visual review.
+        let isVisualSample = ProcessInfo.processInfo.arguments.contains("KATIE_VISUAL_SAMPLE")
+        // KATIE_VISUAL_TAB=today|practice|progress|coach — picks the landing tab
+        // for visual review. Pairs with KATIE_VISUAL_SAMPLE.
+        let visualTab = ProcessInfo.processInfo.arguments
+            .first(where: { $0.hasPrefix("KATIE_VISUAL_TAB=") })
+            .flatMap { $0.split(separator: "=").last.flatMap { AppTab(rawValue: String($0)) } }
         if !restorePersistedState() {
             scenarioHistories = Self.buildScenarioHistories()
             currentMission = .weeklyUpdate
+        }
+        if isVisualSample {
+            hasCompletedOnboarding = true
+            hasDismissedFirstBaselineGate = true
+        }
+        if let visualTab {
+            selectedTab = visualTab
         }
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
