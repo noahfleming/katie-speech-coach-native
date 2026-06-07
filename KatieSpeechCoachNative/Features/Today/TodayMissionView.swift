@@ -1658,13 +1658,13 @@ struct TodayMissionView: View {
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
-                Spacer(minLength: 12)
+                Spacer(minLength: KatieSpacing.base)
 
                 Text("60–90 sec")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, KatieSpacing.md)
+                    .padding(.vertical, KatieSpacing.xs)
                     .background(KatieColors.cardSecondary)
                     .clipShape(Capsule())
             }
@@ -1672,8 +1672,8 @@ struct TodayMissionView: View {
             Button {
                 appViewModel.launchQuickChallenge()
             } label: {
-                HStack(alignment: .top, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top, spacing: KatieSpacing.base) {
+                    VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                         Label(appViewModel.quickChallengeHeadline, systemImage: "timer")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -1698,18 +1698,18 @@ struct TodayMissionView: View {
                     Text(appViewModel.quickChallengeDurationLabel)
                         .modifier(KatieCapsuleLabelStyle(accent: KatieColors.gold))
                 }
-                .padding(14)
+                .padding(KatieSpacing.lg)
                 .background(KatieColors.gold.opacity(0.12))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
                         .stroke(KatieColors.gold.opacity(0.35), lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
             }
             .buttonStyle(.plain)
 
             if usesWideTodayLayout {
-                LazyVGrid(columns: quickRepGridColumns, alignment: .leading, spacing: 12) {
+                LazyVGrid(columns: quickRepGridColumns, alignment: .leading, spacing: KatieSpacing.base) {
                     ForEach(appViewModel.quickRepRail) { prompt in
                         let isRecommended = prompt.scenario == appViewModel.recommendedScenarioForCurrentContext
                         let reminderProtected = appViewModel.reminderPlan?.scenario == prompt.scenario
@@ -1718,7 +1718,7 @@ struct TodayMissionView: View {
                 }
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
+                    HStack(spacing: Layout.inlineSpacing) {
                         ForEach(appViewModel.quickRepRail) { prompt in
                             let isRecommended = prompt.scenario == appViewModel.recommendedScenarioForCurrentContext
                             let reminderProtected = appViewModel.reminderPlan?.scenario == prompt.scenario
@@ -1733,8 +1733,8 @@ struct TodayMissionView: View {
 
     private var quickRepGridColumns: [GridItem] {
         [
-            GridItem(.flexible(), spacing: 12, alignment: .top),
-            GridItem(.flexible(), spacing: 12, alignment: .top)
+            GridItem(.flexible(), spacing: KatieSpacing.base, alignment: .top),
+            GridItem(.flexible(), spacing: KatieSpacing.base, alignment: .top)
         ]
     }
 
@@ -1747,7 +1747,7 @@ struct TodayMissionView: View {
         Button {
             appViewModel.launchQuickRep(for: prompt.scenario)
         } label: {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                 HStack {
                     Text(prompt.title)
                         .font(.subheadline.weight(.semibold))
