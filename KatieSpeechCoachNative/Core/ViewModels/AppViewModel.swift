@@ -133,10 +133,10 @@ final class AppViewModel: ObservableObject {
     private var recordingStateCancellable: AnyCancellable?
     private var reflectionStateCancellable: AnyCancellable?
     private var modalStateCancellable: AnyCancellable?
+    private var fillerStateCancellable: AnyCancellable?
     private let appSessionState = AppSessionState()
 
-    @Published var fillerWordCount: Int = 0
-    @Published var fillerWordBreakdown: [String: Int] = [:]
+    @Published private(set) var fillerState = FillerState()
     private let premiumStore: PremiumStore
 
     init(premiumStore: PremiumStore? = nil) {
@@ -168,6 +168,7 @@ final class AppViewModel: ObservableObject {
         bindRecordingStateChanges()
         bindReflectionStateChanges()
         bindModalStateChanges()
+        bindFillerStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -273,6 +274,24 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindFillerStateChanges() {
+        fillerStateCancellable?.cancel()
+        fillerStateCancellable = fillerState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var fillerWordCount: Int {
+        get { fillerState.fillerWordCount }
+        set { fillerState.fillerWordCount = newValue }
+    }
+
+    var fillerWordBreakdown: [String: Int] {
+        get { fillerState.fillerWordBreakdown }
+        set { fillerState.fillerWordBreakdown = newValue }
     }
 
     var isPremiumPreviewPresented: Bool {
