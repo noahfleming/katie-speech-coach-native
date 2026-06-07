@@ -1047,18 +1047,18 @@ struct TodayMissionView: View {
 
     private var hypothesisStanceCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top, spacing: 10) {
+            HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                 Label("Hypothesis stance in this pack", systemImage: appViewModel.transferHypothesisFeedback.systemImage)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: KatieSpacing.base)
 
                 Text(appViewModel.transferHypothesisStatusTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, KatieSpacing.md)
+                    .padding(.vertical, KatieSpacing.xs)
                     .background(KatieColors.cardBackground)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.trailing)
@@ -1072,10 +1072,10 @@ struct TodayMissionView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(12)
+        .padding(KatieSpacing.base)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private var todayQueueCard: some View {
@@ -1092,9 +1092,9 @@ struct TodayMissionView: View {
         let compareReadyCount = fullQueue.filter { appViewModel.userOwnedSessionCount(in: $0.scenario) >= 2 }.count
         let activeReminderCount = fullQueue.filter(\.reminderCue.isActive).count
 
-        return VStack(alignment: .leading, spacing: 14) {
+        return VStack(alignment: .leading, spacing: Layout.heroSpacing) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                     Label("Active packs", systemImage: "rectangle.stack.badge.play.fill")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1102,19 +1102,19 @@ struct TodayMissionView: View {
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
-                Spacer(minLength: 12)
+                Spacer(minLength: KatieSpacing.base)
 
                 Text(appViewModel.hasAnyUserProof ? "\(fullQueue.count) packs" : "Waiting on first proof")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, KatieSpacing.md)
+                    .padding(.vertical, KatieSpacing.xs)
                     .background(KatieColors.cardSecondary)
                     .clipShape(Capsule())
             }
 
             if appViewModel.hasAnyUserProof {
-                KatieWrap(spacing: 8, rowSpacing: 8) {
+                KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                     queueSummaryChip(title: "Protected", value: activeReminderCount, accent: KatieColors.accent)
                     queueSummaryChip(title: "Replay-ready", value: replayReadyCount, accent: KatieColors.mint)
                     queueSummaryChip(title: "Compare-ready", value: compareReadyCount, accent: KatieColors.gold)
@@ -1129,10 +1129,10 @@ struct TodayMissionView: View {
                     let bestNextLatest = bestNextHistory.first(where: \.isUserOwned) ?? bestNextHistory.first
                     let bestNextAnchor = bestNextHistory.filter(\.isUserOwned).dropFirst().first
 
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                         ViewThatFits(in: .horizontal) {
-                            HStack(alignment: .top, spacing: 10) {
-                                VStack(alignment: .leading, spacing: 4) {
+                            HStack(alignment: .top, spacing: Layout.inlineSpacing) {
+                                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                                     Text("Best next pack")
                                         .font(.caption.weight(.semibold))
                                         .foregroundStyle(KatieColors.textSecondary)
@@ -1141,14 +1141,14 @@ struct TodayMissionView: View {
                                         .foregroundStyle(KatieColors.textPrimary)
                                 }
 
-                                Spacer(minLength: 8)
+                                Spacer(minLength: KatieSpacing.sm)
 
                                 Text(bestNextEntry.statusLabel)
                                     .modifier(KatieCapsuleLabelStyle())
                             }
 
-                            VStack(alignment: .leading, spacing: 8) {
-                                VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: KatieSpacing.sm) {
+                                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                                     Text("Best next pack")
                                         .font(.caption.weight(.semibold))
                                         .foregroundStyle(KatieColors.textSecondary)
@@ -1168,39 +1168,39 @@ struct TodayMissionView: View {
                             .fixedSize(horizontal: false, vertical: true)
 
                         ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 8) {
+                            HStack(spacing: KatieSpacing.sm) {
                                 Button(bestNextEntry.actionTitle) {
                                     handleTodayQueuePrimaryAction(bestNextEntry)
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 10)
+                                .padding(.horizontal, KatieSpacing.base)
+                                .padding(.vertical, KatieSpacing.md)
                                 .background(todayQueueActionBackground(for: bestNextEntry))
                                 .foregroundStyle(todayQueueActionForeground(for: bestNextEntry))
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
 
                                 todayActionsMenu(for: bestNextEntry.scenario, latest: bestNextLatest, anchor: bestNextAnchor, label: "Peek")
                             }
 
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                                 Button(bestNextEntry.actionTitle) {
                                     handleTodayQueuePrimaryAction(bestNextEntry)
                                 }
                                 .font(.caption.weight(.semibold))
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .padding(.vertical, KatieSpacing.md)
                                 .background(todayQueueActionBackground(for: bestNextEntry))
                                 .foregroundStyle(todayQueueActionForeground(for: bestNextEntry))
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
 
                                 todayActionsMenu(for: bestNextEntry.scenario, latest: bestNextLatest, anchor: bestNextAnchor, label: "Peek")
                             }
                         }
                     }
-                    .padding(12)
+                    .padding(KatieSpacing.base)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary.opacity(0.72))
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                 }
             }
 
