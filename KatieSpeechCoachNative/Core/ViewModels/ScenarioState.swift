@@ -66,4 +66,58 @@ final class ScenarioState: ObservableObject, Codable {
     var currentScenarioStarterHistory: [PracticeSession] {
         currentScenarioHistory.filter { !$0.isUserOwned }
     }
+
+    var latestSession: PracticeSession? {
+        currentScenarioUserHistory.first ?? currentScenarioStarterHistory.first
+    }
+
+    // MARK: - Pure scenario-domain helpers (no AppViewModel side effects)
+
+    /// User-owned session count for a specific scenario.
+    func userOwnedSessionCount(in scenario: PracticeScenario) -> Int {
+        (scenarioHistories[scenario] ?? []).filter(\.isUserOwned).count
+    }
+
+    /// User-owned count for the current mission (convenience).
+    var currentUserOwnedSessionCount: Int {
+        userOwnedSessionCount(in: currentMission)
+    }
+
+    /// Latest user-owned session in a scenario, falling back to its seeded starter.
+    func latestSession(in scenario: PracticeScenario) -> PracticeSession? {
+        let history = scenarioHistories[scenario] ?? []
+        return history.first(where: \.isUserOwned) ?? history.first
+    }
+
+    /// First session in a scenario's history — used as a fallback when no
+    /// user-owned sessions exist yet.
+    func sampleSession(in scenario: PracticeScenario) -> PracticeSession? {
+        scenarioHistories[scenario]?.first
+    }
+
+    /// Pick a default compare anchor for a scenario that doesn't have one yet.
+    /// The first *non-latest* session becomes the anchor so the user has
+    /// something to compare against on first compare.
+    func ensureAnchorSelection(for scenario: PracticeScenario) {
+        guard selectedAnchorByScenario[scenario] == nil else { return }
+        if let defaultAnchor = scenarioHistories[scenario]?.dropFirst().first {
+            selectedAnchorByScenario[scenario] = defaultAnchor.id
+        }
+    }
+
+    /// Set the compare anchor for the current mission.
+    func selectCompareAnchor(_ session: PracticeSession) {
+        selectedAnchorByScenario[currentMission] = session.id
+    }
+
+    /// Is the given session the current compare anchor for the current mission?
+    func isSelectedAnchor(_ session: PracticeSession) -> Bool {
+        selectedCompareAnchor?.id == session.id
+    }
+
+    /// Read-only: the current compare anchor for the current mission, if any.
+    var selectedCompareAnchor: PracticeSession? {
+        guard let anchorID = selectedAnchorByScenario[currentMission] else { return nil }
+        return scenarioHistories[currentMission]?.first { $0.id == anchorID }
+    }
 }

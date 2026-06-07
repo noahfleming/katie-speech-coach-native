@@ -506,15 +506,15 @@ final class AppViewModel: ObservableObject {
     }
 
     var currentScenarioHistory: [PracticeSession] {
-        scenarioHistories[currentMission] ?? []
+        scenarioState.currentScenarioHistory
     }
 
     var currentScenarioUserHistory: [PracticeSession] {
-        currentScenarioHistory.filter(\.isUserOwned)
+        scenarioState.currentScenarioUserHistory
     }
 
     var currentScenarioStarterHistory: [PracticeSession] {
-        currentScenarioHistory.filter { !$0.isUserOwned }
+        scenarioState.currentScenarioStarterHistory
     }
 
     var latestSession: PracticeSession {
@@ -3594,7 +3594,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func selectCompareAnchor(_ session: PracticeSession) {
-        selectedAnchorByScenario[currentMission] = session.id
+        scenarioState.selectCompareAnchor(session)
         persistState()
     }
 
@@ -3606,11 +3606,11 @@ final class AppViewModel: ObservableObject {
     }
 
     func isSelectedAnchor(_ session: PracticeSession) -> Bool {
-        selectedCompareAnchor?.id == session.id
+        scenarioState.isSelectedAnchor(session)
     }
 
     func userOwnedSessionCount(in scenario: PracticeScenario) -> Int {
-        userOwnedSessionCount(for: scenario)
+        scenarioState.userOwnedSessionCount(in: scenario)
     }
 
     private func todayQueuePriority(for entry: TodayQueueEntry) -> Int {
@@ -3861,10 +3861,7 @@ final class AppViewModel: ObservableObject {
     }
 
     private func ensureAnchorSelection(for scenario: PracticeScenario) {
-        guard selectedAnchorByScenario[scenario] == nil else { return }
-        if let defaultAnchor = scenarioHistories[scenario]?.dropFirst().first {
-            selectedAnchorByScenario[scenario] = defaultAnchor.id
-        }
+        scenarioState.ensureAnchorSelection(for: scenario)
     }
 
     private func enableReminderForCurrentScenario() async {
@@ -4106,7 +4103,7 @@ final class AppViewModel: ObservableObject {
     }
 
     private func userOwnedSessionCount(for scenario: PracticeScenario) -> Int {
-        (scenarioHistories[scenario] ?? []).filter(\.isUserOwned).count
+        scenarioState.userOwnedSessionCount(in: scenario)
     }
 
     private var latestSessionOptional: PracticeSession? {
@@ -4114,8 +4111,7 @@ final class AppViewModel: ObservableObject {
     }
 
     private func latestSession(in scenario: PracticeScenario) -> PracticeSession? {
-        let history = scenarioHistories[scenario] ?? []
-        return history.first(where: \.isUserOwned) ?? history.first
+        scenarioState.latestSession(in: scenario)
     }
 
     private func restorePersistedState() -> Bool {
