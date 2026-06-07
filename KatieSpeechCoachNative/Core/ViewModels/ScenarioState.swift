@@ -163,4 +163,16 @@ final class ScenarioState: ObservableObject, Codable {
             return "Quick rep: one short repair with reset, corrected detail, and clean close."
         }
     }
+
+    // MARK: - Cross-VM aggregations (caller passes a recording-aware predicate)
+
+    /// Count of sessions whose audio file is still on disk and replayable.
+    /// Caller supplies the playback predicate so this VM stays free of file
+    /// URL dependencies.
+    func localReplayCount(hasPlayback: (PracticeSession) -> Bool) -> Int {
+        scenarioHistories.values
+            .flatMap { $0 }
+            .filter(hasPlayback)
+            .count
+    }
 }

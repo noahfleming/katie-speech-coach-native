@@ -433,10 +433,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var localReplayCount: Int {
-        scenarioHistories.values
-            .flatMap { $0 }
-            .filter { hasPlayback(for: $0) }
-            .count
+        scenarioState.localReplayCount(hasPlayback: { recordingState.hasPlayback(for: $0) })
     }
 
     var recordedHistoryCount: Int {
