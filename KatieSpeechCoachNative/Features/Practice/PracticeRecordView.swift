@@ -1388,7 +1388,7 @@ struct PracticeRecordView: View {
     }
 
     private var reflectionCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: KatieSpacing.lg) {
             Label("Before you save", systemImage: "checklist.checked")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1415,13 +1415,13 @@ struct PracticeRecordView: View {
                 action: { appViewModel.draftReflectionConfidenceScore = $0 }
             )
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                 Text("Where did it get sticky?")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: KatieSpacing.sm) {
                         ForEach(appViewModel.stickyMomentOptions(for: appViewModel.currentMission), id: \.self) { option in
                             Button(option) {
                                 appViewModel.draftReflectionStickyMoment = option
@@ -1429,7 +1429,7 @@ struct PracticeRecordView: View {
                             .modifier(KatieActionChipStyle(
                                 background: appViewModel.draftReflectionStickyMoment == option ? KatieColors.accent : KatieColors.cardSecondary,
                                 foreground: appViewModel.draftReflectionStickyMoment == option ? .black : KatieColors.textPrimary,
-                                horizontalPadding: 10
+                                horizontalPadding: KatieSpacing.md
                             ))
                         }
                     }
@@ -1441,12 +1441,12 @@ struct PracticeRecordView: View {
     }
 
     private func scoreRow(title: String, score: Int, action: @escaping (Int) -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: KatieSpacing.sm) {
             Text(title)
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
-            HStack(spacing: 8) {
+            HStack(spacing: KatieSpacing.sm) {
                 ForEach(1...5, id: \.self) { value in
                     Button(String(value)) {
                         action(value)
@@ -1454,7 +1454,7 @@ struct PracticeRecordView: View {
                     .modifier(KatieActionChipStyle(
                         background: score == value ? KatieColors.accent : KatieColors.cardSecondary,
                         foreground: score == value ? .black : KatieColors.textPrimary,
-                        horizontalPadding: 10
+                        horizontalPadding: KatieSpacing.md
                     ))
                 }
             }
