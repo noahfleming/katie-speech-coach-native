@@ -66,8 +66,13 @@ struct CoachTrustView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "checkmark.shield.fill")
                         .katieIconBadge(background: KatieColors.cardSecondary, foreground: KatieColors.mint, size: 34)
-                    Text("Trust")
-                        .font(.title.bold())
+                    // KAT-202: page title matches the tab label ("Coach").
+                    // The trust framing stays below as the eyebrow + section
+                    // name — the user lands on the same Coach tab, but the
+                    // page now reads "Coach · Trust frame" instead of
+                    // "Trust · Trust frame" (which was the KAT-153 parity bug).
+                    Text("Coach")
+                        .font(KatieType.title)
                         .foregroundStyle(KatieColors.textPrimary)
                     Spacer()
                 }
