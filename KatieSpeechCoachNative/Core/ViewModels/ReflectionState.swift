@@ -100,4 +100,38 @@ final class ReflectionState: ObservableObject, Codable {
             return ["Reset phrase", "Apology line", "Corrected next step", "Confidence in the close"]
         }
     }
+
+    // MARK: - Reflection reset (domain-local)
+
+    /// Reset the draft reflection to either the last saved self-reflection
+    /// for the current mission, or a sensible 3/3/3 starter if there is none.
+    /// - Parameters:
+    ///   - resetScores: If `true`, overwrite the scores even when a previous
+    ///     self-reflection exists.
+    ///   - previousSelfReflection: The latest self-reflection for the mission
+    ///     (or nil if there is none yet) — provided by the caller so this
+    ///     VM stays free of scenario-history dependencies.
+    ///   - currentMission: The current mission (used to validate the sticky
+    ///     moment is in the option list).
+    func prepareDraft(
+        resetScores: Bool,
+        previousSelfReflection: SessionSelfReflection?,
+        currentMission: PracticeScenario
+    ) {
+        let defaults = previousSelfReflection ?? SessionSelfReflection(
+            listenerCatchScore: 3,
+            paceControlScore: 3,
+            confidenceScore: 3,
+            stickyMoment: Self.stickyMomentOptions(for: currentMission).first ?? "Opening line"
+        )
+
+        if resetScores || previousSelfReflection == nil {
+            draftReflectionListenerCatchScore = defaults.listenerCatchScore
+            draftReflectionPaceControlScore = defaults.paceControlScore
+            draftReflectionConfidenceScore = defaults.confidenceScore
+        }
+
+        let options = Self.stickyMomentOptions(for: currentMission)
+        draftReflectionStickyMoment = options.contains(defaults.stickyMoment) ? defaults.stickyMoment : (options.first ?? "Opening line")
+    }
 }

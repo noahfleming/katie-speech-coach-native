@@ -2984,21 +2984,11 @@ final class AppViewModel: ObservableObject {
     }
 
     func prepareDraftReflection(resetScores: Bool = false) {
-        let defaults = currentScenarioUserHistory.first?.selfReflection ?? SessionSelfReflection(
-            listenerCatchScore: 3,
-            paceControlScore: 3,
-            confidenceScore: 3,
-            stickyMoment: stickyMomentOptions(for: currentMission).first ?? "Opening line"
+        reflectionState.prepareDraft(
+            resetScores: resetScores,
+            previousSelfReflection: currentScenarioUserHistory.first?.selfReflection,
+            currentMission: currentMission
         )
-
-        if resetScores || currentScenarioUserHistory.isEmpty {
-            draftReflectionListenerCatchScore = defaults.listenerCatchScore
-            draftReflectionPaceControlScore = defaults.paceControlScore
-            draftReflectionConfidenceScore = defaults.confidenceScore
-        }
-
-        let options = stickyMomentOptions(for: currentMission)
-        draftReflectionStickyMoment = options.contains(defaults.stickyMoment) ? defaults.stickyMoment : (options.first ?? "Opening line")
     }
 
     func saveCurrentRetake() {
