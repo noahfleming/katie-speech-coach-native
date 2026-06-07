@@ -109,14 +109,11 @@ final class AppViewModel: ObservableObject {
     }()
 
     @Published var learnerProfile = LearnerProfile()
-    @Published var currentMission: PracticeScenario = .weeklyUpdate
-    @Published var availableScenarios: [PracticeScenario] = PracticeScenario.allCases
+    @Published private(set) var scenarioState = ScenarioState()
     @Published var premiumAccessState: PremiumAccessState = .locked
     @Published private(set) var premiumStoreStatus: PremiumStoreStatus = .idle
     @Published private(set) var reminderState = ReminderState()
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
-    @Published private(set) var scenarioHistories: [PracticeScenario: [PracticeSession]] = [:]
-    @Published private var selectedAnchorByScenario: [PracticeScenario: UUID] = [:]
     @Published private(set) var isRecording = false
     @Published var draftTranscript = ""
     @Published var draftReflectionListenerCatchScore = 3
@@ -144,6 +141,7 @@ final class AppViewModel: ObservableObject {
     private var appSessionStateCancellable: AnyCancellable?
     private var learnerProfileCancellable: AnyCancellable?
     private var reminderStateCancellable: AnyCancellable?
+    private var scenarioStateCancellable: AnyCancellable?
     private let appSessionState = AppSessionState()
 
     @Published var fillerWordCount: Int = 0
@@ -174,6 +172,7 @@ final class AppViewModel: ObservableObject {
         bindAppSessionStateChanges()
         bindLearnerProfileChanges()
         bindReminderStateChanges()
+        bindScenarioStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -214,6 +213,34 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindScenarioStateChanges() {
+        scenarioStateCancellable?.cancel()
+        scenarioStateCancellable = scenarioState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var currentMission: PracticeScenario {
+        get { scenarioState.currentMission }
+        set { scenarioState.currentMission = newValue }
+    }
+
+    var availableScenarios: [PracticeScenario] {
+        get { scenarioState.availableScenarios }
+        set { scenarioState.availableScenarios = newValue }
+    }
+
+    private(set) var scenarioHistories: [PracticeScenario: [PracticeSession]] {
+        get { scenarioState.scenarioHistories }
+        set { scenarioState.scenarioHistories = newValue }
+    }
+
+    private var selectedAnchorByScenario: [PracticeScenario: UUID] {
+        get { scenarioState.selectedAnchorByScenario }
+        set { scenarioState.selectedAnchorByScenario = newValue }
     }
 
     var reminderPlan: ReminderPlan? {
