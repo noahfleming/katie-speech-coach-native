@@ -71,4 +71,33 @@ final class ReflectionState: ObservableObject, Codable {
         try container.encode(draftReflectionStickyMoment, forKey: .draftReflectionStickyMoment)
         try container.encode(activePracticeStep, forKey: .activePracticeStep)
     }
+
+    // MARK: - Step navigation (pure reflection-domain)
+
+    /// Clamp + apply a step index. Returns the clamped value so callers
+    /// (e.g. the haptic + return-cue logic in AppViewModel) can react.
+    @discardableResult
+    func setActivePracticeStep(_ step: Int, totalSteps: Int) -> Int {
+        let clampedStep = max(0, min(step, max(0, totalSteps - 1)))
+        activePracticeStep = clampedStep
+        return clampedStep
+    }
+
+    // MARK: - Sticky-moment option list (pure reflection-domain)
+
+    /// Locales for the reflection's sticky-moment free-text picker, by scenario.
+    static func stickyMomentOptions(for scenario: PracticeScenario) -> [String] {
+        switch scenario {
+        case .interviewIntro:
+            return ["Opening line", "Role summary", "Fit close", "Final sentence landing"]
+        case .weeklyUpdate:
+            return ["Decision line", "Tradeoff phrase", "Next-move ask", "Transition between beats"]
+        case .managerOneOnOne:
+            return ["Pattern line", "Friction sentence", "Support ask", "Decision close"]
+        case .presentationOpening:
+            return ["First sentence", "Why-it-matters phrase", "Audience handoff", "Ending the opener"]
+        case .customerRepair:
+            return ["Reset phrase", "Apology line", "Corrected next step", "Confidence in the close"]
+        }
+    }
 }

@@ -2884,10 +2884,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func setActivePracticeStep(_ step: Int) {
-        let clampedStep = max(0, min(step, currentMission.stepLabels.count - 1))
+        let totalSteps = currentMission.stepLabels.count
+        let clampedStep = max(0, min(step, max(0, totalSteps - 1)))
         guard activePracticeStep != clampedStep else { return }
-
-        activePracticeStep = clampedStep
+        reflectionState.setActivePracticeStep(step, totalSteps: totalSteps)
         KatieHaptic.selection.play()
         if activePracticeStep != recommendedPracticeStep {
             practiceReturnCue = nil
@@ -2980,18 +2980,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func stickyMomentOptions(for scenario: PracticeScenario) -> [String] {
-        switch scenario {
-        case .interviewIntro:
-            return ["Opening line", "Role summary", "Fit close", "Final sentence landing"]
-        case .weeklyUpdate:
-            return ["Decision line", "Tradeoff phrase", "Next-move ask", "Transition between beats"]
-        case .managerOneOnOne:
-            return ["Pattern line", "Friction sentence", "Support ask", "Decision close"]
-        case .presentationOpening:
-            return ["First sentence", "Why-it-matters phrase", "Audience handoff", "Ending the opener"]
-        case .customerRepair:
-            return ["Reset phrase", "Apology line", "Corrected next step", "Confidence in the close"]
-        }
+        ReflectionState.stickyMomentOptions(for: scenario)
     }
 
     func prepareDraftReflection(resetScores: Bool = false) {
