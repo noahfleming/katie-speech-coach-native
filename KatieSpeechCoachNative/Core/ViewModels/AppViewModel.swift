@@ -422,7 +422,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var reminderDraftTimeLabel: String {
-        Self.reminderFormatter.string(from: reminderDraftDate)
+        reminderState.draftTimeLabel
     }
 
     var reminderQuickPresets: [ReminderQuickPreset] {

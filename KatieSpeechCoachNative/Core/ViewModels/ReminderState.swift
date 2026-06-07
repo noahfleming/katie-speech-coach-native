@@ -104,4 +104,16 @@ final class ReminderState: ObservableObject, Codable {
             ReminderQuickPreset(title: "Next workday 9 AM", fireDate: reminderDateNextWorkday(hour: 9, minute: 0))
         ]
     }
+
+    /// "EEEE · h:mm a" formatter for the reminder card.
+    private static let draftTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE · h:mm a"
+        return formatter
+    }()
+
+    /// Human-readable label for the draft date (e.g. "Monday · 9:00 AM").
+    var draftTimeLabel: String {
+        Self.draftTimeFormatter.string(from: draftDate)
+    }
 }
