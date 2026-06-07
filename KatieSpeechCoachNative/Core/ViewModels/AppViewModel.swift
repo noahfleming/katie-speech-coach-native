@@ -4182,30 +4182,19 @@ final class AppViewModel: ObservableObject {
     }
 
     private static func defaultReminderDate(from date: Date) -> Date {
-        let calendar = Calendar.current
-        let nextDay = calendar.date(byAdding: .day, value: 1, to: date) ?? date.addingTimeInterval(86_400)
-        return calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextDay) ?? nextDay
+        ReminderState.defaultReminderDate(from: date)
     }
 
     private func reminderDate(hoursFromNow hours: Int) -> Date {
-        Calendar.current.date(byAdding: .hour, value: hours, to: .now) ?? .now
+        reminderState.reminderDate(hoursFromNow: hours)
     }
 
     private func reminderDateTomorrow(hour: Int, minute: Int) -> Date {
-        let calendar = Calendar.current
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
-        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: tomorrow) ?? tomorrow
+        reminderState.reminderDateTomorrow(hour: hour, minute: minute)
     }
 
     private func reminderDateNextWorkday(hour: Int, minute: Int) -> Date {
-        let calendar = Calendar.current
-        var candidate = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
-
-        while calendar.isDateInWeekend(candidate) {
-            candidate = calendar.date(byAdding: .day, value: 1, to: candidate) ?? candidate
-        }
-
-        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: candidate) ?? candidate
+        reminderState.reminderDateNextWorkday(hour: hour, minute: minute)
     }
 
     private static func buildScenarioHistories() -> [PracticeScenario: [PracticeSession]] {

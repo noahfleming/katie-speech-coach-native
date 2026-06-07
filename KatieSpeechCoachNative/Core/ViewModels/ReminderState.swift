@@ -54,4 +54,37 @@ final class ReminderState: ObservableObject, Codable {
     func clearReminderFlowMessage() {
         reminderFlowMessage = nil
     }
+
+    // MARK: - Reminder date helpers (pure, no state)
+
+    /// Default reminder date (tomorrow at 9 AM local) when no plan exists yet.
+    static func defaultReminderDate(from date: Date) -> Date {
+        let calendar = Calendar.current
+        let nextDay = calendar.date(byAdding: .day, value: 1, to: date) ?? date.addingTimeInterval(86_400)
+        return calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextDay) ?? nextDay
+    }
+
+    /// Reminder date `hours` from now.
+    func reminderDate(hoursFromNow hours: Int) -> Date {
+        Calendar.current.date(byAdding: .hour, value: hours, to: .now) ?? .now
+    }
+
+    /// Tomorrow at the given hour/minute local time.
+    func reminderDateTomorrow(hour: Int, minute: Int) -> Date {
+        let calendar = Calendar.current
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: tomorrow) ?? tomorrow
+    }
+
+    /// Next weekday (Mon-Fri) at the given hour/minute local time.
+    func reminderDateNextWorkday(hour: Int, minute: Int) -> Date {
+        let calendar = Calendar.current
+        var candidate = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
+
+        while calendar.isDateInWeekend(candidate) {
+            candidate = calendar.date(byAdding: .day, value: 1, to: candidate) ?? candidate
+        }
+
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: candidate) ?? candidate
+    }
 }
