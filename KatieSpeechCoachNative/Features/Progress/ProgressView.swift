@@ -12,6 +12,8 @@ struct ProgressView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var isPackLibraryExpanded = false
 
+    // MARK: - Layout (size class + computed metrics)
+
     private var activePackCount: Int {
         appViewModel.availableScenarios.filter { appViewModel.userOwnedSessionCount(in: $0) > 0 }.count
     }
@@ -103,6 +105,8 @@ struct ProgressView: View {
             )
         ]
     }
+
+    // MARK: - Subviews (boards, ladders, achievements)
 
     private var progressBoardCard: some View {
         KatieGlanceBoard(
@@ -552,6 +556,8 @@ struct ProgressView: View {
             return KatieColors.accent
         }
     }
+
+    // MARK: - Analytics + comparison library (heavier surfaces)
 
     private var analyticsOverviewCard: some View {
         let analytics = appViewModel.currentScenarioAnalyticsSummary

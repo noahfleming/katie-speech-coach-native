@@ -6,6 +6,8 @@ struct ReviewRetakeView: View {
     @Environment(\.openURL) private var openURL
     @State private var isDeeperReviewExpanded = false
 
+    // MARK: - Layout
+
     private var usesWideReviewLayout: Bool {
         horizontalSizeClass == .regular
     }
@@ -32,6 +34,8 @@ struct ReviewRetakeView: View {
             )
         ]
     }
+
+    // MARK: - Subviews (board, rails, hero, deeper tools)
 
     private var reviewBoardCard: some View {
         KatieGlanceBoard(
