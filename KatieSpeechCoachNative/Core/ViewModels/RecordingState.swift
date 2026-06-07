@@ -19,17 +19,21 @@ final class RecordingState: ObservableObject, Codable {
     @Published var recorderStatusLine: String
     @Published var latestScratchRecordingDuration: TimeInterval?
     @Published var currentlyPlayingSessionID: UUID?
+    /// File URL of the most recent scratch recording on disk. Not persisted.
+    var scratchRecordingURL: URL?
 
     init(
         isRecording: Bool = false,
         recorderStatusLine: String = "Ready to record one real rep on this iPhone.",
         latestScratchRecordingDuration: TimeInterval? = nil,
-        currentlyPlayingSessionID: UUID? = nil
+        currentlyPlayingSessionID: UUID? = nil,
+        scratchRecordingURL: URL? = nil
     ) {
         self.isRecording = isRecording
         self.recorderStatusLine = recorderStatusLine
         self.latestScratchRecordingDuration = latestScratchRecordingDuration
         self.currentlyPlayingSessionID = currentlyPlayingSessionID
+        self.scratchRecordingURL = scratchRecordingURL
     }
 
     private enum CodingKeys: String, CodingKey {

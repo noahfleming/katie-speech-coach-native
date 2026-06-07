@@ -120,7 +120,10 @@ final class AppViewModel: ObservableObject {
     private var audioRecorder: AVAudioRecorder?
     private var audioPlayer: AVAudioPlayer?
     private var reminderNotificationObserver: NSObjectProtocol?
-    private var scratchRecordingURL: URL?
+    private var scratchRecordingURL: URL? {
+        get { recordingState.scratchRecordingURL }
+        set { recordingState.scratchRecordingURL = newValue }
+    }
     private var fillerWordDetector: FillerWordDetector?
     private var audioCaptureEngine: AudioCaptureEngine?
     private var fillerCountCancellable: AnyCancellable?
@@ -2342,18 +2345,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var quickRepHintLine: String {
-        switch currentMission {
-        case .interviewIntro:
-            return "Quick rep: one calm 60-second intro with your name, role, and fit line."
-        case .weeklyUpdate:
-            return "Quick rep: one 60-second update with headline, blocker, and next step."
-        case .managerOneOnOne:
-            return "Quick rep: one honest 60-second 1:1 with the pattern, friction, and one answerable ask."
-        case .presentationOpening:
-            return "Quick rep: one 60-90 second opening with topic, key idea, and takeaway."
-        case .customerRepair:
-            return "Quick rep: one short repair with reset, corrected detail, and clean close."
-        }
+        scenarioState.quickRepHintLine
     }
 
     var quickChallengeScenario: PracticeScenario {
