@@ -2404,7 +2404,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func unlockPremiumPreview() {
-        premiumAccessState = .preview
+        premiumState.unlockPreview()
         persistState()
     }
 

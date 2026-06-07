@@ -74,4 +74,10 @@ final class PremiumState: ObservableObject, Codable {
     func clearPocketCopyStatusLine() {
         pocketCopyStatusLine = nil
     }
+
+    /// Move the user from locked → preview (used by the in-app preview sheet
+    /// and the onboarding free-trial affordance).
+    func unlockPreview() {
+        premiumAccessState = .preview
+    }
 }
