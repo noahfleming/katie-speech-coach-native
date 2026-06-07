@@ -813,10 +813,10 @@ struct PracticeRecordView: View {
                 }
             }
         }
-        .padding(12)
+        .padding(KatieSpacing.base)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
     }
 
     private var practiceSaveOutcomeCard: some View {
@@ -824,11 +824,11 @@ struct PracticeRecordView: View {
             ? KatieColors.gold
             : (appViewModel.hasScratchRecording ? KatieColors.mint : KatieColors.accent)
 
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top, spacing: 10) {
+        return VStack(alignment: .leading, spacing: Layout.heroSpacing) {
+            HStack(alignment: .top, spacing: Layout.heroSpacing) {
                 KatieSectionEyebrow(title: "If you save now", systemImage: appViewModel.isRecording ? "record.circle" : (appViewModel.hasScratchRecording ? "waveform.circle.fill" : "text.bubble.fill"), accent: accent)
 
-                Spacer(minLength: 8)
+                Spacer(minLength: KatieSpacing.sm)
 
                 statusPill(
                     title: appViewModel.isRecording ? "Finish recording" : (appViewModel.hasScratchRecording ? "Replay-ready save" : "Text-only save"),
@@ -844,7 +844,7 @@ struct PracticeRecordView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                 Label(appViewModel.practiceSaveReviewOutcomeLine, systemImage: "arrow.triangle.2.circlepath.circle")
                 Label(appViewModel.practiceSaveProgressOutcomeLine, systemImage: "chart.line.uptrend.xyaxis")
             }
@@ -1280,8 +1280,8 @@ struct PracticeRecordView: View {
                                         Text(appViewModel.scenarioStatusLabel(for: scenario))
                                             .font(.caption.weight(.semibold))
                                             .foregroundStyle(isSelected ? .black : KatieColors.mint)
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
+                                            .padding(.horizontal, KatieSpacing.sm)
+                                            .padding(.vertical, KatieSpacing.xxs)
                                             .background(isSelected ? KatieColors.accent : KatieColors.cardBackground.opacity(0.9))
                                             .clipShape(Capsule())
 
@@ -1305,13 +1305,13 @@ struct PracticeRecordView: View {
                                 .buttonStyle(.plain)
                                 .disabled(isLockedByRecording)
 
-                                KatieWrap(spacing: 8, rowSpacing: 8) {
+                                KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                                     Button(practiceReminderActionTitle(for: scenario)) {
                                         handlePracticeReminderAction(for: scenario)
                                     }
                                     .font(.caption.weight(.semibold))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, KatieSpacing.md)
+                                    .padding(.vertical, KatieSpacing.sm)
                                     .background(practiceReminderActionBackground(for: scenario))
                                     .foregroundStyle(practiceReminderActionForeground(for: scenario))
                                     .clipShape(Capsule())
@@ -1322,8 +1322,8 @@ struct PracticeRecordView: View {
                                             appViewModel.openReview(for: scenario, anchor: reviewAnchor)
                                         }
                                         .font(.caption.weight(.semibold))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, KatieSpacing.md)
+                                        .padding(.vertical, KatieSpacing.sm)
                                         .background(KatieColors.cardBackground.opacity(0.9))
                                         .foregroundStyle(KatieColors.textPrimary)
                                         .clipShape(Capsule())
@@ -1334,8 +1334,8 @@ struct PracticeRecordView: View {
                                         appViewModel.openPractice(for: scenario)
                                     }
                                     .font(.caption.weight(.semibold))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, KatieSpacing.md)
+                                    .padding(.vertical, KatieSpacing.sm)
                                     .background(isSelected ? KatieColors.accent : KatieColors.cardBackground.opacity(0.9))
                                     .foregroundStyle(isSelected ? .black : KatieColors.textPrimary)
                                     .clipShape(Capsule())
@@ -1345,8 +1345,8 @@ struct PracticeRecordView: View {
                                         appViewModel.openProgress(for: scenario)
                                     }
                                     .font(.caption.weight(.semibold))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, KatieSpacing.md)
+                                    .padding(.vertical, KatieSpacing.sm)
                                     .background(KatieColors.cardBackground.opacity(0.9))
                                     .foregroundStyle(KatieColors.textPrimary)
                                     .clipShape(Capsule())
@@ -1355,14 +1355,14 @@ struct PracticeRecordView: View {
                                     practiceScenarioMenu(for: scenario, isLockedByRecording: isLockedByRecording)
                                 }
                             }
-                            .padding(14)
+                            .padding(KatieSpacing.lg)
                             .frame(width: 220, alignment: .leading)
                             .background(isSelected ? KatieColors.accent.opacity(0.16) : KatieColors.cardSecondary)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
                                     .stroke(isSelected ? KatieColors.accent.opacity(0.7) : Color.clear, lineWidth: 1.5)
                             )
-                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                             .opacity(isLockedByRecording ? 0.55 : 1)
                         }
                     }
