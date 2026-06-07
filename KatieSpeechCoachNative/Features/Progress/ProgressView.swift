@@ -170,7 +170,7 @@ struct ProgressView: View {
                     fullProgressContent
                 }
             }
-            .padding(16)
+            .padding(Layout.heroPadding)
             .katieContentFrame(maxWidth: 840)
         }
         .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
@@ -333,7 +333,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
         }
         .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-        .padding(.vertical, 10)
+        .padding(.vertical, Layout.spacing_10)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
@@ -359,7 +359,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
         }
         .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-        .padding(.vertical, 10)
+        .padding(.vertical, Layout.spacing_10)
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
@@ -497,7 +497,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
         }
         .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-        .padding(.vertical, 10)
+        .padding(.vertical, Layout.spacing_10)
         .background(isComplete ? KatieColors.mint.opacity(0.14) : KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
@@ -1567,7 +1567,7 @@ struct ProgressView: View {
                             }
                             .font(.caption.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, Layout.spacing_10)
                             .background(primaryScenarioActionBackground(for: scenario))
                             .foregroundStyle(primaryScenarioActionForeground(for: scenario))
                             .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
@@ -1772,7 +1772,7 @@ struct ProgressView: View {
                     }
                     .font(.caption.weight(.semibold))
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, Layout.spacing_10)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
@@ -1785,13 +1785,13 @@ struct ProgressView: View {
                 }
                 .font(.caption.weight(.semibold))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
+                .padding(.vertical, Layout.spacing_10)
                 .background(primaryScenarioActionBackground(for: entry.scenario))
                 .foregroundStyle(primaryScenarioActionForeground(for: entry.scenario))
                 .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
             }
         }
-        .padding(16)
+        .padding(Layout.heroPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(entry.scenario == appViewModel.currentMission ? KatieColors.accent.opacity(0.16) : KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius20, style: .continuous))
@@ -1808,7 +1808,7 @@ struct ProgressView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
                     .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, Layout.spacing_10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
                     .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
@@ -2480,7 +2480,7 @@ struct ProgressView: View {
             Label(label, systemImage: "ellipsis.circle")
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                .padding(.vertical, 10)
+                .padding(.vertical, Layout.spacing_10)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
