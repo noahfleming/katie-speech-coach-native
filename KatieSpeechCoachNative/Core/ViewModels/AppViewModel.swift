@@ -115,12 +115,7 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var reminderState = ReminderState()
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
     @Published private(set) var recordingState = RecordingState()
-    @Published var draftTranscript = ""
-    @Published var draftReflectionListenerCatchScore = 3
-    @Published var draftReflectionPaceControlScore = 3
-    @Published var draftReflectionConfidenceScore = 3
-    @Published var draftReflectionStickyMoment = "Opening line"
-    @Published private(set) var activePracticeStep = 0
+    @Published private(set) var reflectionState = ReflectionState()
     @Published var isPremiumPreviewPresented = false
     @Published var isReviewPresented = false
     @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
@@ -140,6 +135,7 @@ final class AppViewModel: ObservableObject {
     private var reminderStateCancellable: AnyCancellable?
     private var scenarioStateCancellable: AnyCancellable?
     private var recordingStateCancellable: AnyCancellable?
+    private var reflectionStateCancellable: AnyCancellable?
     private let appSessionState = AppSessionState()
 
     @Published var fillerWordCount: Int = 0
@@ -172,6 +168,7 @@ final class AppViewModel: ObservableObject {
         bindReminderStateChanges()
         bindScenarioStateChanges()
         bindRecordingStateChanges()
+        bindReflectionStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -228,6 +225,44 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindReflectionStateChanges() {
+        reflectionStateCancellable?.cancel()
+        reflectionStateCancellable = reflectionState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var draftTranscript: String {
+        get { reflectionState.draftTranscript }
+        set { reflectionState.draftTranscript = newValue }
+    }
+
+    var draftReflectionListenerCatchScore: Int {
+        get { reflectionState.draftReflectionListenerCatchScore }
+        set { reflectionState.draftReflectionListenerCatchScore = newValue }
+    }
+
+    var draftReflectionPaceControlScore: Int {
+        get { reflectionState.draftReflectionPaceControlScore }
+        set { reflectionState.draftReflectionPaceControlScore = newValue }
+    }
+
+    var draftReflectionConfidenceScore: Int {
+        get { reflectionState.draftReflectionConfidenceScore }
+        set { reflectionState.draftReflectionConfidenceScore = newValue }
+    }
+
+    var draftReflectionStickyMoment: String {
+        get { reflectionState.draftReflectionStickyMoment }
+        set { reflectionState.draftReflectionStickyMoment = newValue }
+    }
+
+    private(set) var activePracticeStep: Int {
+        get { reflectionState.activePracticeStep }
+        set { reflectionState.activePracticeStep = newValue }
     }
 
     private(set) var isRecording: Bool {
