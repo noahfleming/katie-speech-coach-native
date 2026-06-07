@@ -984,14 +984,14 @@ struct TodayMissionView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, KatieSpacing.base)
+                .padding(.vertical, KatieSpacing.sm)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
             }
 
-            KatieWrap(spacing: 8, rowSpacing: 8) {
+            KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                 Text(appViewModel.goalFocusTitle)
                     .modifier(KatieCapsuleLabelStyle())
                 Text(appViewModel.profileContextHeadline)
@@ -1003,7 +1003,7 @@ struct TodayMissionView: View {
             }
 
             if !keepsCompactHome || isLanguageFocusExpanded {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: KatieSpacing.base) {
                     scanRow(title: "Communication goal", body: appViewModel.goalFocusTitle)
                     scanRow(title: "Speaking context", body: appViewModel.profileContextHeadline)
                     scanRow(title: "Sound-first hypothesis", body: appViewModel.languageAssessmentSnapshot.soundFocus)
@@ -1018,7 +1018,7 @@ struct TodayMissionView: View {
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    KatieWrap(spacing: 8, rowSpacing: 8) {
+                    KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                         goalFocusMenu
                         startingPackMenu
 
@@ -1030,7 +1030,7 @@ struct TodayMissionView: View {
                         .modifier(KatieActionChipStyle(
                             background: appViewModel.isRecommendedScenarioAlignedForToday ? KatieColors.cardBackground : KatieColors.accent,
                             foreground: appViewModel.isRecommendedScenarioAlignedForToday ? KatieColors.textSecondary : .black,
-                            horizontalPadding: 10
+                            horizontalPadding: KatieSpacing.md
                         ))
                         .disabled(appViewModel.isRecommendedScenarioAlignedForToday)
                     }
@@ -1246,13 +1246,13 @@ struct TodayMissionView: View {
                     let latest = history.first(where: \.isUserOwned) ?? history.first
                     let anchor = history.filter(\.isUserOwned).dropFirst().first
 
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                         ViewThatFits(in: .horizontal) {
-                            HStack(alignment: .top, spacing: 10) {
+                            HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                                 KatieScenarioArtwork(systemImage: entry.reminderCue.systemImage, accent: entry.reminderCue.isActive ? KatieColors.accent : KatieColors.cardTertiary, secondary: KatieColors.mint)
 
-                                VStack(alignment: .leading, spacing: 6) {
-                                    HStack(spacing: 8) {
+                                VStack(alignment: .leading, spacing: KatieSpacing.xs) {
+                                    HStack(spacing: KatieSpacing.sm) {
                                         Text(entry.scenario.packTitle)
                                             .font(.subheadline.weight(.semibold))
                                             .foregroundStyle(KatieColors.textPrimary)
@@ -1268,9 +1268,9 @@ struct TodayMissionView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
 
-                                Spacer(minLength: 8)
+                                Spacer(minLength: KatieSpacing.sm)
 
-                                VStack(alignment: .trailing, spacing: 8) {
+                                VStack(alignment: .trailing, spacing: KatieSpacing.sm) {
                                     if let freshnessLabel = entry.freshnessLabel {
                                         Text(freshnessLabel)
                                             .modifier(KatieCapsuleLabelStyle())
@@ -1284,11 +1284,11 @@ struct TodayMissionView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack(alignment: .top, spacing: 10) {
+                            VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
+                                HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                                     KatieScenarioArtwork(systemImage: entry.reminderCue.systemImage, accent: entry.reminderCue.isActive ? KatieColors.accent : KatieColors.cardTertiary, secondary: KatieColors.mint)
 
-                                    VStack(alignment: .leading, spacing: 6) {
+                                    VStack(alignment: .leading, spacing: KatieSpacing.xs) {
                                         Text(entry.scenario.packTitle)
                                             .font(.subheadline.weight(.semibold))
                                             .foregroundStyle(KatieColors.textPrimary)
@@ -1304,7 +1304,7 @@ struct TodayMissionView: View {
                                     .foregroundStyle(KatieColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
 
-                                HStack(spacing: 8) {
+                                HStack(spacing: KatieSpacing.sm) {
                                     if let freshnessLabel = entry.freshnessLabel {
                                         Text(freshnessLabel)
                                             .modifier(KatieCapsuleLabelStyle())
@@ -1324,7 +1324,7 @@ struct TodayMissionView: View {
                             .foregroundStyle(KatieColors.textPrimary.opacity(0.82))
                             .fixedSize(horizontal: false, vertical: true)
 
-                        HStack(alignment: .top, spacing: 10) {
+                        HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                             Image(systemName: entry.reminderCue.systemImage)
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(entry.reminderCue.isActive ? KatieColors.accent : KatieColors.textSecondary)
@@ -1334,7 +1334,7 @@ struct TodayMissionView: View {
                                         .fill(entry.reminderCue.isActive ? KatieColors.accent.opacity(0.18) : KatieColors.cardBackground)
                                 )
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                                 Text(entry.reminderCue.eyebrow)
                                     .font(.caption2.weight(.semibold))
                                     .foregroundStyle(entry.reminderCue.isActive ? KatieColors.accent : KatieColors.textSecondary)
@@ -1351,50 +1351,50 @@ struct TodayMissionView: View {
 
                             Spacer(minLength: 0)
                         }
-                        .padding(10)
+                        .padding(KatieSpacing.md)
                         .background(KatieColors.cardBackground)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous)
                                 .stroke(entry.reminderCue.isActive ? KatieColors.accent.opacity(0.25) : KatieColors.cardBorder, lineWidth: 1)
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
 
                         ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 10) {
+                            HStack(spacing: Layout.inlineSpacing) {
                                 Button(entry.actionTitle) {
                                     handleTodayQueuePrimaryAction(entry)
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 10)
+                                .padding(.horizontal, KatieSpacing.base)
+                                .padding(.vertical, KatieSpacing.md)
                                 .background(todayQueueActionBackground(for: entry))
                                 .foregroundStyle(todayQueueActionForeground(for: entry))
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
 
                                 todayActionsMenu(for: entry.scenario, latest: latest, anchor: anchor, label: "Peek")
 
                                 Spacer(minLength: 0)
                             }
 
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: KatieSpacing.sm) {
                                 Button(entry.actionTitle) {
                                     handleTodayQueuePrimaryAction(entry)
                                 }
                                 .font(.caption.weight(.semibold))
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .padding(.vertical, KatieSpacing.md)
                                 .background(todayQueueActionBackground(for: entry))
                                 .foregroundStyle(todayQueueActionForeground(for: entry))
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
 
                                 todayActionsMenu(for: entry.scenario, latest: latest, anchor: anchor, label: "Peek")
                             }
                         }
                     }
-                    .padding(14)
+                    .padding(KatieSpacing.lg)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                 }
 
                 if isExpandable {
@@ -1404,11 +1404,11 @@ struct TodayMissionView: View {
                         }
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, KatieSpacing.base)
+                    .padding(.vertical, KatieSpacing.md)
                     .background(KatieColors.cardBackground)
                     .foregroundStyle(KatieColors.textPrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                 }
             }
         }
