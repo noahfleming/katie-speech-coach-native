@@ -931,10 +931,10 @@ struct PracticeRecordView: View {
         let compareAnchor = appViewModel.selectedCompareAnchor
         let reviewActionTitle = compareAnchor == nil ? "Open proof" : "Open compare"
 
-        return VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: Layout.headerSpacingCompact) {
             if let compareAnchor {
                 ViewThatFits(in: .vertical) {
-                    HStack(alignment: .top, spacing: 10) {
+                    HStack(alignment: .top, spacing: Layout.headerSpacingCompact) {
                         practiceProofColumn(
                             title: "Earlier proof",
                             session: compareAnchor,
@@ -956,7 +956,7 @@ struct PracticeRecordView: View {
                         )
                     }
 
-                    VStack(spacing: 10) {
+                    VStack(spacing: Layout.headerSpacingCompact) {
                         practiceProofColumn(
                             title: "Earlier proof",
                             session: compareAnchor,
@@ -1490,8 +1490,8 @@ struct PracticeRecordView: View {
         } label: {
             Label("Peek", systemImage: "ellipsis.circle")
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.horizontal, Layout.regularHorizontalPadding)
+                .padding(.vertical, Layout.compactSectionSpacing)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
@@ -1510,11 +1510,11 @@ struct PracticeRecordView: View {
         } label: {
             Label("Browse", systemImage: "ellipsis.circle")
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.horizontal, Layout.regularHorizontalPadding)
+                .padding(.vertical, Layout.compactSectionSpacing)
                 .background(KatieColors.cardBackground.opacity(0.9))
                 .foregroundStyle(KatieColors.textPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
         }
         .disabled(isLockedByRecording)
     }
@@ -1612,8 +1612,8 @@ struct PracticeRecordView: View {
     }
 
     private var reminderContinuityCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.compactSectionSpacing) {
+            HStack(alignment: .top, spacing: Layout.cardSpacing) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Reminder continuity")
                         .font(.headline)
@@ -1621,8 +1621,8 @@ struct PracticeRecordView: View {
 
                     KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
 
-                    VStack(alignment: .leading, spacing: 10) {
-                        VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Layout.headerSpacingCompact) {
+                        VStack(alignment: .leading, spacing: Layout.chipVerticalPaddingCompact) {
                             Label("Protected line", systemImage: "text.quote")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.mint)
@@ -1631,7 +1631,7 @@ struct PracticeRecordView: View {
                                 .foregroundStyle(KatieColors.textPrimary)
                         }
 
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: Layout.chipVerticalPaddingCompact) {
                             Label("Listener outcome", systemImage: "ear.fill")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.gold)
@@ -1640,7 +1640,7 @@ struct PracticeRecordView: View {
                                 .foregroundStyle(KatieColors.textSecondary)
                         }
 
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: Layout.chipVerticalPaddingCompact) {
                             Label("Next grounded move", systemImage: "figure.walk")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.accent)
@@ -1661,7 +1661,7 @@ struct PracticeRecordView: View {
 
                 Spacer(minLength: 0)
 
-                VStack(alignment: .trailing, spacing: 8) {
+                VStack(alignment: .trailing, spacing: Layout.chipSpacing) {
                     Image(systemName: practiceReminderOwnerSystemImage)
                         .font(.title3)
                         .foregroundStyle(practiceReminderOwnerAccent)
@@ -1696,7 +1696,7 @@ struct PracticeRecordView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             if appViewModel.remindersEnabled {
-                HStack(spacing: 8) {
+                HStack(spacing: Layout.chipSpacing) {
                     ForEach(appViewModel.reminderQuickPresets) { preset in
                         reminderQuickPresetButton(title: preset.title, date: preset.fireDate)
                     }
@@ -1709,7 +1709,7 @@ struct PracticeRecordView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            HStack(spacing: 10) {
+            HStack(spacing: Layout.headerSpacingCompact) {
                 Button(appViewModel.reminderButtonTitle) {
                     if appViewModel.reminderPermissionState == .denied {
                         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
@@ -1719,21 +1719,21 @@ struct PracticeRecordView: View {
                     appViewModel.scheduleOrDismissReminder()
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.horizontal, Layout.regularHorizontalPadding)
+                .padding(.vertical, Layout.compactSectionSpacing)
                 .frame(maxWidth: .infinity)
                 .background(appViewModel.remindersEnabled ? KatieColors.accent : KatieColors.cardSecondary)
                 .foregroundStyle(appViewModel.remindersEnabled ? .black : KatieColors.textPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
 
                 if appViewModel.remindersEnabled {
                     Label(appViewModel.reminderDraftTimeLabel, systemImage: "calendar")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, Layout.regularHorizontalPadding)
+                        .padding(.vertical, Layout.compactSectionSpacing)
                         .background(KatieColors.cardSecondary)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
                         .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .trailing)))
                 }
             }
@@ -1743,7 +1743,7 @@ struct PracticeRecordView: View {
     }
 
     private func stepProgressCard(proxy: ScrollViewProxy) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
             Text("Scenario step flow")
                 .font(.headline)
 
@@ -1768,8 +1768,8 @@ struct PracticeRecordView: View {
                             }
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Layout.headerSpacingCompact)
+                        .padding(.vertical, Layout.compactTopPadding)
                         .foregroundStyle(isActive ? Color.black : isReached ? KatieColors.textPrimary : KatieColors.textSecondary)
                         .background(isActive ? KatieColors.accent : isReached ? KatieColors.accent.opacity(0.25) : KatieColors.cardSecondary)
                         .overlay(
@@ -1786,7 +1786,7 @@ struct PracticeRecordView: View {
                 Button {
                     appViewModel.focusRecommendedPracticeStep()
                 } label: {
-                    HStack(spacing: 8) {
+                    HStack(spacing: Layout.chipSpacing) {
                         Image(systemName: "flag.fill")
                         Text("Jump back to recommended step: \(appViewModel.recommendedPracticeStepLabel)")
                             .lineLimit(2)
@@ -1794,17 +1794,17 @@ struct PracticeRecordView: View {
                         Image(systemName: "arrow.right")
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, Layout.regularHorizontalPadding)
+                    .padding(.vertical, Layout.compactSectionSpacing)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.mint)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                 Text(appViewModel.activePracticeStepProgressLabel)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -1822,13 +1822,13 @@ struct PracticeRecordView: View {
             .background(KatieColors.cardSecondary)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
-            HStack(spacing: 10) {
+            HStack(spacing: Layout.headerSpacingCompact) {
                 Button("Back") {
                     appViewModel.moveToPreviousPracticeStep()
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Layout.regularHorizontalPadding)
+                .padding(.vertical, Layout.compactTopPadding)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -1841,8 +1841,8 @@ struct PracticeRecordView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Layout.regularHorizontalPadding)
+                .padding(.vertical, Layout.compactTopPadding)
                 .background(KatieColors.accent.opacity(appViewModel.canMoveToNextPracticeStep ? 1 : 0.2))
                 .foregroundStyle(appViewModel.canMoveToNextPracticeStep ? .black : KatieColors.textSecondary)
                 .clipShape(Capsule())
@@ -1887,15 +1887,15 @@ struct PracticeRecordView: View {
             appViewModel.updateReminderTime(date)
         }
         .font(.caption.weight(.semibold))
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Layout.headerSpacingCompact)
+        .padding(.vertical, Layout.compactTopPadding)
         .background(KatieColors.cardSecondary)
         .foregroundStyle(KatieColors.textPrimary)
         .clipShape(Capsule())
     }
 
     private var reminderOptionsPopover: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: Layout.compactSectionSpacing) {
             Text("Reminder options")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1908,7 +1908,7 @@ struct PracticeRecordView: View {
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                 Text("Tone")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -1919,8 +1919,8 @@ struct PracticeRecordView: View {
                             appViewModel.setReminderTone(tone)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Layout.headerSpacingCompact)
+                        .padding(.vertical, Layout.compactTopPadding)
                         .background(appViewModel.reminderTone == tone ? KatieColors.accent.opacity(0.25) : KatieColors.cardSecondary)
                         .foregroundStyle(appViewModel.reminderTone == tone ? KatieColors.textPrimary : KatieColors.textSecondary)
                         .clipShape(Capsule())
@@ -1929,7 +1929,7 @@ struct PracticeRecordView: View {
             }
 
             if appViewModel.remindersEnabled {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Layout.headerSpacingCompact) {
                     Text("Reminder time")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1955,7 +1955,7 @@ struct PracticeRecordView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
+                            HStack(spacing: Layout.chipSpacing) {
                                 ForEach(appViewModel.reminderQuickPresets) { preset in
                                     reminderQuickPresetButton(title: preset.title, date: preset.fireDate)
                                 }
@@ -1970,7 +1970,7 @@ struct PracticeRecordView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                 Text("Preview notification")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -1990,7 +1990,7 @@ struct PracticeRecordView: View {
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
         }
         .padding(16)
         .frame(width: usesWideReminderPresetLayout ? 420 : 320)
