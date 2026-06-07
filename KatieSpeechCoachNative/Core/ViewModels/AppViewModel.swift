@@ -108,9 +108,6 @@ final class AppViewModel: ObservableObject {
         return formatter
     }()
 
-    @Published var hasCompletedOnboarding = false
-    @Published private(set) var hasDismissedFirstBaselineGate = false
-    @Published var selectedTab: AppTab = .today
     @Published var learnerProfile = LearnerProfile()
     @Published var currentMission: PracticeScenario = .weeklyUpdate
     @Published var availableScenarios: [PracticeScenario] = PracticeScenario.allCases
@@ -147,7 +144,9 @@ final class AppViewModel: ObservableObject {
     private var audioCaptureEngine: AudioCaptureEngine?
     private var fillerCountCancellable: AnyCancellable?
     private var fillerBreakdownCancellable: AnyCancellable?
+    private var appSessionStateCancellable: AnyCancellable?
     private var learnerProfileCancellable: AnyCancellable?
+    private let appSessionState = AppSessionState()
 
     @Published var fillerWordCount: Int = 0
     @Published var fillerWordBreakdown: [String: Int] = [:]
@@ -174,6 +173,7 @@ final class AppViewModel: ObservableObject {
         if let visualTab {
             selectedTab = visualTab
         }
+        bindAppSessionStateChanges()
         bindLearnerProfileChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
@@ -199,6 +199,29 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindAppSessionStateChanges() {
+        appSessionStateCancellable?.cancel()
+        appSessionStateCancellable = appSessionState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var hasCompletedOnboarding: Bool {
+        get { appSessionState.hasCompletedOnboarding }
+        set { appSessionState.hasCompletedOnboarding = newValue }
+    }
+
+    var hasDismissedFirstBaselineGate: Bool {
+        get { appSessionState.hasDismissedFirstBaselineGate }
+        set { appSessionState.hasDismissedFirstBaselineGate = newValue }
+    }
+
+    var selectedTab: AppTab {
+        get { appSessionState.selectedTab }
+        set { appSessionState.selectedTab = newValue }
     }
 
     var isPremiumUnlocked: Bool {
