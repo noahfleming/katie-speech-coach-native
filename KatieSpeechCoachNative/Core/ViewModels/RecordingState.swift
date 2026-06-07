@@ -76,4 +76,46 @@ final class RecordingState: ObservableObject, Codable {
     func setStarterLoadedStatus(title: String) {
         recorderStatusLine = title
     }
+
+    // MARK: - File storage (per-device, non-persisted)
+
+    /// Directory that holds local on-device recordings (transcript-only
+    /// reps are not stored; recorded reps persist in this folder).
+    func recordingsDirectory() -> URL {
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: NSTemporaryDirectory())
+        let directory = documents.appendingPathComponent("KatieRecordings", isDirectory: true)
+        if !FileManager.default.fileExists(atPath: directory.path()) {
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        }
+        return directory
+    }
+
+    /// Build a unique scratch-recording file URL inside the recordings dir.
+    func makeScratchRecordingURL() -> URL {
+        recordingsDirectory().appendingPathComponent("scratch-\(UUID().uuidString).m4a")
+    }
+
+    /// Resolve a stored session's audio file to an on-disk URL (nil if missing
+    /// or the file was deleted from under us).
+    func audioURL(for session: PracticeSession) -> URL? {
+        guard let audioFileName = session.audioFileName else { return nil }
+        let url = recordingsDirectory().appendingPathComponent(audioFileName)
+        return FileManager.default.fileExists(atPath: url.path()) ? url : nil
+    }
+
+    /// True if the session has a backing audio file we can play back.
+    func hasPlayback(for session: PracticeSession) -> Bool {
+        audioURL(for: session) != nil
+    }
+
+    /// Remove every file in the recordings directory. Used by
+    /// `deleteAllOnDeviceData`.
+    func clearAllLocalRecordings() {
+        let directory = recordingsDirectory()
+        if let files = try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil) {
+            for file in files {
+                try? FileManager.default.removeItem(at: file)
+            }
+        }
+    }
 }

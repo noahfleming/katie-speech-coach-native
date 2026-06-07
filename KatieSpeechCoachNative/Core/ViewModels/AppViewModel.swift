@@ -3679,7 +3679,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func hasPlayback(for session: PracticeSession) -> Bool {
-        audioURL(for: session) != nil
+        recordingState.hasPlayback(for: session)
     }
 
     func deleteAllOnDeviceData() {
@@ -3717,12 +3717,7 @@ final class AppViewModel: ObservableObject {
     }
 
     private func clearAllLocalRecordings() {
-        let directory = recordingsDirectory()
-        if let files = try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil) {
-            for file in files {
-                try? FileManager.default.removeItem(at: file)
-            }
-        }
+        recordingState.clearAllLocalRecordings()
     }
 
     private func ensureAnchorSelection(for scenario: PracticeScenario) {
@@ -4353,21 +4348,14 @@ final class AppViewModel: ObservableObject {
     }
 
     private func recordingsDirectory() -> URL {
-        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: NSTemporaryDirectory())
-        let directory = documents.appendingPathComponent("KatieRecordings", isDirectory: true)
-        if !FileManager.default.fileExists(atPath: directory.path()) {
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        }
-        return directory
+        recordingState.recordingsDirectory()
     }
 
     private func makeScratchRecordingURL() -> URL {
-        recordingsDirectory().appendingPathComponent("scratch-\(UUID().uuidString).m4a")
+        recordingState.makeScratchRecordingURL()
     }
 
     func audioURL(for session: PracticeSession) -> URL? {
-        guard let audioFileName = session.audioFileName else { return nil }
-        let url = recordingsDirectory().appendingPathComponent(audioFileName)
-        return FileManager.default.fileExists(atPath: url.path()) ? url : nil
+        recordingState.audioURL(for: session)
     }
 }
