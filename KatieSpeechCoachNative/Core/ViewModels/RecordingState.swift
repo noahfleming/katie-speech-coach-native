@@ -54,4 +54,22 @@ final class RecordingState: ObservableObject, Codable {
         try container.encodeIfPresent(latestScratchRecordingDuration, forKey: .latestScratchRecordingDuration)
         try container.encodeIfPresent(currentlyPlayingSessionID, forKey: .currentlyPlayingSessionID)
     }
+
+    // MARK: - State-local mutators (no AVFoundation side effects yet)
+
+    /// Clear the active session pointer. Used when playback finishes or
+    /// the user stops it manually.
+    func clearActivePlayback() {
+        currentlyPlayingSessionID = nil
+    }
+
+    /// Update the human-readable status line that the recording card shows.
+    func setStatusLine(_ line: String) {
+        recorderStatusLine = line
+    }
+
+    /// Append a "loaded a starter into the draft" status update.
+    func setStarterLoadedStatus(title: String) {
+        recorderStatusLine = title
+    }
 }

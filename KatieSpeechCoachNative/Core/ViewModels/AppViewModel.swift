@@ -354,12 +354,12 @@ final class AppViewModel: ObservableObject {
         set { recordingState.currentlyPlayingSessionID = newValue }
     }
 
-    var currentMission: PracticeScenario {
+    private(set) var currentMission: PracticeScenario {
         get { scenarioState.currentMission }
         set { scenarioState.currentMission = newValue }
     }
 
-    var availableScenarios: [PracticeScenario] {
+    private(set) var availableScenarios: [PracticeScenario] {
         get { scenarioState.availableScenarios }
         set { scenarioState.availableScenarios = newValue }
     }
