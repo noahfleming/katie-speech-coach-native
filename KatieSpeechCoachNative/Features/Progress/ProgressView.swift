@@ -314,7 +314,7 @@ struct ProgressView: View {
         .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func proofCountChip(title: String, value: Int, accent: Color) -> some View {
@@ -329,7 +329,7 @@ struct ProgressView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func proofConfidenceTile(title: String, score: Int, accent: Color) -> some View {
@@ -356,7 +356,7 @@ struct ProgressView: View {
         .padding(.vertical, 10)
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private var evidenceLadderCard: some View {
@@ -493,7 +493,7 @@ struct ProgressView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .background(isComplete ? KatieColors.mint.opacity(0.14) : KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private var achievementsCard: some View {
@@ -533,7 +533,7 @@ struct ProgressView: View {
                 .foregroundStyle(achievement.isUnlocked ? accent : KatieColors.textSecondary)
                 .frame(width: 30, height: 30)
                 .background((achievement.isUnlocked ? accent : KatieColors.cardBackground).opacity(achievement.isUnlocked ? 0.16 : 0.9))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.chipCornerRadius, style: .continuous))
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
@@ -560,10 +560,10 @@ struct ProgressView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous)
                 .stroke((achievement.isUnlocked ? accent : KatieColors.cardBackground).opacity(0.45), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func achievementAccent(for achievement: ProgressAchievement) -> Color {
@@ -666,7 +666,7 @@ struct ProgressView: View {
         .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func analyticsChart(points: [ScenarioAnalyticsPoint]) -> some View {
@@ -711,7 +711,7 @@ struct ProgressView: View {
         }
         .padding(Layout.cardPadding)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func analyticsPointRow(_ point: ScenarioAnalyticsPoint) -> some View {
@@ -734,7 +734,7 @@ struct ProgressView: View {
         }
         .padding(Layout.cardPadding)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func analyticsPointRowTrack(title: String, value: Int, accent: Color) -> some View {
@@ -888,7 +888,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.mint)
                 .frame(width: 28, height: 28)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.chipCornerRadius, style: .continuous))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
@@ -1175,7 +1175,7 @@ struct ProgressView: View {
             .padding(Layout.cardPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
         }
         .katieCard()
     }
@@ -1309,7 +1309,7 @@ struct ProgressView: View {
         .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private var clarityStoryHero: some View {
@@ -1564,7 +1564,7 @@ struct ProgressView: View {
                             .padding(.vertical, 10)
                             .background(primaryScenarioActionBackground(for: scenario))
                             .foregroundStyle(primaryScenarioActionForeground(for: scenario))
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
 
                             progressActionsMenu(for: scenario, latest: latest, anchor: anchor, reminderTitle: followThroughReminderActionTitle(for: scenario), reminderAction: { handleFollowThroughReminderAction(for: scenario) }, label: "Peek")
                         }
@@ -1572,7 +1572,7 @@ struct ProgressView: View {
                     .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                 }
             }
         }
@@ -1769,7 +1769,7 @@ struct ProgressView: View {
                     .padding(.vertical, 10)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
 
                     compareLibraryActionsMenu(for: entry)
                 }
@@ -1782,13 +1782,13 @@ struct ProgressView: View {
                 .padding(.vertical, 10)
                 .background(primaryScenarioActionBackground(for: entry.scenario))
                 .foregroundStyle(primaryScenarioActionForeground(for: entry.scenario))
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(entry.scenario == appViewModel.currentMission ? KatieColors.accent.opacity(0.16) : KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius20, style: .continuous))
     }
 
     private var growthThemesCard: some View {
@@ -1805,7 +1805,7 @@ struct ProgressView: View {
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
             }
         }
         .katieCard()
@@ -1930,7 +1930,7 @@ struct ProgressView: View {
                 .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
             }
         }
         .katieCard()
@@ -2066,7 +2066,7 @@ struct ProgressView: View {
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
             }
         }
         .katieCard()
@@ -2170,10 +2170,10 @@ struct ProgressView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(accent.opacity(0.12))
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous)
                 .stroke(accent.opacity(0.22), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func featuredWinTruthLine(for featured: FeaturedWin) -> String {
@@ -2236,7 +2236,7 @@ struct ProgressView: View {
         .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func proofFactChip(_ title: String, systemImage: String) -> some View {
@@ -2269,7 +2269,7 @@ struct ProgressView: View {
         .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
         .padding(14)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
     }
 
     @ViewBuilder
@@ -2356,7 +2356,7 @@ struct ProgressView: View {
         .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func compareScoreTrack(label: String, score: Int, fill: Color) -> some View {
@@ -2477,7 +2477,7 @@ struct ProgressView: View {
                 .padding(.vertical, 10)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
         }
     }
 
@@ -2561,7 +2561,7 @@ struct ProgressView: View {
         .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     private func handleFollowThroughReminderAction(for scenario: PracticeScenario) {
