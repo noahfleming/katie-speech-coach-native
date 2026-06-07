@@ -1986,7 +1986,7 @@ struct TodayMissionView: View {
                     .lineLimit(2)
             }
 
-            Spacer(minLength: 12)
+            Spacer(minLength: KatieSpacing.base)
 
             Image(systemName: systemImage)
                 .font(.subheadline.weight(.semibold))
@@ -1996,17 +1996,17 @@ struct TodayMissionView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(14)
+        .padding(KatieSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
     }
 
     private var packProgressCard: some View {
         let latest = appViewModel.currentScenarioHistory.first(where: \.isUserOwned) ?? appViewModel.currentScenarioHistory.first
         let anchor = Array(appViewModel.currentScenarioHistory.filter(\.isUserOwned).dropFirst()).first
 
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: KatieSpacing.base) {
             Label("Pack progress", systemImage: "map.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2035,7 +2035,7 @@ struct TodayMissionView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             if let latest {
-                KatieWrap(spacing: 8, rowSpacing: 8) {
+                KatieWrap(spacing: KatieSpacing.sm, rowSpacing: KatieSpacing.sm) {
                     if appViewModel.hasPlayback(for: latest) {
                         Button(appViewModel.currentlyPlayingSessionID == latest.id ? "Stop" : "Play") {
                             if appViewModel.currentlyPlayingSessionID == latest.id {
@@ -2044,28 +2044,28 @@ struct TodayMissionView: View {
                                 appViewModel.playSession(latest)
                             }
                         }
-                        .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                        .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
                     }
 
                     Button(anchor == nil ? "Open proof" : "Open compare") {
                         appViewModel.openReview(for: appViewModel.currentMission, anchor: anchor)
                     }
-                    .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                    .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
 
                     Button(todayReminderActionTitle(for: appViewModel.currentMission)) {
                         handleReminderAction(for: appViewModel.currentMission)
                     }
-                    .modifier(KatieActionChipStyle(background: todayReminderActionBackground(for: appViewModel.currentMission), foreground: todayReminderActionForeground(for: appViewModel.currentMission), horizontalPadding: 10))
+                    .modifier(KatieActionChipStyle(background: todayReminderActionBackground(for: appViewModel.currentMission), foreground: todayReminderActionForeground(for: appViewModel.currentMission), horizontalPadding: KatieSpacing.md))
 
                     Button("Practice") {
                         appViewModel.openPractice(for: appViewModel.currentMission)
                     }
-                    .modifier(KatieActionChipStyle(background: KatieColors.accent, foreground: .black, horizontalPadding: 10))
+                    .modifier(KatieActionChipStyle(background: KatieColors.accent, foreground: .black, horizontalPadding: KatieSpacing.md))
 
                     Button("Open progress") {
                         appViewModel.openProgress(for: appViewModel.currentMission)
                     }
-                    .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
+                    .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: KatieSpacing.md))
                 }
             }
         }
@@ -2073,9 +2073,9 @@ struct TodayMissionView: View {
     }
 
     private var scenarioSwitcher: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: KatieSpacing.base) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: KatieSpacing.xxs) {
                     Text("Speaking contexts")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
