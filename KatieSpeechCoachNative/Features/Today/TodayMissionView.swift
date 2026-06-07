@@ -1052,7 +1052,7 @@ struct TodayMissionView: View {
     }
 
     private var hypothesisStanceCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
             HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                 Label("Hypothesis stance in this pack", systemImage: appViewModel.transferHypothesisFeedback.systemImage)
                     .font(.subheadline.weight(.semibold))
@@ -1211,7 +1211,7 @@ struct TodayMissionView: View {
             }
 
             if !appViewModel.hasAnyUserProof {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                     KatieSectionEyebrow(title: appViewModel.currentMission.packTitle, systemImage: "sparkles.rectangle.stack.fill", accent: KatieColors.gold)
 
                     Text("Save one real rep and the queue wakes up. Katie will start nudging with your own proof instead of generic encouragement.")
@@ -1230,16 +1230,16 @@ struct TodayMissionView: View {
                         }
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, Layout.chipHorizontalPadding)
+                    .padding(.vertical, Layout.inlineSpacing)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                 }
-                .padding(14)
+                .padding(Layout.heroSpacing)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
             } else {
                 if isExpandable && !isTodayQueueExpanded {
                     Text("\(hiddenCount) more packs stay tucked away until you want the full list.")
@@ -1422,7 +1422,7 @@ struct TodayMissionView: View {
     }
 
     private var managerPrepCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
             Label("1:1 prep", systemImage: "person.2.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1430,7 +1430,7 @@ struct TodayMissionView: View {
             Text("Keep the rep clinician-safe and useful: name the observed pattern, point to the friction, then end with one answerable ask.")
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                 Label("Pattern to name first: \(appViewModel.languageAssessmentSnapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
                 Label("Transfer watch-out, not a diagnosis: \(appViewModel.languageAssessmentSnapshot.transferPattern)", systemImage: "arrow.triangle.branch")
                 Label("Close on one manager decision, not a broad vent", systemImage: "checkmark.bubble.fill")
@@ -1609,7 +1609,7 @@ struct TodayMissionView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                     languageFocusRow(
                         title: "Likely transfer pattern",
                         body: appViewModel.languageAssessmentSnapshot.transferPattern,
@@ -1656,9 +1656,9 @@ struct TodayMissionView: View {
     }
 
     private var quickRepRail: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                     Text("Quick rep")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1805,21 +1805,21 @@ struct TodayMissionView: View {
                     .foregroundStyle(KatieColors.textSecondary)
                     .lineLimit(2)
             }
-            .padding(14)
+            .padding(Layout.heroSpacing)
             .frame(maxWidth: compactWidth == nil ? .infinity : nil, alignment: .leading)
             .frame(width: compactWidth, alignment: .leading)
             .background(isRecommended ? KatieColors.gold.opacity(0.12) : KatieColors.cardSecondary)
             .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
                     .stroke(isRecommended ? KatieColors.gold.opacity(0.35) : .clear, lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)
     }
 
     private var goalFocusCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: Layout.heroSpacing) {
             Label("Goal focus", systemImage: "target")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1832,7 +1832,7 @@ struct TodayMissionView: View {
             Text(appViewModel.goalFocusDetail)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                 Text("Tune Katie to what matters right now")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -1841,7 +1841,7 @@ struct TodayMissionView: View {
                 startingPackMenu
             }
 
-            HStack(spacing: 10) {
+            HStack(spacing: Layout.inlineSpacing) {
                 Label("Starting pack: \(appViewModel.learnerProfile.focusScenario.packTitle)", systemImage: "flag.fill")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
@@ -1860,7 +1860,7 @@ struct TodayMissionView: View {
     }
 
     private var profileContextCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: Layout.heroSpacing) {
             Label("Today’s speaking context", systemImage: "person.text.rectangle.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1878,7 +1878,7 @@ struct TodayMissionView: View {
 
             Divider().overlay(.white.opacity(0.08))
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                 Label("Best pack for this context", systemImage: "sparkles")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
@@ -1899,7 +1899,7 @@ struct TodayMissionView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
 
-                HStack(spacing: 10) {
+                HStack(spacing: Layout.inlineSpacing) {
                     Button(appViewModel.isRecommendedScenarioAlignedForToday ? "Today already matches" : "Switch Today to this pack") {
                         withAnimation(.spring(response: 0.24, dampingFraction: 0.86)) {
                             appViewModel.selectScenario(appViewModel.recommendedScenarioForCurrentContext)
@@ -1937,7 +1937,7 @@ struct TodayMissionView: View {
                         appViewModel.applyGoalPreset(preset)
                     }
                 } label: {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                         Text(preset.title)
                         Text(preset.detail)
                     }
@@ -1961,7 +1961,7 @@ struct TodayMissionView: View {
                         appViewModel.updateFocusScenario(scenario)
                     }
                 } label: {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                         Text(scenario.packTitle)
                         Text(scenario.listenerOutcome)
                     }
@@ -1978,8 +1978,8 @@ struct TodayMissionView: View {
     }
 
     private func cardMenuLabel(eyebrow: String, title: String, detail: String, systemImage: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .top, spacing: Layout.cardSpacing) {
+            VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                 Text(eyebrow.uppercased())
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -2106,19 +2106,19 @@ struct TodayMissionView: View {
                 let latest = history.first(where: \.isUserOwned) ?? history.first
                 let anchor = Array(history.filter(\.isUserOwned).dropFirst()).first
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
                     Button {
                         appViewModel.selectScenario(scenario)
                     } label: {
-                        HStack(alignment: .top, spacing: 12) {
+                        HStack(alignment: .top, spacing: Layout.cardSpacing) {
                             Image(systemName: appViewModel.currentMission == scenario ? "checkmark.circle.fill" : "circle")
                                 .foregroundStyle(appViewModel.currentMission == scenario ? KatieColors.accent : KatieColors.textSecondary)
                                 .padding(.top, 2)
 
                             VStack(alignment: .leading, spacing: 6) {
                                 ViewThatFits(in: .horizontal) {
-                                    HStack(alignment: .top, spacing: 8) {
-                                        VStack(alignment: .leading, spacing: 4) {
+                                    HStack(alignment: .top, spacing: Layout.chipSpacing) {
+                                        VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                                             Text(scenario.packTitle)
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(KatieColors.textPrimary)
@@ -2135,8 +2135,8 @@ struct TodayMissionView: View {
                                             .foregroundStyle(KatieColors.mint)
                                     }
 
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: Layout.chipSpacing) {
+                                        VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                                             Text(scenario.packTitle)
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(KatieColors.textPrimary)
@@ -2168,7 +2168,7 @@ struct TodayMissionView: View {
                                     .foregroundStyle(KatieColors.textSecondary)
 
                                 if let latest {
-                                    HStack(spacing: 8) {
+                                    HStack(spacing: Layout.chipSpacing) {
                                         Text(todayScenarioReviewStatusLabel(for: scenario))
                                             .font(.caption2.weight(.semibold))
                                             .foregroundStyle(KatieColors.textSecondary)
@@ -2202,39 +2202,39 @@ struct TodayMissionView: View {
                     .buttonStyle(.plain)
 
                     ViewThatFits(in: .horizontal) {
-                        HStack(spacing: 10) {
+                        HStack(spacing: Layout.inlineSpacing) {
                             Button("Practice") {
                                 appViewModel.openPractice(for: scenario)
                             }
                             .font(.caption.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, Layout.inlineSpacing)
                             .background(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardBackground)
                             .foregroundStyle(scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
 
                             todayActionsMenu(for: scenario, latest: latest, anchor: anchor, label: "Peek")
                         }
 
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                             Button("Practice") {
                                 appViewModel.openPractice(for: scenario)
                             }
                             .font(.caption.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, Layout.inlineSpacing)
                             .background(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardBackground)
                             .foregroundStyle(scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
 
                             todayActionsMenu(for: scenario, latest: latest, anchor: anchor, label: "Peek")
                         }
                     }
                 }
-                .padding(14)
+                .padding(Layout.heroSpacing)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                 }
             } else {
                 compactTodayScenarioSummary
@@ -2248,7 +2248,7 @@ struct TodayMissionView: View {
         let history = appViewModel.scenarioHistories[scenario] ?? []
         let latest = history.first(where: \.isUserOwned) ?? history.first
 
-        return VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
             Text(scenario.packTitle)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2262,7 +2262,7 @@ struct TodayMissionView: View {
                         .modifier(KatieCapsuleLabelStyle(accent: KatieColors.gold))
                 }
             }
-            HStack(spacing: 8) {
+            HStack(spacing: Layout.chipSpacing) {
                 Text(appViewModel.scenarioStatusLabel(for: scenario))
                     .modifier(KatieCapsuleLabelStyle())
                 if let latest {
@@ -2278,14 +2278,14 @@ struct TodayMissionView: View {
                 .foregroundStyle(KatieColors.textPrimary.opacity(0.82))
                 .lineLimit(2)
         }
-        .padding(14)
+        .padding(Layout.heroSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
     }
 
     private var carryoverCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
             Text("Live pack continuity")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2335,7 +2335,7 @@ struct TodayMissionView: View {
                         .foregroundStyle(KatieColors.textSecondary)
 
                     if let featured = appViewModel.featuredWin {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                             Text("Proof of the win")
                                 .font(.headline)
                                 .foregroundStyle(KatieColors.textPrimary)
@@ -2345,7 +2345,7 @@ struct TodayMissionView: View {
                                 .foregroundStyle(KatieColors.mint)
 
                             if appViewModel.hasEarnedCompare {
-                                HStack(alignment: .top, spacing: 10) {
+                                HStack(alignment: .top, spacing: Layout.inlineSpacing) {
                                     proofColumn(title: "Before", body: featured.beforeText)
                                     proofColumn(title: "After", body: featured.afterText)
                                 }
@@ -2375,21 +2375,21 @@ struct TodayMissionView: View {
                             Image(systemName: "checkmark.seal.fill")
                                 .foregroundStyle(KatieColors.mint)
                         }
-                        .padding(14)
+                        .padding(Layout.heroSpacing)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(KatieColors.cardSecondary)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                     }
 
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                         Text("Paywall experiments in this build")
                             .font(.headline)
                             .foregroundStyle(KatieColors.textPrimary)
 
                         ForEach(appViewModel.premiumExperimentSurfaces) { experiment in
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack(alignment: .top, spacing: 10) {
-                                    VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
+                                HStack(alignment: .top, spacing: Layout.inlineSpacing) {
+                                    VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                                         Text(experiment.title)
                                             .font(.subheadline.weight(.semibold))
                                             .foregroundStyle(KatieColors.textPrimary)
@@ -2404,7 +2404,7 @@ struct TodayMissionView: View {
                                         .modifier(KatieCapsuleLabelStyle(accent: KatieColors.gold))
                                 }
 
-                                VStack(alignment: .leading, spacing: 8) {
+                                VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                                     ForEach(experiment.bullets, id: \.self) { bullet in
                                         Label(bullet, systemImage: "checkmark.circle.fill")
                                             .font(.caption)
@@ -2412,15 +2412,15 @@ struct TodayMissionView: View {
                                     }
                                 }
                             }
-                            .padding(14)
+                            .padding(Layout.heroSpacing)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(KatieColors.cardSecondary)
-                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                         }
                     }
                     .katieCard()
 
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                         Text("Follow-through scaffold")
                             .font(.headline)
                             .foregroundStyle(KatieColors.textPrimary)
@@ -2438,7 +2438,7 @@ struct TodayMissionView: View {
                     }
                     .katieCard()
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                         Text("Trust note")
                             .font(.headline)
                             .foregroundStyle(KatieColors.textPrimary)
@@ -2449,7 +2449,7 @@ struct TodayMissionView: View {
                     .katieCard()
 
                     if let restoreMessage = appViewModel.premiumRestoreMessage {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                             Label(restoreMessage.title, systemImage: restoreMessageSystemImage(for: restoreMessage.tone))
                                 .font(.headline)
                                 .foregroundStyle(restoreMessageColor(for: restoreMessage.tone))
@@ -2461,7 +2461,7 @@ struct TodayMissionView: View {
                         .katieCard()
                     }
 
-                    VStack(spacing: 10) {
+                    VStack(spacing: Layout.inlineSpacing) {
                         Button(appViewModel.premiumActionButtonTitle) {
                             handlePremiumAction()
                         }
@@ -2470,14 +2470,14 @@ struct TodayMissionView: View {
                         .padding(.vertical, 12)
                         .background(KatieColors.accent)
                         .foregroundStyle(.black)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
                         .disabled(appViewModel.premiumActionButtonDisabled || isPremiumActionRunning || isRefreshingPremiumStore || isRestoringPremiumPurchases)
 
                         Text(appViewModel.premiumCTASecondaryLine)
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
 
-                        VStack(spacing: 10) {
+                        VStack(spacing: Layout.inlineSpacing) {
                             Button(isRestoringPremiumPurchases ? "Restoring purchases…" : "Restore purchases") {
                                 isRestoringPremiumPurchases = true
                                 Task {
@@ -2491,12 +2491,12 @@ struct TodayMissionView: View {
                                 }
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
+                            .padding(.horizontal, Layout.chipHorizontalPadding)
+                            .padding(.vertical, Layout.inlineSpacing)
                             .frame(maxWidth: .infinity)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                             .disabled(isRestoringPremiumPurchases || isRefreshingPremiumStore || isPremiumActionRunning)
 
                             if appViewModel.canManageSubscription, let manageURL = appViewModel.manageSubscriptionURL {
@@ -2504,16 +2504,16 @@ struct TodayMissionView: View {
                                     openURL(manageURL)
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 10)
+                                .padding(.horizontal, Layout.chipHorizontalPadding)
+                                .padding(.vertical, Layout.inlineSpacing)
                                 .frame(maxWidth: .infinity)
                                 .background(KatieColors.cardSecondary)
                                 .foregroundStyle(KatieColors.textPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                                 .disabled(isRestoringPremiumPurchases || isRefreshingPremiumStore || isPremiumActionRunning)
                             }
 
-                            HStack(spacing: 10) {
+                            HStack(spacing: Layout.inlineSpacing) {
                             Button(isRefreshingPremiumStore ? "Refreshing StoreKit…" : "Refresh StoreKit") {
                                 isRefreshingPremiumStore = true
                                 Task {
@@ -2524,12 +2524,12 @@ struct TodayMissionView: View {
                                 }
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
+                            .padding(.horizontal, Layout.chipHorizontalPadding)
+                            .padding(.vertical, Layout.inlineSpacing)
                             .frame(maxWidth: .infinity)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                             .disabled(isRefreshingPremiumStore || isPremiumActionRunning || isRestoringPremiumPurchases)
 
                             Button(appViewModel.premiumCTAButtonTitle) {
@@ -2537,12 +2537,12 @@ struct TodayMissionView: View {
                                 appViewModel.isPremiumPreviewPresented = false
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
+                            .padding(.horizontal, Layout.chipHorizontalPadding)
+                            .padding(.vertical, Layout.inlineSpacing)
                             .frame(maxWidth: .infinity)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
                             .disabled(isPremiumActionRunning || isRefreshingPremiumStore || isRestoringPremiumPurchases)
                             }
                         }
@@ -2587,9 +2587,9 @@ struct TodayMissionView: View {
     }
 
     private var continuityCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                     Text("Continuity handoff")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -2634,7 +2634,7 @@ struct TodayMissionView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                     Label("Preview notification", systemImage: "bell.badge.fill")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(KatieColors.accent)
@@ -2651,12 +2651,12 @@ struct TodayMissionView: View {
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
-                .padding(12)
+                .padding(Layout.cardSpacing)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                 Text("Reminder tone")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -2667,7 +2667,7 @@ struct TodayMissionView: View {
                             appViewModel.setReminderTone(tone)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, Layout.chipHorizontalPadding)
                         .padding(.vertical, 8)
                         .background(appViewModel.reminderTone == tone ? KatieColors.accent.opacity(0.25) : KatieColors.cardSecondary)
                         .foregroundStyle(appViewModel.reminderTone == tone ? KatieColors.textPrimary : KatieColors.textSecondary)
@@ -2681,7 +2681,7 @@ struct TodayMissionView: View {
             }
 
             if appViewModel.remindersEnabled {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: Layout.chipSpacing) {
                     Text("Reminder time")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -2707,7 +2707,7 @@ struct TodayMissionView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
+                            HStack(spacing: Layout.chipSpacing) {
                                 ForEach(appViewModel.reminderQuickPresets) { preset in
                                     todayReminderPresetChip(preset)
                                 }
@@ -2727,7 +2727,7 @@ struct TodayMissionView: View {
                     openURL(url)
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
+                .padding(.horizontal, Layout.chipHorizontalPadding)
                 .padding(.vertical, 8)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2748,7 +2748,7 @@ struct TodayMissionView: View {
             }
             .fontWeight(.semibold)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+            .padding(.vertical, Layout.inlineSpacing)
             .background(KatieColors.cardSecondary)
             .foregroundStyle(KatieColors.textPrimary)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -2828,14 +2828,14 @@ private extension TodayMissionView {
                 .font(.subheadline)
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(14)
+        .padding(Layout.heroSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
     }
 
     func languageFocusRow(title: String, body: String, systemImage: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: Layout.inlineSpacing) {
             Image(systemName: systemImage)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -2843,7 +2843,7 @@ private extension TodayMissionView {
                 .background(KatieColors.cardSecondary)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -2854,14 +2854,14 @@ private extension TodayMissionView {
 
             Spacer(minLength: 0)
         }
-        .padding(12)
+        .padding(Layout.cardSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     func proofColumn(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Layout.chipSpacing) {
             KatieSectionEyebrow(title: title, systemImage: title == "After" ? "sparkles" : "circle.lefthalf.filled", accent: title == "After" ? KatieColors.mint : KatieColors.gold)
 
             Text(body)
@@ -2869,7 +2869,7 @@ private extension TodayMissionView {
                 .foregroundStyle(KatieColors.textPrimary)
                 .lineLimit(4)
         }
-        .padding(14)
+        .padding(Layout.heroSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             LinearGradient(
@@ -2878,7 +2878,7 @@ private extension TodayMissionView {
                 endPoint: .bottomTrailing
             )
         )
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
     }
 
     func todayScenarioReviewStatusLabel(for scenario: PracticeScenario) -> String {
@@ -2894,8 +2894,8 @@ private extension TodayMissionView {
     }
 
     func featuredWinProofMetaStrip(title: String, session: PracticeSession, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .leading, spacing: Layout.chipSpacing) {
+            HStack(alignment: .center, spacing: Layout.chipSpacing) {
                 Label(title, systemImage: session.captureSource.systemImage)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(accent)
@@ -2908,14 +2908,14 @@ private extension TodayMissionView {
 
             todayProofFacts(for: session)
         }
-        .padding(12)
+        .padding(Layout.cardSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     func featuredWinReplayTruthCard(for featured: FeaturedWin) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Layout.chipSpacing) {
             Label(featuredWinReplayTruthTitle(for: featured), systemImage: featuredWinReplayTruthSystemImage(for: featured))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2925,10 +2925,10 @@ private extension TodayMissionView {
                 .foregroundStyle(KatieColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
+        .padding(Layout.cardSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
     }
 
     func featuredWinReplayTruthTitle(for featured: FeaturedWin) -> String {
@@ -2990,7 +2990,7 @@ private extension TodayMissionView {
             appViewModel.updateReminderTime(preset.fireDate)
         }
         .font(.caption.weight(.semibold))
-        .padding(.horizontal, 10)
+        .padding(.horizontal, Layout.chipHorizontalPadding)
         .padding(.vertical, 8)
         .background(KatieColors.cardSecondary)
         .foregroundStyle(KatieColors.textPrimary)
@@ -3053,11 +3053,11 @@ private extension TodayMissionView {
         } label: {
             Label(label, systemImage: "ellipsis.circle")
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.horizontal, Layout.chipHorizontalPadding)
+                .padding(.vertical, Layout.inlineSpacing)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
         }
     }
 
