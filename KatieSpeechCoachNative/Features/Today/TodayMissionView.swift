@@ -2115,7 +2115,7 @@ struct TodayMissionView: View {
                                 .foregroundStyle(appViewModel.currentMission == scenario ? KatieColors.accent : KatieColors.textSecondary)
                                 .padding(.top, 2)
 
-                            VStack(alignment: .leading, spacing: 6) {
+                            VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                                 ViewThatFits(in: .horizontal) {
                                     HStack(alignment: .top, spacing: Layout.chipSpacing) {
                                         VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
@@ -2326,7 +2326,7 @@ struct TodayMissionView: View {
     private var premiumPreviewSheet: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: Layout.compactSectionSpacing) {
                     Text("Katie Plus preview")
                         .font(.title.bold())
                         .foregroundStyle(KatieColors.textPrimary)
@@ -2548,7 +2548,7 @@ struct TodayMissionView: View {
                         }
                     }
                 }
-                .padding(16)
+                .padding(Layout.screenTopPadding)
             }
             .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
             .toolbar {
@@ -2614,7 +2614,7 @@ struct TodayMissionView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             if isContinuityExpanded {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
                     Label("Portable proof", systemImage: "doc.on.doc.fill")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -2819,7 +2819,7 @@ private extension TodayMissionView {
     }
 
     func scanRow(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Layout.chipVerticalPadding) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
