@@ -12,6 +12,26 @@ struct ProgressView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var isPackLibraryExpanded = false
 
+    private enum Layout {
+        static let cardCornerRadius: CGFloat = 18
+        static let innerCardCornerRadius: CGFloat = 16
+        static let editorCornerRadius: CGFloat = 14
+        static let chipCornerRadius: CGFloat = 10
+        static let cornerRadius20: CGFloat = 20
+        static let cardPadding: CGFloat = 12
+        static let heroPadding: CGFloat = 16
+        static let mediumChipHorizontalPadding: CGFloat = 12
+        static let mediumChipVerticalPadding: CGFloat = 8
+        static let smallChipHorizontalPadding: CGFloat = 10
+        static let smallChipVerticalPadding: CGFloat = 6
+        static let tightChipHorizontalPadding: CGFloat = 8
+        static let tightChipVerticalPadding: CGFloat = 4
+        static let gridSpacing: CGFloat = 12
+        static let sectionSpacing: CGFloat = 16
+        static let cardSpacing: CGFloat = 12
+        static let subSpacing: CGFloat = 6
+    }
+
     // MARK: - Layout (size class + computed metrics)
 
     private var activePackCount: Int {
@@ -291,7 +311,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -536,7 +556,7 @@ struct ProgressView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .overlay(
@@ -643,7 +663,7 @@ struct ProgressView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -689,7 +709,7 @@ struct ProgressView: View {
                     .foregroundStyle(KatieColors.mint)
             }
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -712,7 +732,7 @@ struct ProgressView: View {
             analyticsPointRowTrack(title: "Pace", value: point.paceScore, accent: KatieColors.mint)
             analyticsPointRowTrack(title: "Confidence", value: point.confidenceScore, accent: KatieColors.blush)
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -1152,7 +1172,7 @@ struct ProgressView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
             }
-            .padding(12)
+            .padding(Layout.cardPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -1286,7 +1306,7 @@ struct ProgressView: View {
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -2146,7 +2166,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(accent.opacity(0.12))
         .overlay(
@@ -2213,7 +2233,7 @@ struct ProgressView: View {
             .foregroundStyle(.black)
             .clipShape(Capsule())
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -2333,7 +2353,7 @@ struct ProgressView: View {
             compareScoreTrack(label: "Before", score: earlier, fill: KatieColors.cardBackground.opacity(0.9))
             compareScoreTrack(label: "Now", score: latest, fill: accent)
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -2538,7 +2558,7 @@ struct ProgressView: View {
             .foregroundStyle(.black)
             .clipShape(Capsule())
         }
-        .padding(12)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
