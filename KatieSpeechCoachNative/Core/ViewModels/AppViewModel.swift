@@ -116,8 +116,7 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
     @Published private(set) var recordingState = RecordingState()
     @Published private(set) var reflectionState = ReflectionState()
-    @Published var isPremiumPreviewPresented = false
-    @Published var isReviewPresented = false
+    @Published private(set) var modalState = ModalState()
     @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
     @Published private(set) var pocketCopyStatusLine: String?
     @Published private(set) var practiceReturnCue: PracticeReturnCue?
@@ -136,6 +135,7 @@ final class AppViewModel: ObservableObject {
     private var scenarioStateCancellable: AnyCancellable?
     private var recordingStateCancellable: AnyCancellable?
     private var reflectionStateCancellable: AnyCancellable?
+    private var modalStateCancellable: AnyCancellable?
     private let appSessionState = AppSessionState()
 
     @Published var fillerWordCount: Int = 0
@@ -169,6 +169,7 @@ final class AppViewModel: ObservableObject {
         bindScenarioStateChanges()
         bindRecordingStateChanges()
         bindReflectionStateChanges()
+        bindModalStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -233,6 +234,24 @@ final class AppViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+    }
+
+    private func bindModalStateChanges() {
+        modalStateCancellable?.cancel()
+        modalStateCancellable = modalState.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+    }
+
+    var isPremiumPreviewPresented: Bool {
+        get { modalState.isPremiumPreviewPresented }
+        set { modalState.isPremiumPreviewPresented = newValue }
+    }
+
+    var isReviewPresented: Bool {
+        get { modalState.isReviewPresented }
+        set { modalState.isReviewPresented = newValue }
     }
 
     var draftTranscript: String {
