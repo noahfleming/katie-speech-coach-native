@@ -2850,7 +2850,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func dismissPracticeReturnCue() {
-        practiceReturnCue = nil
+        premiumState.dismissPracticeReturnCue()
     }
 
     var draftSelfReflection: SessionSelfReflection {

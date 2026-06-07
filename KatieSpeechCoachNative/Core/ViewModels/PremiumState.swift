@@ -80,4 +80,9 @@ final class PremiumState: ObservableObject, Codable {
     func unlockPreview() {
         premiumAccessState = .preview
     }
+
+    /// Clear the practice "come back" cue (e.g. after the user dismisses it).
+    func dismissPracticeReturnCue() {
+        practiceReturnCue = nil
+    }
 }
