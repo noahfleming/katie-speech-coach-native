@@ -113,7 +113,22 @@ struct ReviewRetakeView: View {
             .padding(16)
             .katieContentFrame(maxWidth: 820)
         }
-        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .overlay {
+                ZStack {
+                    RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
+                    KatieAuroraBackground(accent: KatieColors.mint, secondary: KatieColors.plum)
+                        .opacity(0.50)
+                    KatieFloatingParticles()
+                }
+            }
+            .ignoresSafeArea()
+        )
     }
 
     @ViewBuilder
