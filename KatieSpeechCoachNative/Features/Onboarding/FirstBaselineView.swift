@@ -73,12 +73,17 @@ struct FirstBaselineView: View {
                 endPoint: .bottomTrailing
             )
             .overlay {
-                RadialGradient(
-                    colors: [KatieColors.appBackgroundGlow, .clear],
-                    center: .topLeading,
-                    startRadius: 8,
-                    endRadius: 420
-                )
+                ZStack {
+                    RadialGradient(
+                        colors: [KatieColors.appBackgroundGlow, .clear],
+                        center: .topLeading,
+                        startRadius: 8,
+                        endRadius: 420
+                    )
+                    KatieAuroraBackground(accent: KatieColors.accent, secondary: KatieColors.mint)
+                        .opacity(0.60)
+                    KatieFloatingParticles()
+                }
             }
             .ignoresSafeArea()
         )

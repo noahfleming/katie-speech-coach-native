@@ -285,8 +285,23 @@ struct PracticeRecordView: View {
                 .katieCard()
 
                 VStack(alignment: .leading, spacing: Layout.regularSectionSpacing) {
-                    Text("Recording")
-                        .font(.headline)
+                    HStack(alignment: .center, spacing: Layout.inlineSpacing) {
+                        Text("Recording")
+                            .font(.headline)
+                        Spacer(minLength: 0)
+                        // KAT-206: compact waveform in the section header when live
+                        if appViewModel.isRecording {
+                            KatieRecordingWaveform(
+                                isActive: true,
+                                barCount: 12,
+                                accent: KatieColors.mint,
+                                secondary: KatieColors.accent
+                            )
+                            .frame(width: 72, height: 18)
+                            .transition(.opacity)
+                        }
+                    }
+                    .animation(KatieMotion.quick, value: appViewModel.isRecording)
                     Text(appViewModel.isRecording ? "Live prep mode: follow the steps, then save one calm rep" : appViewModel.recorderStatusLine)
                         .foregroundStyle(KatieColors.textSecondary)
 
@@ -441,7 +456,23 @@ struct PracticeRecordView: View {
             .padding(.bottom, isCompactPhoneLayout ? Layout.compactBottomPadding : Layout.regularBottomPadding)
             .katieContentFrame(maxWidth: isCompactPhoneLayout ? Layout.contentMaxWidthCompact : Layout.contentMaxWidthRegular)
         }
-        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .overlay {
+                ZStack {
+                    RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
+                    KatieAuroraBackground(accent: KatieColors.accent, secondary: KatieColors.plum)
+                        .opacity(appViewModel.isRecording ? 0.75 : 0.45)
+                        .animation(KatieMotion.slow, value: appViewModel.isRecording)
+                    KatieFloatingParticles()
+                }
+            }
+            .ignoresSafeArea()
+        )
     }
     }
     }
@@ -497,6 +528,18 @@ struct PracticeRecordView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
 
+            // KAT-206: live waveform visualisation while recording is active
+            if appViewModel.isRecording {
+                KatieRecordingWaveform(
+                    isActive: true,
+                    barCount: 22,
+                    accent: KatieColors.mint,
+                    secondary: KatieColors.gold
+                )
+                .frame(height: 28)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
             Text(appViewModel.scratchCaptureTruthBody)
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
@@ -510,6 +553,7 @@ struct PracticeRecordView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
         .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
+        .animation(KatieMotion.quick, value: appViewModel.isRecording)
     }
 
     private var quickRepCard: some View {

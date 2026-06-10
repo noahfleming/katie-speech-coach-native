@@ -709,7 +709,22 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
             }
             .padding(16)
             .katieContentFrame(maxWidth: 1040)
-        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .overlay {
+                ZStack {
+                    RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
+                    KatieAuroraBackground(accent: KatieColors.plum, secondary: KatieColors.mint)
+                        .opacity(0.45)
+                    KatieFloatingParticles()
+                }
+            }
+            .ignoresSafeArea()
+        )
         .confirmationDialog("Delete all local Katie history from this iPhone?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete all local data", role: .destructive) {
                 appViewModel.deleteAllOnDeviceData()
