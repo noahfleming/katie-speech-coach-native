@@ -82,12 +82,17 @@ struct OnboardingView: View {
             endPoint: .bottomTrailing
         )
         .overlay {
-            RadialGradient(
-                colors: [KatieColors.appBackgroundGlow, KatieColors.appBackgroundGlowSecondary, .clear],
-                center: .topLeading,
-                startRadius: 8,
-                endRadius: 520
-            )
+            ZStack {
+                RadialGradient(
+                    colors: [KatieColors.appBackgroundGlow, KatieColors.appBackgroundGlowSecondary, .clear],
+                    center: .topLeading,
+                    startRadius: 8,
+                    endRadius: 520
+                )
+                KatieAuroraBackground(accent: KatieColors.accent, secondary: KatieColors.plum)
+                    .opacity(0.65)
+                KatieFloatingParticles()
+            }
         }
         .ignoresSafeArea()
     }

@@ -160,6 +160,7 @@ struct ProgressView: View {
                 }
 
                 progressBoardCard
+                progressRingsRow
 
                 switch progressStage {
                 case .starter:
@@ -173,7 +174,57 @@ struct ProgressView: View {
             .padding(Layout.heroPadding)
             .katieContentFrame(maxWidth: 840)
         }
-        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
+        .background(
+            LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .overlay {
+                    ZStack {
+                        RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
+                        KatieFloatingParticles()
+                    }
+                }
+                .ignoresSafeArea()
+        )
+    }
+
+    private var progressRingsRow: some View {
+        HStack(spacing: 0) {
+            Spacer(minLength: 0)
+            progressRingCell(
+                progress: min(1.0, Double(activePackCount) / 5.0),
+                label: "\(activePackCount)",
+                title: "Active\npacks",
+                accent: KatieColors.mint
+            )
+            Spacer(minLength: 0)
+            progressRingCell(
+                progress: activePackCount > 0
+                    ? min(1.0, Double(compareReadyCount) / Double(activePackCount))
+                    : 0,
+                label: "\(compareReadyCount)",
+                title: "Compare\nready",
+                accent: KatieColors.gold
+            )
+            Spacer(minLength: 0)
+            progressRingCell(
+                progress: min(1.0, Double(replayReadyCount) / 10.0),
+                label: "\(replayReadyCount)",
+                title: "Replay\nclips",
+                accent: KatieColors.accent
+            )
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, KatieSpacing.xl)
+        .katieCard()
+    }
+
+    private func progressRingCell(progress: Double, label: String, title: String, accent: Color) -> some View {
+        VStack(spacing: KatieSpacing.base) {
+            KatieProgressRing(progress: progress, size: 68, lineWidth: 5, accent: accent, label: label)
+            Text(title)
+                .font(KatieType.label)
+                .foregroundStyle(KatieColors.textSecondary)
+                .multilineTextAlignment(.center)
+        }
     }
 
     @ViewBuilder

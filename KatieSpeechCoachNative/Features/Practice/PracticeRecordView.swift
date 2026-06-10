@@ -884,6 +884,14 @@ struct PracticeRecordView: View {
             RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
                 .fill(KatieColors.cardSecondary)
 
+            KatieRecordingWaveform(
+                isActive: appViewModel.isRecording,
+                accent: KatieColors.mint,
+                secondary: KatieColors.gold
+            )
+            .padding(.horizontal, 16)
+            .allowsHitTesting(false)
+
             VStack(spacing: KatieSpacing.xs) {
                 Text(appViewModel.isRecording ? "Release to stop and keep this local clip" : "Press and hold for a quick rep")
                     .font(.subheadline.weight(.semibold))
