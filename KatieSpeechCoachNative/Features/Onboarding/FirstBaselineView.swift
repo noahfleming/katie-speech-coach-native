@@ -207,7 +207,7 @@ struct FirstBaselineView: View {
 
     private var firstBaselineContractPanel: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("What changes after the first honest save")
+            Text("What changes after your first recording")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
@@ -420,7 +420,7 @@ struct FirstBaselineView: View {
                 .font(.title3.weight(.bold))
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("One clear save is enough to turn Katie from demo mode into your own proof trail, with a believable next action on both iPhone and iPad.")
+            Text("One clear recording is enough to turn Katie from example mode into your own recordings, with a clear next step on both iPhone and iPad.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -445,7 +445,7 @@ struct FirstBaselineView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary.opacity(0.42), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-            Text("Prototype note: once your first personal sample is saved, starter proof becomes the reference, not the headline.")
+            Text("Once you record your own, the example recordings become a reference, not the headline.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
         }
@@ -485,7 +485,7 @@ struct FirstBaselineView: View {
         VStack(alignment: .leading, spacing: usesWideBaselineLayout ? 12 : 16) {
             KatieSectionEyebrow(title: "Trust contract", systemImage: "list.bullet.clipboard.fill", accent: KatieColors.gold)
 
-            Text("Katie should make the first save feel safe, specific, and worth doing now")
+            Text("Your first recording should feel safe, specific, and worth doing now")
                 .font(.title3.weight(.bold))
                 .foregroundStyle(KatieColors.textPrimary)
 

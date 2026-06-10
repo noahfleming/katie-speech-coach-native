@@ -65,7 +65,7 @@ struct CoachTrustView: View {
         KatieGlanceBoard(
             eyebrow: "Trust frame",
             title: "Keep the coaching context visible before you tweak it",
-            detail: "Katie stays local-first, pack-aware, and explicit about reminder ownership so the settings surface still feels clinician-safe instead of slippery.",
+            detail: "Your recordings stay on your phone, Katie knows which pack you're in, and it's clear which pack owns your reminders.",
             systemImage: "checkmark.shield.fill",
             accent: KatieColors.mint,
             secondary: KatieColors.gold,
@@ -484,7 +484,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     Text("Quick rep")
                         .font(.headline)
-                    Text("Need a low-friction start? Pick one short rep and see exactly how the next save changes proof, compare, and reminders.")
+                    Text("Want an easy start? Pick one short rep and see exactly how your next recording changes your recordings, compare, and reminders.")
                         .foregroundStyle(KatieColors.textSecondary)
 
                     if usesWideQuickRepGrid {
@@ -543,7 +543,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     Text("What stays on this iPhone")
                         .font(.headline)
-                    Text("This native scaffold is local-first for audio and compare memory on this device. If synced storage arrives later, export, deletion, and retention controls should become visible product surfaces — not hidden settings.")
+                    Text("Your recordings and compare history stay on your phone. If cloud sync is ever added, you'll get clear controls to export, delete, and manage how long things are kept.")
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 

@@ -1402,14 +1402,14 @@ final class AppViewModel: ObservableObject {
         let freshness = freshnessLabel(for: latestSession).lowercased()
 
         if activeScenarioUserRepCount <= 0 {
-            return "Katie is still showing the starter example here. Save your first rep and this review block will switch to your own \(freshness) proof."
+            return "Katie is still showing the starter example here. Save your first rep and this will switch to your own \(freshness) recording."
         }
 
         if activeScenarioUserRepCount == 1 {
             return "Your \(freshness) proof is ready to replay against the next rep. Review it now, then return on \(recommendedPracticeStepLabel.lowercased()) to sharpen the next save."
         }
 
-        return "Your \(freshness) compare is ready. Review the latest delta, then keep practicing on \(recommendedPracticeStepLabel.lowercased()) so the next retake stays focused."
+        return "Your \(freshness) compare is ready. Review what changed, then keep practicing on \(recommendedPracticeStepLabel.lowercased()) so the next retake stays focused."
     }
 
     var starterProofStatusLine: String {
@@ -1584,7 +1584,7 @@ final class AppViewModel: ObservableObject {
         if !userOwnedHistory.isEmpty {
             return KatieContinuityStrip(
                 title: "Transcript-first for now",
-                message: "This pack already has your own saved proof, but replay is not attached on this iPhone yet. Katie keeps the transcript trail visible instead of pretending audio is here.\(continuityReminderLine(for: scenario, userOwnedCount: userOwnedCount)) Next move: \(nextMove)",
+                message: "This pack already has your own saved rep, but replay is not attached on this iPhone yet. Your notes stay visible, but there's no audio here.\(continuityReminderLine(for: scenario, userOwnedCount: userOwnedCount)) Next move: \(nextMove)",
                 systemImage: "text.quote",
                 accent: .accent
             )
@@ -1749,7 +1749,7 @@ final class AppViewModel: ObservableObject {
         case .denied:
             return AudioCaptureLane(
                 title: "Text-only fallback stays honest",
-                detail: "Microphone access is off, so Katie keeps the transcript path visible without pretending replay exists on this device.",
+                detail: "Microphone access is off, so Katie keeps the transcript path visible. There's no audio to replay on this device.",
                 systemImage: "mic.slash.fill",
                 actionTitle: "Use text-only proof"
             )
@@ -2056,7 +2056,7 @@ final class AppViewModel: ObservableObject {
             if session.captureSource == .seeded {
                 return "This is starter continuity from the prototype. Katie keeps the compare trail visible, but this iPhone does not currently have the bundled audio attached for playback."
             }
-            return "This rep carries replay metadata, but the local audio file is not attached on this iPhone right now. Katie keeps the compare trail visible without pretending playback still works."
+            return "This rep carries replay metadata, but the local audio file is not attached on this iPhone right now. Your notes stay visible, but playback isn't available."
         }
         return displayCompareReadiness(for: session).detail
     }
@@ -2206,7 +2206,7 @@ final class AppViewModel: ObservableObject {
             }
             return "Notifications are allowed. Turn on a reminder when this pack earns one."
         case .denied:
-            return "Notifications are blocked, so Katie keeps the reminder plan visible here without pretending the nudge will fire."
+            return "Notifications are blocked, so Katie keeps the reminder plan visible here, but the nudge won't fire."
         }
     }
 
@@ -2221,7 +2221,7 @@ final class AppViewModel: ObservableObject {
         case .granted:
             return "Microphone access is available for replay-ready retakes on this iPhone."
         case .denied:
-            return "Microphone access is blocked, so Katie can still save text-only retakes without pretending replay exists."
+            return "Microphone access is blocked, so Katie saves text-only retakes. There's no audio to replay."
         }
     }
 
@@ -2518,7 +2518,7 @@ final class AppViewModel: ObservableObject {
             recorderStatusLine = "Pocket copy restored as transcript-first continuity. Replay will return only after you record fresh audio on this iPhone."
             KatieHaptic.success.play()
         } catch {
-            pocketCopyStatusLine = "Katie couldn’t restore that pocket copy. Use a Katie export JSON so continuity comes back without pretending audio survived the move."
+            pocketCopyStatusLine = "Katie couldn’t restore that pocket copy. Use a Katie export JSON to bring your notes back. Audio doesn't survive the move."
             KatieHaptic.warning.play()
         }
     }
@@ -2580,7 +2580,7 @@ final class AppViewModel: ObservableObject {
             case .fallbackPreview:
                 premiumRestoreMessage = PremiumRestoreMessage(
                     title: "Katie Plus is not purchasable on this build yet",
-                    body: "StoreKit still could not load a live Katie Plus product, so Katie stayed honest about preview-mode fallback instead of pretending purchase succeeded.",
+                    body: "Katie Plus still couldn't load from the App Store, so you're in preview mode for now. Nothing was charged.",
                     tone: .warning
                 )
             }
@@ -2879,7 +2879,7 @@ final class AppViewModel: ObservableObject {
             currentlyPlayingSessionID = session.id
             recorderStatusLine = "Playing \(session.title.lowercased())."
         } catch {
-            recorderStatusLine = "Playback failed. Katie kept the compare note instead of pretending replay exists."
+            recorderStatusLine = "Playback failed. Katie kept your compare note, but there's no audio to replay."
             currentlyPlayingSessionID = nil
         }
     }
@@ -2956,7 +2956,7 @@ final class AppViewModel: ObservableObject {
         Task {
             let permissionGranted = await requestMicrophoneAccessIfNeeded()
             guard permissionGranted else {
-                recorderStatusLine = "Microphone access is blocked. Katie keeps the text-only fallback visible instead of pretending replay will save."
+                recorderStatusLine = "Microphone access is blocked. Katie keeps the text-only fallback visible, but there's no audio to save."
                 KatieHaptic.warning.play()
                 return
             }

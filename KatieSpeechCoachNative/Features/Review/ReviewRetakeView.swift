@@ -61,7 +61,7 @@ struct ReviewRetakeView: View {
         KatieGlanceBoard(
             eyebrow: "Retake board",
             title: "One benchmark, one latest rep, one calmer next move",
-            detail: "This keeps Review readable on iPhone, roomy on iPad, and honest about compare state before the deeper evidence stack opens.",
+            detail: "One saved rep stays in focus, and you can see right away whether there is enough to compare before you open the detail below.",
             systemImage: "arrow.triangle.2.circlepath.circle.fill",
             accent: KatieColors.mint,
             secondary: KatieColors.accent,
@@ -321,7 +321,7 @@ struct ReviewRetakeView: View {
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("Step stability, transcript shifts, listener scores, and transfer coaching stay tucked away until you want the fuller readback.")
+                    Text("Step stability, transcript shifts, listener scores, and what tends to carry over stay tucked away until you want the fuller readback.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -478,7 +478,7 @@ struct ReviewRetakeView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Three listener signals stay visible at a glance, so the compare reads like progress instead of a wall of notes.")
+            Text("Three listener signals stay visible at a glance, so you can see your progress without digging through a wall of notes.")
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -761,7 +761,7 @@ struct ReviewRetakeView: View {
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("A better retake should sound more answerable, not more dramatic. Katie keeps the compare honest by protecting the observed pattern and one concrete ask.")
+            Text("A better retake should sound easier to answer, not more dramatic. Katie keeps the compare honest by saving what you noticed and one concrete ask.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
@@ -1006,8 +1006,8 @@ struct ReviewRetakeView: View {
 
         if gained > 0 {
             return gained == 1
-                ? "The latest retake unlocked one more scenario beat, so Katie can show exactly where the pack moved forward."
-                : "The latest retake unlocked \(gained) more scenario beats, so the progress ladder shows where the pack genuinely advanced."
+                ? "The latest retake unlocked one more step, so Katie can show exactly where the pack moved forward."
+                : "The latest retake unlocked \(gained) more steps, so the progress list shows where the pack genuinely advanced."
         }
 
         if latest.unlockedStepCount == anchor.unlockedStepCount {
@@ -1564,7 +1564,7 @@ struct ReviewRetakeView: View {
                             }
                         }
 
-                        Text("Adjust the reminder from Review so the next nudge lands in the exact real-world moment this rep needs.")
+                        Text("Adjust the reminder from Review so the next nudge arrives right when you need this rep.")
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
                     }
@@ -1968,7 +1968,7 @@ struct ReviewRetakeView: View {
             case (true, false):
                 return "Save one calmer latest rep on this iPhone to restore the missing replay side without breaking the compare trail."
             case (false, true):
-                return "Save another local retake so Review can keep the audible before/after ritual instead of only the newer side."
+                return "Save another local retake so Review can keep hearing the before and after instead of only the newer side."
             case (false, false):
                 return "One fresh local retake starts rebuilding replay for this compare while the transcript trail stays honest."
             case (true, true):
@@ -2099,7 +2099,7 @@ struct ReviewRetakeView: View {
             return (
                 sourceTitle,
                 readiness.title,
-                "This compare side came over as imported continuity. Katie kept the proof trail visible, but replay still needs a fresh local recording on this iPhone.",
+                "This compare side came over as imported clips. Katie kept your recordings visible, but replay still needs a fresh local recording on this iPhone.",
                 "Record replacement clip"
             )
         case .missingAudio:
@@ -2239,7 +2239,7 @@ struct ReviewRetakeView: View {
         case (true, false):
             return "The earlier proof can replay now. Record one fresh retake on this iPhone to restore a full A/B listening loop."
         case (false, true):
-            return "The latest retake can replay now. Restore the older proof locally if you want the full before/after listening ritual back."
+            return "The latest retake can replay now. Restore the older recording locally if you want to hear the full before and after again."
         case (false, false):
             return "Replay is missing for both sides on this iPhone, so Katie keeps the compare trail visible and sends you back to Practice only when you want to rebuild it."
         }

@@ -84,7 +84,7 @@ struct TodayMissionView: View {
             KatieGlanceMetric(
                 title: "Reminder owner",
                 value: appViewModel.reminderPlan?.scenario.packTitle ?? "Open lane",
-                detail: appViewModel.reminderPlan.map { "\($0.fireDate.formatted(date: .omitted, time: .shortened)) on \(reminderSurfaceLabel)." } ?? "Save one real line, then Katie can protect it next.",
+                detail: appViewModel.reminderPlan.map { "\($0.fireDate.formatted(date: .omitted, time: .shortened)) on \(reminderSurfaceLabel)." } ?? "Save one real line, then Katie can set a reminder for it next.",
                 accent: KatieColors.mint
             ),
             KatieGlanceMetric(
@@ -101,13 +101,13 @@ struct TodayMissionView: View {
     private var todayBoardCard: some View {
         KatieGlanceBoard(
             eyebrow: "Today board",
-            title: "Keep one clear line alive",
+            title: "Practice one line until it feels natural",
             detail: "Katie keeps \(appViewModel.currentMission.packTitle) in focus, makes reminder ownership obvious, and keeps the next move glanceable on \(reminderSurfaceLabel).",
             systemImage: "sun.max.fill",
             accent: KatieColors.gold,
             secondary: KatieColors.mint,
             metrics: todayBoardMetrics,
-            footnote: "Next grounded move · \(appViewModel.currentPackNextStepLabel)"
+            footnote: "Next step · \(appViewModel.currentPackNextStepLabel)"
         )
         .katieHeroAura(accent: KatieColors.gold, secondary: KatieColors.mint)
     }
@@ -128,7 +128,7 @@ struct TodayMissionView: View {
                             Text("Today")
                                 .font(isCompactPhoneLayout ? .title.bold() : .largeTitle.bold())
                                 .foregroundStyle(KatieColors.textPrimary)
-                            Text("One calm rep at a time")
+                            Text("One rep at a time")
                                 .font(.footnote)
                                 .foregroundStyle(KatieColors.textSecondary)
                         }
@@ -405,7 +405,7 @@ struct TodayMissionView: View {
                     Text("First benchmark saved")
                         .modifier(KatieCapsuleLabelStyle())
 
-                    Text("Your saved proof is the anchor now")
+                    Text("Your saved rep is the one to beat now")
                         .modifier(KatieCapsuleLabelStyle())
 
                     Text("One more save unlocks compare")
@@ -796,7 +796,7 @@ struct TodayMissionView: View {
         let activeReminder = appViewModel.reminderPlan?.scenario == appViewModel.currentMission
         let activeQueueCount = appViewModel.todayQueue.count
         let focusLabel = activeReminder
-            ? "Reminder protecting \(appViewModel.currentMission.packTitle)"
+            ? "Reminder set for \(appViewModel.currentMission.packTitle)"
             : "\(appViewModel.currentMission.packTitle) in focus"
 
         return VStack(alignment: .leading, spacing: Layout.heroSpacing) {
@@ -2329,7 +2329,7 @@ struct TodayMissionView: View {
 
             Divider().overlay(.white.opacity(0.08))
 
-            Text("Next grounded move")
+            Text("Next step")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
             Text(appViewModel.currentPackNextStepLabel)
@@ -2730,7 +2730,7 @@ struct TodayMissionView: View {
                         }
                     }
 
-                    Text("Move the nudge to the exact conversation window you want to protect on \(reminderSurfaceLabel).")
+                    Text("Set the reminder for the exact conversation window you want it to cover on \(reminderSurfaceLabel).")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -2785,14 +2785,14 @@ private extension TodayMissionView {
 
     var todayReminderOwnerDetail: String {
         guard let reminderPlan = appViewModel.reminderPlan else {
-            return "Today stays centered on this pack until you decide a saved line is worth protecting with a reminder."
+            return "Today stays centered on this pack until you decide a saved line is worth a reminder."
         }
 
         if reminderPlan.scenario == appViewModel.currentMission {
-            return "Today and the next nudge are protecting the same pack, so the live handoff stays grounded on one saved line."
+            return "Today and the next nudge are set for the same pack, so the live handoff stays on one saved line."
         }
 
-        return "Today stays on \(appViewModel.currentMission.packTitle), but the next nudge is currently protecting \(reminderPlan.scenario.packTitle). Move it here only when this is the line you want back next."
+        return "Today stays on \(appViewModel.currentMission.packTitle), but the next nudge is currently set for \(reminderPlan.scenario.packTitle). Move it here only when this is the line you want back next."
     }
 
     var todayReminderOwnerSystemImage: String {
@@ -2970,7 +2970,7 @@ private extension TodayMissionView {
 
         return featured.latestSession.captureSource == .seeded
             ? "Starter proof stays transcript-first here"
-            : "Replay needs a fresh local clip"
+            : "Replay needs a fresh recording"
     }
 
     func featuredWinReplayTruthSystemImage(for featured: FeaturedWin) -> String {

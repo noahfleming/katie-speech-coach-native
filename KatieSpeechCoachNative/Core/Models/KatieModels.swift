@@ -10,7 +10,7 @@ enum SessionCaptureSource: String, Codable {
     var title: String {
         switch self {
         case .seeded: return "Starter sample"
-        case .recorded: return "Fresh on this iPhone"
+        case .recorded: return "Recorded here"
         case .imported: return "Carried over"
         case .syntheticRetake: return "Text-only fallback"
         }
@@ -20,8 +20,8 @@ enum SessionCaptureSource: String, Codable {
         switch self {
         case .seeded: return "Just enough to show the compare flow before your own clips show up."
         case .recorded: return "Saved locally on this iPhone."
-        case .imported: return "The coaching trail came over, but replay did not."
-        case .syntheticRetake: return "Text only, so progress stays honest when you skip audio."
+        case .imported: return "Your coaching notes came over, but replay did not."
+        case .syntheticRetake: return "Text only, so your progress still counts when you skip audio."
         }
     }
 
@@ -437,7 +437,7 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
         case .interviewIntro:
             return "Keep your best short intro warm for the next high-stakes room."
         case .weeklyUpdate:
-            return "Protect the clearest version of your decision update so the next meeting starts cleaner."
+            return "Save the clearest version of your decision update so the next meeting starts cleaner."
         case .managerOneOnOne:
             return "Hold onto the version that names the pattern and lands a specific ask."
         case .presentationOpening:
@@ -466,7 +466,7 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .interviewIntro:
             return [
-                "Start with the role and context fast so the listener is not still guessing who you are.",
+                "Start with your role and context fast so the listener isn't still guessing who you are.",
                 "Give one concrete strength beat that sounds observed, not like a list of traits.",
                 "Close with why this role fits now, and stop before the ending turns into extra explanation."
             ]
@@ -480,7 +480,7 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
             return [
                 "Lead with the pattern your manager should notice so the conversation does not start in the weeds.",
                 "Describe the friction in concrete language that sounds observed, not self-critical or diagnostic.",
-                "Finish with one specific ask or experiment so the 1:1 ends with a next move instead of a vague vent."
+                "Finish with one specific ask or experiment so the 1:1 ends with a next move."
             ]
         case .presentationOpening:
             return [
@@ -502,9 +502,9 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
         case .interviewIntro:
             return "Protect your first benchmark, then keep one cleaner version ready for live conversations."
         case .weeklyUpdate:
-            return "Keep one short decision benchmark that makes your clearest meeting version easy to revisit before real conversations."
+            return "Keep one short decision benchmark you can revisit before real conversations."
         case .managerOneOnOne:
-            return "Keep one honest 1:1 benchmark that names the friction and lands one concrete ask before the conversation gets muddy."
+            return "Keep one clear 1:1 benchmark that names the friction and lands one concrete ask before the conversation gets muddy."
         case .presentationOpening:
             return "Keep one steady opener you can reuse before higher-stakes walkthroughs and demos."
         case .customerRepair:
@@ -535,9 +535,9 @@ enum CompareReadiness: String, Codable {
         case .transcriptOnly:
             return "The wording and coaching survive, but the original audio is not attached here."
         case .transferredWithoutAudio:
-            return "The handoff kept your compare story honest, but audio still needs to be re-recorded on this device."
+            return "Your notes came over, but the audio still needs to be re-recorded on this device."
         case .missingAudio:
-            return "Katie still shows the coaching trail instead of pretending playback exists."
+            return "Your coaching notes are still here, but there's no audio to play back."
         }
     }
 
@@ -607,11 +607,11 @@ enum CommunicationEnvironment: String, Codable, CaseIterable, Identifiable {
 
     var detail: String {
         switch self {
-        case .oneOnOne: return "Optimize for quick context, steady pacing, and easier back-and-forth repair."
-        case .teamMeeting: return "Optimize for status clarity so the headline, blocker, and ask land on the first listen."
-        case .presentationRoom: return "Optimize for room-level clarity, cleaner emphasis, and strong sentence endings."
-        case .customerCall: return "Optimize for warmth under pressure and fast repair when trust matters."
-        case .hybridRoom: return "Optimize for remote + in-room listeners who can miss soft endings and rushed transitions."
+        case .oneOnOne: return "Tuned for quick context, steady pacing, and easier back-and-forth repair."
+        case .teamMeeting: return "Tuned for status clarity so the headline, blocker, and ask land on the first listen."
+        case .presentationRoom: return "Tuned for room-level clarity, cleaner emphasis, and strong sentence endings."
+        case .customerCall: return "Tuned for warmth under pressure and fast repair when trust matters."
+        case .hybridRoom: return "Tuned for remote and in-room listeners who can miss soft endings and rushed transitions."
         }
     }
 }

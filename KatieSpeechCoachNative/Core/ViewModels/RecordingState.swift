@@ -133,15 +133,15 @@ final class RecordingState: ObservableObject, Codable {
     /// (caller supplies the predicate to keep this VM file-URL-free).
     func replayTruthLine(hasSavedReplay: Bool, savedReplayFreshnessLabel: String?) -> String {
         if isRecording {
-            return "Local audio is recording on this iPhone now. Release and save when you want replay-ready proof."
+            return "Local audio is recording on this iPhone now. Release and save when you want a replay-ready recording."
         }
         if hasScratchRecording, let latestScratchRecordingDuration {
             return "A \(Int(latestScratchRecordingDuration.rounded())) second scratch clip is waiting on this iPhone. Save it to keep replay attached in Review and Progress."
         }
         if hasSavedReplay, let label = savedReplayFreshnessLabel {
-            return "Your latest saved proof can replay here from \(label.lowercased()), but this draft still needs a fresh local clip if you want the next compare to stay listenable."
+            return "Your latest saved recording can replay here from \(label.lowercased()), but this draft still needs a fresh local clip if you want the next compare to stay listenable."
         }
-        return "No fresh local clip is attached to this draft yet. Katie keeps the transcript path visible instead of implying replay exists."
+        return "No fresh local clip is attached to this draft yet. Katie keeps the transcript path visible, but there's no audio to replay."
     }
 
     /// Honesty line about whether saving will attach replay or stay text-only.

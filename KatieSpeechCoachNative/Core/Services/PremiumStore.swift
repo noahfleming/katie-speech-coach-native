@@ -34,7 +34,7 @@ extension PremiumStoreStatus {
     var ctaTitle: String {
         switch self {
         case .idle, .loadingProducts:
-            return "Checking Katie Plus"
+            return "Checking availability…"
         case .ready(let priceLabel):
             return "Continue with Katie Plus · \(priceLabel)"
         case .purchasing:
@@ -53,17 +53,17 @@ extension PremiumStoreStatus {
     var detailLine: String {
         switch self {
         case .idle:
-            return "Katie is checking whether a real App Store entitlement is available on this build."
+            return "Checking with the App Store…"
         case .loadingProducts:
-            return "Loading Katie Plus from StoreKit so the premium layer can stop pretending a local toggle is a purchase."
+            return "Loading Katie Plus from the App Store…"
         case .ready(let priceLabel):
-            return "StoreKit is ready. Katie Plus can use a real entitlement at \(priceLabel)."
+            return "Katie Plus is ready at \(priceLabel)."
         case .purchasing:
             return "Completing the App Store purchase now."
         case .restoring:
-            return "Checking the App Store for an existing Katie Plus entitlement on this iPhone."
+            return "Checking the App Store for an existing Katie Plus purchase."
         case .pendingApproval:
-            return "The App Store accepted the request, but the entitlement is still pending."
+            return "The App Store accepted the request, but it's still pending."
         case .unavailable(let reason):
             return reason
         case .failed(let message):
@@ -130,11 +130,11 @@ final class PremiumStore: ObservableObject {
                 status = .ready(priceLabel: first.displayPrice)
             } else {
                 product = nil
-                status = .unavailable(reason: "Katie Plus is not configured in App Store Connect for this build yet, so the app stays explicit about preview mode.")
+                status = .unavailable(reason: "Katie Plus isn't available to buy just yet. You can keep exploring in preview mode.")
             }
         } catch {
             product = nil
-            status = .failed(message: "Katie could not reach StoreKit right now, so premium stays in preview mode instead of pretending purchase succeeded.")
+            status = .failed(message: "We couldn't reach the App Store right now. Try again in a moment.")
         }
     }
 
@@ -163,7 +163,7 @@ final class PremiumStore: ObservableObject {
             await refreshProductsIfNeeded(force: false)
             return .userCancelled
         @unknown default:
-            status = .failed(message: "Katie hit an unknown StoreKit state and kept premium locked instead of guessing.")
+            status = .failed(message: "Something went wrong with the purchase. Nothing was charged — please try again.")
             return .userCancelled
         }
     }
@@ -179,10 +179,10 @@ final class PremiumStore: ObservableObject {
             let message: String
             if let product {
                 status = .ready(priceLabel: product.displayPrice)
-                message = "Katie could not restore purchases from the App Store right now, so premium stayed explicit instead of claiming access."
+                message = "We couldn't restore your purchases right now. Check your connection and try again."
             } else {
-                status = .failed(message: "Katie could not restore purchases from the App Store right now, so premium stayed explicit instead of claiming access.")
-                message = "Katie could not restore purchases from the App Store right now, so premium stayed explicit instead of claiming access."
+                status = .failed(message: "We couldn't restore your purchases right now. Check your connection and try again.")
+                message = "We couldn't restore your purchases right now. Check your connection and try again."
             }
             return .failed(message: message)
         }

@@ -114,12 +114,12 @@ struct OnboardingView: View {
                         .font(isWideLayout ? .system(size: 44, weight: .bold, design: .rounded) : .largeTitle.bold())
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("An SLP-informed speaking coach for clearer work moments.")
+                    Text("A speaking coach, built with speech therapists, for clearer work moments.")
                         .font(isWideLayout ? .title3.weight(.semibold) : .headline)
                         .foregroundStyle(KatieColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("Work speaking · local-first · trust-forward")
+                    Text("Practice work conversations · your recordings stay on your phone")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -178,7 +178,7 @@ struct OnboardingView: View {
                 )
                 heroFeatureTile(
                     title: "Proof over pep talks",
-                    detail: "Your first save becomes the benchmark.",
+                    detail: "Your first recording becomes the benchmark.",
                     systemImage: "person.crop.circle.badge.checkmark",
                     accent: KatieColors.gold
                 )
@@ -348,8 +348,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
                 eyebrow: "Your setup",
-                title: "Add enough context for a believable first coaching pass",
-                detail: "Katie uses your role, language background, and work context to frame the first sample without boxing you into a stereotype."
+                title: "Tell us a little about your speaking",
+                detail: "Katie uses your role, language background, and work context to set up your first practice without putting you in a box."
             )
 
             TextField("First name", text: profileBinding(\.firstName))
@@ -379,8 +379,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
                 eyebrow: "Work context",
-                title: "Tune the first listener-pressure lane",
-                detail: "A tighter first lane helps Katie make the first proof feel grounded instead of generic."
+                title: "Tell us where speaking gets hard",
+                detail: "A clearer starting point helps Katie make your first recording feel grounded instead of generic."
             )
 
             VStack(alignment: .leading, spacing: 10) {
@@ -560,7 +560,7 @@ struct OnboardingView: View {
             sectionHeader(
                 eyebrow: "Capture trust",
                 title: appViewModel.audioCaptureLane.title,
-                detail: "Item 2 stays explicit here: real on-device capture is available when needed, and text-only fallback stays visible when it is not."
+                detail: "You can record right on your phone when you want to, and there's always a text-only option when you'd rather not."
             )
 
             Label(appViewModel.audioCaptureLane.detail, systemImage: appViewModel.audioCaptureLane.systemImage)
@@ -650,7 +650,7 @@ struct OnboardingView: View {
                             .font(.headline)
                             .foregroundStyle(KatieColors.textPrimary)
 
-                        Text("Katie uses this as a starting stance in \(appViewModel.learnerProfile.focusScenario.packTitle) until your first saved sample proves what actually helps the listener most.")
+                        Text("Katie uses this as a starting point in \(appViewModel.learnerProfile.focusScenario.packTitle) until your first recording shows what actually helps the listener most.")
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -725,7 +725,7 @@ struct OnboardingView: View {
                     )
             )
 
-            Text("Choose the starting stance that feels closest right now")
+            Text("Choose the starting point that feels closest right now")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -803,7 +803,7 @@ struct OnboardingView: View {
                         .font(isWideLayout ? .title3.weight(.semibold) : .headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("One saved sample in \(appViewModel.learnerProfile.focusScenario.packTitle) is the moment Katie stops leaning on setup copy and starts coaching from evidence you actually own.")
+                    Text("One recording in \(appViewModel.learnerProfile.focusScenario.packTitle) is the moment Katie stops working from examples and starts coaching from a rep that's actually yours.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -962,7 +962,7 @@ struct OnboardingView: View {
             sectionHeader(
                 eyebrow: "Full surface area",
                 title: "Speaking packs in Katie",
-                detail: "Katie should feel broader than interviews from the first tap, so every pack stays visible during setup."
+                detail: "Katie covers more than interviews, so you can see every pack while you set up."
             )
 
             ForEach(appViewModel.availableScenarios) { scenario in
@@ -1035,14 +1035,14 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
                 eyebrow: "Handoff",
-                title: "Land one real proof before the premium loop expands",
-                detail: "Next, you’ll save one personal sample in your starting pack so compare, reminders, and premium framing can point to your own proof."
+                title: "Make one real recording first",
+                detail: "Next, you’ll record one of your own in your starting pack so compare and reminders can point to a rep that's yours."
             )
 
             VStack(alignment: .leading, spacing: 10) {
-                Label("Your first saved rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
-                Label("Starter proof stays visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
-                Label("Premium copy stays tied to a believable first win", systemImage: "crown.fill")
+                Label("Your first rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
+                Label("Example recordings stay visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
+                Label("Everything builds on that first real recording", systemImage: "crown.fill")
             }
             .foregroundStyle(KatieColors.textSecondary)
 

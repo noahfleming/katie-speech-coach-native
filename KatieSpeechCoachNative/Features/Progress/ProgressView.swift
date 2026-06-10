@@ -114,13 +114,13 @@ struct ProgressView: View {
             KatieGlanceMetric(
                 title: "Active packs",
                 value: "\(activePackCount)",
-                detail: activePackCount == 1 ? "One pack already has user-owned proof." : "Packs with at least one user-owned proof.",
+                detail: activePackCount == 1 ? "One pack already has your own recording." : "Packs with at least one of your own recordings.",
                 accent: KatieColors.mint
             ),
             KatieGlanceMetric(
                 title: "Compare-ready",
                 value: "\(compareReadyCount)",
-                detail: compareReadyCount == 0 ? "Save one more proof in any pack to unlock a before-vs-now story." : "Packs with enough proof for a real compare.",
+                detail: compareReadyCount == 0 ? "Save one more recording in any pack to unlock a before-vs-now story." : "Packs with enough recordings for a real compare.",
                 accent: KatieColors.gold
             ),
             KatieGlanceMetric(
@@ -137,8 +137,8 @@ struct ProgressView: View {
     private var progressBoardCard: some View {
         KatieGlanceBoard(
             eyebrow: "Progress board",
-            title: "Glance first, then open the deeper proof",
-            detail: "Katie keeps the top line readable on iPhone and iPad before you drop into the longer compare and clinician-style detail cards.",
+            title: "Glance first, then open the detail below",
+            detail: "See your top numbers at a glance, then open the longer compare and detailed cards when you want more.",
             systemImage: "chart.line.uptrend.xyaxis",
             accent: KatieColors.mint,
             secondary: KatieColors.gold,
@@ -444,15 +444,15 @@ struct ProgressView: View {
         let seededCount = appViewModel.seededHistoryCount
 
         return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            Label("Proof provenance", systemImage: "checkmark.shield.fill")
+            Label("Where your recordings come from", systemImage: "checkmark.shield.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
             Text(recordedCount > 0
-                 ? "Progress leads with proof you recorded on this iPhone. Imported continuity and starter samples stay visible, but clearly behind your own reps."
+                 ? "Progress leads with recordings you made on this iPhone. Imported clips and samples stay visible, but clearly behind your own reps."
                  : importedCount > 0
-                 ? "Imported continuity can keep the lane warm, but Progress still needs a locally saved proof before it should feel earned here."
-                 : "Starter samples stay labeled as prototype continuity until you save your own proof.")
+                 ? "Imported clips can keep the pack warm, but Progress still needs a recording you saved here before it counts."
+                 : "Samples stay labeled as samples until you save your own recording.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             if recordedCount > 0 {
@@ -461,7 +461,7 @@ struct ProgressView: View {
                     proofCountChip(title: "Imported", value: importedCount, accent: KatieColors.accent)
                 }
 
-                Text("Starter proof stays in the lane as smaller prototype continuity.")
+                Text("Samples stay in the pack as smaller examples.")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(KatieColors.gold)
             } else {
@@ -472,7 +472,7 @@ struct ProgressView: View {
                 }
             }
 
-            Text("Order of trust: recorded here first, imported continuity second, starter proof last.")
+            Text("We show your own recordings first, then imported clips, then samples.")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.gold)
         }
@@ -561,7 +561,7 @@ struct ProgressView: View {
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Small, honest milestones that show when this pack has moved from starter flow to real user-owned proof.")
+            Text("Small milestones that show when this pack has moved from samples to your own recordings.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             if usesWideProgressLayout {
@@ -833,7 +833,7 @@ struct ProgressView: View {
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Keep progress grounded in sound-pattern coaching, likely transfer hypotheses, and one answerable next step.")
+            Text("Keep progress grounded in how you actually sound, what tends to carry over, and one answerable next step.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             progressDetailRow(
@@ -920,18 +920,18 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
 
             progressDetailRow(
-                title: "Today creates proof",
+                title: "Today creates a recording",
                 body: "Save one calm rep so Katie has something real to carry forward.",
                 systemImage: "mic.fill"
             )
             progressDetailRow(
                 title: "Review turns it into memory",
-                body: "Your first proof becomes the honest anchor for replay, compare, and reminder copy.",
+                body: "Your first recording becomes the anchor for replay, compare, and reminder copy.",
                 systemImage: "arrow.left.arrow.right.circle.fill"
             )
             progressDetailRow(
-                title: "Progress keeps the continuity warm",
-                body: "Once you have a saved rep, this tab starts tracking pack warmth instead of showing theoretical analytics.",
+                title: "Progress keeps the pack warm",
+                body: "Once you have a saved rep, this tab starts tracking your real practice instead of showing placeholder stats.",
                 systemImage: "chart.line.uptrend.xyaxis.circle.fill"
             )
         }
@@ -992,11 +992,11 @@ struct ProgressView: View {
             currentPackRunwayRows
 
             HStack(spacing: Layout.spacing_10) {
-                snapshotMetric(title: "Saved packs", value: "\(activePackCount)", detail: activePackCount == 1 ? "1 pack has your own proof" : "\(activePackCount) packs have your own proof")
-                snapshotMetric(title: "Replay-ready", value: "\(replayReadyCount)", detail: replayReadyCount == 0 ? "Proof is text-first so far" : replayReadyCount == 1 ? "1 clip replays on this iPhone" : "\(replayReadyCount) clips replay on this iPhone")
+                snapshotMetric(title: "Saved packs", value: "\(activePackCount)", detail: activePackCount == 1 ? "1 pack has your own recording" : "\(activePackCount) packs have your own recordings")
+                snapshotMetric(title: "Replay-ready", value: "\(replayReadyCount)", detail: replayReadyCount == 0 ? "Recordings are text-first so far" : replayReadyCount == 1 ? "1 clip replays on this iPhone" : "\(replayReadyCount) clips replay on this iPhone")
             }
 
-            Text("Next unlock: save a second rep in one pack so Progress can open a real compare instead of a single-proof summary.")
+            Text("Next unlock: save a second rep in one pack so Progress can open a real compare instead of a single-recording summary.")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
         }
@@ -1074,7 +1074,7 @@ struct ProgressView: View {
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Live proof at a glance, without the dashboard clutter or fake analytics weight.")
+            Text("Your real recordings at a glance, without the dashboard clutter or placeholder stats.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
@@ -1105,8 +1105,8 @@ struct ProgressView: View {
                     body: replayReadyCount > 0 ? "\(replayReadyCount) clip\(replayReadyCount == 1 ? "" : "s") can replay on this iPhone." : "Save one local playback clip so Katie can coach from your real sound."
                 )
                 snapshotPulseChip(
-                    title: protectedScenario == nil ? "Protect a pack" : "Protected right now",
-                    body: protectedScenario.map { "\($0.packTitle) is the pack Katie is already protecting for reminders and replay continuity." } ?? "Turn one pack into the protected lane so reminders stay grounded in a real rep."
+                    title: protectedScenario == nil ? "Save a pack" : "Saved right now",
+                    body: protectedScenario.map { "\($0.packTitle) is the pack Katie is already saving for reminders and replay." } ?? "Pick one pack to save so reminders stay grounded in a real rep."
                 )
             }
 
@@ -1135,7 +1135,7 @@ struct ProgressView: View {
                 }
 
                 if let protectedScenario {
-                    Button("Open protected pack") {
+                    Button("Open saved pack") {
                         appViewModel.openProgress(for: protectedScenario)
                     }
                     .font(.caption.weight(.semibold))
@@ -1400,7 +1400,7 @@ struct ProgressView: View {
 
     private var featuredWinSummary: some View {
         VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            Text("First-win continuity")
+            Text("Your first win")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
@@ -1510,7 +1510,7 @@ struct ProgressView: View {
                     )
                 }
             } else {
-                Text("Your first save in each scenario appears as an honest progress object before broader analytics.")
+                Text("Your first save in each scenario shows up here before the broader stats appear.")
                     .foregroundStyle(KatieColors.textSecondary)
             }
         }
@@ -1525,7 +1525,7 @@ struct ProgressView: View {
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("Keep Progress calm by opening the full pack list only when you want to inspect every benchmark, compare, and reminder handoff.")
+                    Text("Open the full pack list when you want to see every benchmark, compare, and reminder handoff.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -1552,7 +1552,7 @@ struct ProgressView: View {
                     .modifier(KatieCapsuleLabelStyle())
                 Text(compareReadyCount == 1 ? "1 compare-ready" : "\(compareReadyCount) compare-ready")
                     .modifier(KatieCapsuleLabelStyle())
-                Text(protectedScenario.map { "Protected pack: \($0.packTitle)" } ?? "No protected pack")
+                Text(protectedScenario.map { "Saved pack: \($0.packTitle)" } ?? "No saved pack")
                     .modifier(KatieCapsuleLabelStyle())
             }
 
@@ -1597,7 +1597,7 @@ struct ProgressView: View {
 
 
                                     if scenario == .managerOneOnOne {
-                                        Label("Guardrail: keep the compare on observed pattern + one answerable ask, not a diagnostic story.", systemImage: "checkmark.shield.fill")
+                                        Label("Keep the compare on what you noticed plus one answerable ask, not a diagnosis.", systemImage: "checkmark.shield.fill")
                                             .font(.caption2.weight(.semibold))
                                             .foregroundStyle(KatieColors.gold)
                                     }
@@ -1646,10 +1646,10 @@ struct ProgressView: View {
                 compareLibraryEntriesRail
             } else {
                 VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-                    Text("Starter and demo reps still show up in the proof/provenance cards above. The compare library only opens once a pack has two user-owned saves from this iPhone.")
+                    Text("Samples and demo reps still show up in the cards above. The compare library only opens once a pack has two of your own saves from this iPhone.")
                     .foregroundStyle(KatieColors.textSecondary)
 
-                    Text("Save a real second rep in any pack and Katie will promote it here as an honest before/after compare.")
+                    Text("Save a real second rep in any pack and Katie will add it here as a before/after compare.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
 

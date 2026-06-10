@@ -103,7 +103,7 @@ struct PracticeRecordView: View {
         KatieGlanceBoard(
             eyebrow: "Practice runway",
             title: "Catch the line while it still feels warm",
-            detail: "Record on \(reminderSurfaceLabel), keep the retake grounded, then bounce straight into Review with one honest proof.",
+            detail: "Record on \(reminderSurfaceLabel), keep the retake clear, then head straight into Review with one recording.",
             systemImage: "mic.fill",
             accent: KatieColors.accent,
             secondary: KatieColors.gold,
@@ -302,7 +302,7 @@ struct PracticeRecordView: View {
                         }
                     }
                     .animation(KatieMotion.quick, value: appViewModel.isRecording)
-                    Text(appViewModel.isRecording ? "Live prep mode: follow the steps, then save one calm rep" : appViewModel.recorderStatusLine)
+                    Text(appViewModel.isRecording ? "Live prep mode: follow the steps, then save a rep" : appViewModel.recorderStatusLine)
                         .foregroundStyle(KatieColors.textSecondary)
 
                     Label(appViewModel.microphonePermissionState.title, systemImage: appViewModel.microphonePermissionState.systemImage)
@@ -386,7 +386,7 @@ struct PracticeRecordView: View {
                                     .stroke(KatieColors.cardSecondary)
                             )
 
-                        Text("Saved draft uses the same protected structure as your latest rep. Keep your final line short so the compare ritual stays honest.")
+                        Text("Saved draft uses the same saved structure as your latest rep. Keep your final line short so the comparison stays honest.")
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
 
@@ -441,11 +441,11 @@ struct PracticeRecordView: View {
                 .katieCard()
 
                 VStack(alignment: .leading, spacing: Layout.cardSpacing) {
-                    Label("Protected line", systemImage: "lock.shield.fill")
+                    Label("Saved line", systemImage: "lock.shield.fill")
                         .font(.headline)
                     Text(appViewModel.currentScenarioRemainsProtected)
                         .foregroundStyle(KatieColors.textSecondary)
-                    Text("This scenario keeps the latest protected benchmark line for quick compare and reminders.")
+                    Text("This scenario keeps the latest saved benchmark line for quick compares and reminders.")
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
@@ -498,7 +498,7 @@ struct PracticeRecordView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.gold)
 
-            Text("Practice keeps the transcript-first save lane open so you can still protect this pack now without pretending a local replay clip exists.")
+            Text("Practice keeps the transcript-first save open so you can still save this pack now, using text instead of a recording.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -545,7 +545,7 @@ struct PracticeRecordView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             HStack(spacing: Layout.chipSpacing) {
-                statusPill(title: appViewModel.hasScratchRecording ? "Local clip attached" : "No local clip yet", accent: appViewModel.hasScratchRecording ? KatieColors.mint : KatieColors.gold)
+                statusPill(title: appViewModel.hasScratchRecording ? "Recording attached" : "No recording yet", accent: appViewModel.hasScratchRecording ? KatieColors.mint : KatieColors.gold)
                 statusPill(title: appViewModel.draftTranscript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Draft empty" : "Transcript draft ready", accent: KatieColors.accent)
             }
         }
@@ -937,7 +937,7 @@ struct PracticeRecordView: View {
             .allowsHitTesting(false)
 
             VStack(spacing: KatieSpacing.xs) {
-                Text(appViewModel.isRecording ? "Release to stop and keep this local clip" : "Press and hold for a quick rep")
+                Text(appViewModel.isRecording ? "Release to stop and keep this recording" : "Press and hold for a quick rep")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
                 Text("Good for one short spoken pass when you don't want to tap start/stop twice.")
@@ -1637,14 +1637,14 @@ struct PracticeRecordView: View {
 
     private var practiceReminderOwnerDetail: String {
         guard let reminderPlan = appViewModel.reminderPlan else {
-            return "Save one line you trust, then turn on a reminder only when you want Katie protecting this pack next."
+            return "Save one line you trust, then turn on a reminder only when you want Katie to nudge you on this pack next."
         }
 
         if reminderPlan.scenario == appViewModel.currentMission {
-            return "The next nudge is protecting this pack, so Practice, Today, and Review are pointing at the same line."
+            return "The next nudge is set for this pack, so Practice, Today, and Review are pointing at the same line."
         }
 
-        return "This pack stays visible in Practice, but the next nudge is currently protecting \(reminderPlan.scenario.packTitle). Move it here when this is the line you want back next."
+        return "This pack stays visible in Practice, but the next nudge is currently set for \(reminderPlan.scenario.packTitle). Move it here when this is the line you want back next."
     }
 
     private var practiceReminderOwnerSystemImage: String {
@@ -1675,7 +1675,7 @@ struct PracticeRecordView: View {
 
                     VStack(alignment: .leading, spacing: Layout.headerSpacingCompact) {
                         VStack(alignment: .leading, spacing: Layout.chipVerticalPaddingCompact) {
-                            Label("Protected line", systemImage: "text.quote")
+                            Label("Saved line", systemImage: "text.quote")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.mint)
                             Text(appViewModel.latestSession.protectedLine)
@@ -1693,7 +1693,7 @@ struct PracticeRecordView: View {
                         }
 
                         VStack(alignment: .leading, spacing: Layout.chipVerticalPaddingCompact) {
-                            Label("Next grounded move", systemImage: "figure.walk")
+                            Label("Next step", systemImage: "figure.walk")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.accent)
                             Text(appViewModel.currentPackNextStepLabel)
@@ -1796,7 +1796,7 @@ struct PracticeRecordView: View {
 
     private func stepProgressCard(proxy: ScrollViewProxy) -> some View {
         VStack(alignment: .leading, spacing: Layout.cardSpacing) {
-            Text("Scenario step flow")
+            Text("Scenario steps")
                 .font(.headline)
 
             Text(appViewModel.currentMission.structurePrompt)
@@ -1887,7 +1887,7 @@ struct PracticeRecordView: View {
                 .disabled(!appViewModel.canMoveToPreviousPracticeStep)
                 .opacity(appViewModel.canMoveToPreviousPracticeStep ? 1 : 0.45)
 
-                Button(appViewModel.canMoveToNextPracticeStep ? "Next step" : "Step flow complete") {
+                Button(appViewModel.canMoveToNextPracticeStep ? "Next step" : "Steps complete") {
                     if appViewModel.canMoveToNextPracticeStep {
                         appViewModel.moveToNextPracticeStep()
                     }
@@ -1952,7 +1952,7 @@ struct PracticeRecordView: View {
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Pick a tone, then park the nudge on the exact work window.")
+            Text("Pick a tone, then set the reminder for the exact work window.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -2015,7 +2015,7 @@ struct PracticeRecordView: View {
                         }
                     }
 
-                    Text("Park it on the exact conversation window you want to protect on \(reminderSurfaceLabel).")
+                    Text("Set it for the exact conversation window you want it to cover on \(reminderSurfaceLabel).")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
