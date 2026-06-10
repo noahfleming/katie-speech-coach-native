@@ -2948,6 +2948,11 @@ final class AppViewModel: ObservableObject {
     }
 
     func startRecording() {
+        // Re-entrancy guard: a fast double-tap must not spin up a second
+        // capture path that orphans the first (leaking a still-recording
+        // engine and clobbering shared state).
+        guard !isRecording else { return }
+
         Task {
             let permissionGranted = await requestMicrophoneAccessIfNeeded()
             guard permissionGranted else {
@@ -2959,24 +2964,40 @@ final class AppViewModel: ObservableObject {
             // Request speech recognition auth (needed for filler word detection)
             let speechStatus = await FillerWordDetector.requestAuthorization()
 
+            // Another start may have won the race across the awaits above.
+            guard !isRecording else { return }
+
             do {
-                let session = AVAudioSession.sharedInstance()
-                try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetoothHFP])
-                try session.setActive(true)
+                // Single audio authority: one engine, one tap, one session
+                // activation. It writes the scratch file AND (optionally) feeds
+                // the recognizer, so there is no competing AVAudioRecorder.
+                let capture = AudioCaptureEngine()
+                self.audioCaptureEngine = capture
 
-                let url = makeScratchRecordingURL()
-                let settings: [String: Any] = [
-                    AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-                    AVSampleRateKey: 44_100,
-                    AVNumberOfChannelsKey: 1,
-                    AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-                ]
+                var detector: FillerWordDetector?
+                if speechStatus == .authorized {
+                    let recognizer = FillerWordDetector()
+                    detector = recognizer
+                    self.fillerWordDetector = recognizer
 
-                let recorder = try AVAudioRecorder(url: url, settings: settings)
-                recorder.prepareToRecord()
-                recorder.record()
+                    self.fillerCountCancellable = recognizer.$sessionFillerWordCount
+                        .receive(on: DispatchQueue.main)
+                        .sink { [weak self] count in self?.fillerWordCount = count }
+                    self.fillerBreakdownCancellable = recognizer.$sessionFillerWordBreakdown
+                        .receive(on: DispatchQueue.main)
+                        .sink { [weak self] breakdown in self?.fillerWordBreakdown = breakdown }
 
-                audioRecorder = recorder
+                    try recognizer.startDetecting()
+                }
+
+                let url = try capture.startCapture(
+                    onBuffer: { buffer in detector?.append(buffer) },
+                    onInterruption: { [weak self] in
+                        Task { @MainActor in self?.stopRecording() }
+                    }
+                )
+
+                audioRecorder = nil
                 microphonePermissionState = .granted
                 scratchRecordingURL = url
                 latestScratchRecordingDuration = nil
@@ -2984,30 +3005,13 @@ final class AppViewModel: ObservableObject {
                 draftTranscript = latestSession.transcript
                 recorderStatusLine = "Recording live on this iPhone. Follow the step rail, then save the retake with replay attached."
                 KatieHaptic.softImpact.play()
-
-                // Start real-time filler word detection if speech recognition is authorized
-                if speechStatus == .authorized {
-                    let detector = FillerWordDetector()
-                    self.fillerWordDetector = detector
-
-                    // Observe filler count and breakdown changes
-                    self.fillerCountCancellable = detector.$sessionFillerWordCount
-                        .receive(on: DispatchQueue.main)
-                        .sink { [weak self] count in self?.fillerWordCount = count }
-                    self.fillerBreakdownCancellable = detector.$sessionFillerWordBreakdown
-                        .receive(on: DispatchQueue.main)
-                        .sink { [weak self] breakdown in self?.fillerWordBreakdown = breakdown }
-
-                    // Also capture audio via AVAudioEngine for Speech tap
-                    let capture = AudioCaptureEngine()
-                    self.audioCaptureEngine = capture
-                    _ = try capture.startCapture()
-
-                    if let inputNode = capture.inputNode {
-                        try? detector.startDetecting(from: inputNode)
-                    }
-                }
             } catch {
+                fillerWordDetector?.stopDetecting()
+                fillerWordDetector = nil
+                fillerCountCancellable = nil
+                fillerBreakdownCancellable = nil
+                _ = audioCaptureEngine?.stopCapture()
+                audioCaptureEngine = nil
                 isRecording = false
                 refreshMicrophonePermissionState()
                 recorderStatusLine = "Microphone capture could not start. Katie keeps the draft path honest instead of faking a recording."
@@ -3017,18 +3021,23 @@ final class AppViewModel: ObservableObject {
     }
 
     func stopRecording() {
-        audioRecorder?.stop()
-        latestScratchRecordingDuration = audioRecorder?.currentTime
-        audioRecorder = nil
+        guard isRecording else { return }
         isRecording = false
 
-        // Stop filler word detection and audio capture
+        // Stop filler word detection first so it stops appending buffers.
         fillerWordDetector?.stopDetecting()
         fillerWordDetector = nil
+
+        // The capture engine is the single source of truth for duration; it
+        // also tears down the tap and deactivates the audio session.
         if let capture = audioCaptureEngine {
             latestScratchRecordingDuration = capture.stopCapture()
         }
         audioCaptureEngine = nil
+
+        // Safety: clear any legacy recorder reference (unused on the live path).
+        audioRecorder?.stop()
+        audioRecorder = nil
         fillerCountCancellable = nil
         fillerBreakdownCancellable = nil
 
@@ -3361,7 +3370,13 @@ final class AppViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            self?.handleReminderNotificationTap(notification)
+            // Delivered on the main *queue*, which is not the same isolation
+            // domain as the MainActor. Assert the main-actor context explicitly
+            // so the @MainActor handler is called without an unsafe cross-actor
+            // hop (queue: .main guarantees we are on the main thread).
+            MainActor.assumeIsolated {
+                self?.handleReminderNotificationTap(notification)
+            }
         }
     }
 

@@ -25,7 +25,9 @@ final class FillerWordDetector: ObservableObject {
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private var audioEngine: AVAudioEngine?
+
+    /// Last computed per-word counts, so we can tell which word just appeared.
+    private var previousBreakdown: [String: Int] = [:]
 
     private let fillerWords: [String]
     private let locale: Locale
@@ -43,9 +45,11 @@ final class FillerWordDetector: ObservableObject {
 
     // MARK: - Public API
 
-    /// Begin real-time filler word detection on the given audio engine's input node.
+    /// Begin real-time filler word detection. Audio is delivered separately via
+    /// `append(_:)` — the detector does not touch the microphone or install a
+    /// tap, so it can share the single capture tap owned by `AudioCaptureEngine`.
     /// Call this when recording starts.
-    func startDetecting(from inputNode: AVAudioInputNode) throws {
+    func startDetecting() throws {
         guard !isDetecting else { return }
 
         guard let recognizer = speechRecognizer, recognizer.isAvailable else {
@@ -59,6 +63,7 @@ final class FillerWordDetector: ObservableObject {
         // Reset session state
         sessionFillerWordCount = 0
         sessionFillerWordBreakdown = [:]
+        previousBreakdown = [:]
         lastDetectedFillerWord = nil
         transcriptSoFar = ""
 
@@ -71,14 +76,8 @@ final class FillerWordDetector: ObservableObject {
         request.shouldReportPartialResults = true
         request.addsPunctuation = true
 
-        // Install tap on input node to stream audio to recognition request
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
-            self?.recognitionRequest?.append(buffer)
-        }
-
         // Start recognition task
-        recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
+        recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, _ in
             guard let self = self else { return }
 
             if let result = result {
@@ -86,21 +85,20 @@ final class FillerWordDetector: ObservableObject {
                 self.transcriptSoFar = text
                 self.processTranscript(text)
             }
-
-            if error != nil || result?.isFinal == true {
-                // Recognition completed or errored — tap stays until stopDetecting
-            }
         }
 
         isDetecting = true
     }
 
+    /// Feed a captured audio buffer to the recognizer. Called from the single
+    /// `AudioCaptureEngine` tap.
+    func append(_ buffer: AVAudioPCMBuffer) {
+        recognitionRequest?.append(buffer)
+    }
+
     /// Stop detection and clean up resources. Call when recording stops.
     func stopDetecting() {
         guard isDetecting else { return }
-
-        audioEngine?.stop()
-        audioEngine = nil
 
         recognitionRequest?.endAudio()
         recognitionRequest = nil
@@ -115,41 +113,49 @@ final class FillerWordDetector: ObservableObject {
     func resetSession() {
         sessionFillerWordCount = 0
         sessionFillerWordBreakdown = [:]
+        previousBreakdown = [:]
         lastDetectedFillerWord = nil
         transcriptSoFar = ""
     }
 
     // MARK: - Private
 
-    /// Process transcript text and count new filler words by comparing against prior transcript.
-    private func processTranscript(_ newTranscript: String) {
-        let priorTranscript = transcriptSoFar
+    /// Recompute filler counts from the full cumulative transcript. The Speech
+    /// framework delivers the whole transcript each callback, so the totals are
+    /// derived directly from it rather than diffed against a moving baseline
+    /// (which is fragile — an earlier version compared the transcript against
+    /// itself and never counted anything).
+    private func processTranscript(_ transcript: String) {
+        var breakdown: [String: Int] = [:]
+        var total = 0
 
         for word in fillerWords {
-            // Count occurrences of this filler word in the new transcript portion
-            let priorCount = countOccurrences(of: word, in: priorTranscript)
-            let newCount = countOccurrences(of: word, in: newTranscript)
-
-            if newCount > priorCount {
-                let delta = newCount - priorCount
-                sessionFillerWordCount += delta
-                sessionFillerWordBreakdown[word, default: 0] += delta
-                lastDetectedFillerWord = word
-            }
+            let count = countOccurrences(of: word, in: transcript)
+            guard count > 0 else { continue }
+            breakdown[word] = count
+            total += count
         }
+
+        // Surface whichever word just grew since the last callback.
+        for word in fillerWords where (breakdown[word] ?? 0) > (previousBreakdown[word] ?? 0) {
+            lastDetectedFillerWord = word
+        }
+
+        previousBreakdown = breakdown
+        sessionFillerWordBreakdown = breakdown
+        sessionFillerWordCount = total
     }
 
+    /// Count whole-word occurrences using word boundaries, so "so" does not
+    /// match inside "something" and "actually" does not match a longer word.
+    /// Handles multi-word fillers ("you know") correctly.
     private func countOccurrences(of word: String, in text: String) -> Int {
+        let pattern = "\\b" + NSRegularExpression.escapedPattern(for: word.lowercased()) + "\\b"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return 0 }
+
         let lowercased = text.lowercased()
-        var count = 0
-        var searchRange = lowercased.startIndex..<lowercased.endIndex
-
-        while let range = lowercased.range(of: word.lowercased(), range: searchRange) {
-            count += 1
-            searchRange = range.upperBound..<lowercased.endIndex
-        }
-
-        return count
+        let range = NSRange(lowercased.startIndex..., in: lowercased)
+        return regex.numberOfMatches(in: lowercased, options: [], range: range)
     }
 }
 

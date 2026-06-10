@@ -64,25 +64,31 @@ final class ReminderState: ObservableObject, Codable {
         return calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextDay) ?? nextDay
     }
 
-    /// Reminder date `hours` from now.
+    /// Reminder date `hours` from now. The fallback keeps the result in the
+    /// future (never `.now`) so a calendar-arithmetic edge case can't schedule a
+    /// notification that fires immediately.
     func reminderDate(hoursFromNow hours: Int) -> Date {
-        Calendar.current.date(byAdding: .hour, value: hours, to: .now) ?? .now
+        Calendar.current.date(byAdding: .hour, value: hours, to: .now)
+            ?? Date.now.addingTimeInterval(TimeInterval(hours) * 3_600)
     }
 
     /// Tomorrow at the given hour/minute local time.
     func reminderDateTomorrow(hour: Int, minute: Int) -> Date {
         let calendar = Calendar.current
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now)
+            ?? Date.now.addingTimeInterval(86_400)
         return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: tomorrow) ?? tomorrow
     }
 
     /// Next weekday (Mon-Fri) at the given hour/minute local time.
     func reminderDateNextWorkday(hour: Int, minute: Int) -> Date {
         let calendar = Calendar.current
-        var candidate = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
+        var candidate = calendar.date(byAdding: .day, value: 1, to: .now)
+            ?? Date.now.addingTimeInterval(86_400)
 
         while calendar.isDateInWeekend(candidate) {
-            candidate = calendar.date(byAdding: .day, value: 1, to: candidate) ?? candidate
+            candidate = calendar.date(byAdding: .day, value: 1, to: candidate)
+                ?? candidate.addingTimeInterval(86_400)
         }
 
         return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: candidate) ?? candidate
