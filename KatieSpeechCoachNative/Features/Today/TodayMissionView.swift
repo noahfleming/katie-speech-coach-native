@@ -1847,7 +1847,7 @@ struct TodayMissionView: View {
             scanRow(title: "Listener pressure", body: appViewModel.listenerPressureDetail)
             scanRow(title: "Sound-first plan", body: appViewModel.languageAssessmentSnapshot.soundFocus)
 
-            Divider().overlay(.white.opacity(0.08))
+            Divider().overlay(KatieColors.cardSubtle)
 
             VStack(alignment: .leading, spacing: 8) {
                 Label("Best pack for this context", systemImage: "sparkles")
@@ -2001,7 +2001,7 @@ struct TodayMissionView: View {
             Text(appViewModel.packProgressCard.whyItMatters)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            Divider().overlay(.white.opacity(0.08))
+            Divider().overlay(KatieColors.cardSubtle)
 
             Text("Next unlock")
                 .font(.caption.weight(.semibold))
@@ -2263,7 +2263,7 @@ struct TodayMissionView: View {
 
             KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
 
-            Divider().overlay(.white.opacity(0.08))
+            Divider().overlay(KatieColors.cardSubtle)
 
             Text("Reminder handoff")
                 .font(.headline)
@@ -2275,7 +2275,7 @@ struct TodayMissionView: View {
             Text(appViewModel.reminderPreviewCopy)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            Divider().overlay(.white.opacity(0.08))
+            Divider().overlay(KatieColors.cardSubtle)
 
             Text("Listener outcome")
                 .font(.headline)
@@ -2283,7 +2283,7 @@ struct TodayMissionView: View {
             Text(appViewModel.latestSession.listenerOutcome)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            Divider().overlay(.white.opacity(0.08))
+            Divider().overlay(KatieColors.cardSubtle)
 
             Text("Next grounded move")
                 .font(.headline)
