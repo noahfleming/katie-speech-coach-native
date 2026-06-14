@@ -58,13 +58,7 @@ struct FirstBaselineView: View {
                 }
             }
             .padding(20)
-            // KAT-199: in a vertical ScrollView, chained `.frame(maxWidth:
-            // .infinity)` was being interpreted as the content's intrinsic
-            // width (400+ pt for long Text views) instead of the visible
-            // 402pt screen width — which overflowed and clipped the right
-            // edge. The simplest fix: cap to a known-good iPhone width
-            // on compact, fall through to the original behaviour on iPad.
-            .frame(maxWidth: usesWideBaselineLayout ? baselineContentMaxWidth : 420)
+            .katieContentFrame(maxWidth: baselineContentMaxWidth)
         }
         .background(
             LinearGradient(
@@ -73,17 +67,12 @@ struct FirstBaselineView: View {
                 endPoint: .bottomTrailing
             )
             .overlay {
-                ZStack {
-                    RadialGradient(
-                        colors: [KatieColors.appBackgroundGlow, .clear],
-                        center: .topLeading,
-                        startRadius: 8,
-                        endRadius: 420
-                    )
-                    KatieAuroraBackground(accent: KatieColors.accent, secondary: KatieColors.mint)
-                        .opacity(0.60)
-                    KatieFloatingParticles()
-                }
+                RadialGradient(
+                    colors: [KatieColors.appBackgroundGlow, .clear],
+                    center: .topLeading,
+                    startRadius: 8,
+                    endRadius: 420
+                )
             }
             .ignoresSafeArea()
         )
@@ -111,13 +100,7 @@ struct FirstBaselineView: View {
 
     private var firstBaselineHeroCard: some View {
         VStack(alignment: .leading, spacing: 18) {
-            // KAT-199: ViewThatFits measures "can the view be laid out" — not
-            // "does it fit the available width" — so the 330pt contract panel
-            // + .infinity hero lead HStack was being chosen on compact iPhone
-            // (402pt screen) and overflowing the right edge, clipping the
-            // "An SLP-informed speaking..." header text and other content.
-            // Use a direct conditional on usesWideBaselineLayout instead.
-            if usesWideBaselineLayout {
+            ViewThatFits(in: .horizontal) {
                 HStack(alignment: .top, spacing: 18) {
                     firstBaselineHeroLead
                         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -125,7 +108,7 @@ struct FirstBaselineView: View {
                     firstBaselineContractPanel
                         .frame(width: 330, alignment: .topLeading)
                 }
-            } else {
+
                 VStack(alignment: .leading, spacing: 18) {
                     firstBaselineHeroLead
                     firstBaselineContractPanel
@@ -163,28 +146,35 @@ struct FirstBaselineView: View {
 
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 10) {
-                    // KAT-199: removed .fixedSize(vertical: true) so the text
-                    // can wrap to fit the available card width on compact
-                    // iPhone. The 'vertical: true' modifier fixes the text
-                    // height to a single line, which prevented wrapping and
-                    // forced the card to widen past the screen edge.
                     Text(appViewModel.firstBaselineHeadline)
                         .font(usesWideBaselineLayout ? .system(size: 38, weight: .bold, design: .rounded) : .largeTitle.bold())
                         .foregroundStyle(KatieColors.textPrimary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: false)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(firstBaselineHeroSupportLine)
                         .font(usesWideBaselineLayout ? .title3.weight(.semibold) : .title2.bold())
                         .foregroundStyle(KatieColors.textPrimary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: false)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(appViewModel.firstBaselineBody)
                         .font(.body)
                         .foregroundStyle(KatieColors.textSecondary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: false)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // KAT-155: privacy as quiet signal (per MOM-130). One line, prominent,
+                    // on the first recording surface. Sets the tone: recordings stay local.
+                    HStack(spacing: 8) {
+                        Image(systemName: "lock.shield.fill")
+                            .foregroundStyle(KatieColors.mint)
+                        Text("Recordings stay on this iPhone.")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(KatieColors.textPrimary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(KatieColors.mint.opacity(0.10), in: Capsule())
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Privacy: recordings stay on this iPhone.")
                 }
 
                 if usesWideBaselineLayout {
@@ -207,7 +197,7 @@ struct FirstBaselineView: View {
 
     private var firstBaselineContractPanel: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("What changes after your first recording")
+            Text("What changes after the first honest save")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
@@ -420,7 +410,7 @@ struct FirstBaselineView: View {
                 .font(.title3.weight(.bold))
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("One clear recording is enough to turn Katie from example mode into your own recordings, with a clear next step on both iPhone and iPad.")
+            Text("One clear save is enough to turn Katie from demo mode into your own proof trail, with a believable next action on both iPhone and iPad.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -445,7 +435,7 @@ struct FirstBaselineView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary.opacity(0.42), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-            Text("Once you record your own, the example recordings become a reference, not the headline.")
+            Text("Prototype note: once your first personal sample is saved, starter proof becomes the reference, not the headline.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
         }
@@ -485,7 +475,7 @@ struct FirstBaselineView: View {
         VStack(alignment: .leading, spacing: usesWideBaselineLayout ? 12 : 16) {
             KatieSectionEyebrow(title: "Trust contract", systemImage: "list.bullet.clipboard.fill", accent: KatieColors.gold)
 
-            Text("Your first recording should feel safe, specific, and worth doing now")
+            Text("Katie should make the first save feel safe, specific, and worth doing now")
                 .font(.title3.weight(.bold))
                 .foregroundStyle(KatieColors.textPrimary)
 

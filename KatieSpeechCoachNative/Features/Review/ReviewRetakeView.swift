@@ -1,32 +1,10 @@
 import SwiftUI
 
-private enum ReviewLayoutTokens {
-    static let cardCornerRadius: CGFloat = 18
-    static let innerCardCornerRadius: CGFloat = 16
-    static let editorCornerRadius: CGFloat = 14
-    static let chipCornerRadius: CGFloat = 10
-    static let cardPadding: CGFloat = 12
-    static let editorPadding: CGFloat = 14
-    static let mediumChipHorizontalPadding: CGFloat = 12
-    static let mediumChipVerticalPadding: CGFloat = 8
-    static let smallChipHorizontalPadding: CGFloat = 10
-    static let smallChipVerticalPadding: CGFloat = 6
-    static let gridSpacing: CGFloat = 12
-    static let sectionSpacing: CGFloat = 16
-    static let cardSpacing: CGFloat = 12
-    static let subSpacing: CGFloat = 6
-    static let spacing_8: CGFloat = 8
-    static let spacing_10: CGFloat = 10
-    static let spacing_14: CGFloat = 14
-}
-
 struct ReviewRetakeView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.openURL) private var openURL
     @State private var isDeeperReviewExpanded = false
-
-    // MARK: - Layout
 
     private var usesWideReviewLayout: Bool {
         horizontalSizeClass == .regular
@@ -55,13 +33,11 @@ struct ReviewRetakeView: View {
         ]
     }
 
-    // MARK: - Subviews (board, rails, hero, deeper tools)
-
     private var reviewBoardCard: some View {
         KatieGlanceBoard(
             eyebrow: "Retake board",
             title: "One benchmark, one latest rep, one calmer next move",
-            detail: "One saved rep stays in focus, and you can see right away whether there is enough to compare before you open the detail below.",
+            detail: "This keeps Review readable on iPhone, roomy on iPad, and honest about compare state before the deeper evidence stack opens.",
             systemImage: "arrow.triangle.2.circlepath.circle.fill",
             accent: KatieColors.mint,
             secondary: KatieColors.accent,
@@ -73,8 +49,8 @@ struct ReviewRetakeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.sectionSpacing) {
-                HStack(spacing: ReviewLayoutTokens.gridSpacing) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 12) {
                     Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
                         .katieIconBadge(background: KatieColors.cardSecondary, foreground: KatieColors.mint, size: 34)
                     Text("Review")
@@ -113,35 +89,20 @@ struct ReviewRetakeView: View {
             .padding(16)
             .katieContentFrame(maxWidth: 820)
         }
-        .background(
-            LinearGradient(
-                colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .overlay {
-                ZStack {
-                    RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
-                    KatieAuroraBackground(accent: KatieColors.mint, secondary: KatieColors.plum)
-                        .opacity(0.50)
-                    KatieFloatingParticles()
-                }
-            }
-            .ignoresSafeArea()
-        )
+        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
     }
 
     @ViewBuilder
     private var reviewSupportRail: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.sectionSpacing) {
+            HStack(alignment: .top, spacing: 16) {
                 reviewStateBanner
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 nextRetakeCueCard
                     .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.sectionSpacing) {
+            VStack(alignment: .leading, spacing: 16) {
                 reviewStateBanner
                 nextRetakeCueCard
             }
@@ -151,14 +112,14 @@ struct ReviewRetakeView: View {
     @ViewBuilder
     private var reviewContinuityRail: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.sectionSpacing) {
+            HStack(alignment: .top, spacing: 16) {
                 carryForwardCard
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 reminderContinuityCard
                     .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.sectionSpacing) {
+            VStack(alignment: .leading, spacing: 16) {
                 carryForwardCard
                 reminderContinuityCard
             }
@@ -166,11 +127,11 @@ struct ReviewRetakeView: View {
     }
 
     private var reviewHero: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 KatieSectionEyebrow(title: appViewModel.currentMission.packTitle, systemImage: "sparkles.rectangle.stack.fill", accent: KatieColors.mint)
                 Spacer()
-                HStack(spacing: ReviewLayoutTokens.spacing_8) {
+                HStack(spacing: 8) {
                     Text(appViewModel.freshnessLabel(for: appViewModel.latestSession))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
@@ -203,7 +164,7 @@ struct ReviewRetakeView: View {
 
     private var reviewHeroRunwayRows: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_10) {
+            HStack(alignment: .top, spacing: 10) {
                 reviewCueRow(
                     title: appViewModel.transferHypothesisStatusTitle,
                     body: appViewModel.transferHypothesisFollowThroughLine,
@@ -219,7 +180,7 @@ struct ReviewRetakeView: View {
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 reviewCueRow(
                     title: appViewModel.transferHypothesisStatusTitle,
                     body: appViewModel.transferHypothesisFollowThroughLine,
@@ -240,8 +201,8 @@ struct ReviewRetakeView: View {
         let anchor = appViewModel.selectedCompareAnchor
         let needsReplayRecovery = reviewStateNeedsReplayRecovery(anchor: anchor, latest: latest)
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
                 Image(systemName: reviewStateSystemImage(anchor: anchor, latest: latest))
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(needsReplayRecovery ? KatieColors.textPrimary : Color.black)
@@ -249,7 +210,7 @@ struct ReviewRetakeView: View {
                     .background(needsReplayRecovery ? KatieColors.cardBackground.opacity(0.88) : KatieColors.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text(reviewStateTitle(anchor: anchor))
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -267,25 +228,25 @@ struct ReviewRetakeView: View {
                     appViewModel.openPractice(for: latest.scenario)
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
-                .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.accent)
                 .foregroundStyle(.black)
                 .clipShape(Capsule())
             }
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(needsReplayRecovery ? KatieColors.cardSecondary : KatieColors.accent.opacity(0.14))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private var nextRetakeCueCard: some View {
         let scan = appViewModel.firstSpeakingScan
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Label("Next retake cue", systemImage: "arrow.clockwise.circle.fill")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -314,14 +275,14 @@ struct ReviewRetakeView: View {
     }
 
     private var deeperReviewToolsCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Label("Deeper review tools", systemImage: "text.magnifyingglass")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("Step stability, transcript shifts, listener scores, and what tends to carry over stay tucked away until you want the fuller readback.")
+                    Text("Step stability, transcript shifts, listener scores, and transfer coaching stay tucked away until you want the fuller readback.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -334,14 +295,14 @@ struct ReviewRetakeView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
-                .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
             }
 
-            HStack(spacing: ReviewLayoutTokens.spacing_8) {
+            HStack(spacing: 8) {
                 Text("Listener scores")
                     .modifier(KatieCapsuleLabelStyle())
                 if appViewModel.selectedCompareAnchor != nil {
@@ -363,7 +324,7 @@ struct ReviewRetakeView: View {
             let latest = appViewModel.latestSession
 
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.sectionSpacing) {
+                HStack(alignment: .top, spacing: 16) {
                     compareScoreRibbon(anchor: anchor, latest: latest)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
 
@@ -371,7 +332,7 @@ struct ReviewRetakeView: View {
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.sectionSpacing) {
+                VStack(alignment: .leading, spacing: 16) {
                     compareScoreRibbon(anchor: anchor, latest: latest)
                     compareStoryStrip(anchor: anchor, latest: latest)
                 }
@@ -383,7 +344,7 @@ struct ReviewRetakeView: View {
         let latest = appViewModel.latestSession
         let anchor = appViewModel.selectedCompareAnchor
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.sectionSpacing) {
+        return VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text(anchor != nil && usesWideReviewCompareLayout ? "Compare details" : "Benchmark vs retake")
                     .font(.headline)
@@ -427,7 +388,7 @@ struct ReviewRetakeView: View {
         let reflectionSummary = appViewModel.reflectionDeltaSummary
         let stepSummary = stepLadderSummary(anchor: anchor, latest: latest)
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
             Label("Before vs now", systemImage: "sparkles.rectangle.stack")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.gold)
@@ -438,23 +399,23 @@ struct ReviewRetakeView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_10) {
+                HStack(alignment: .top, spacing: 10) {
                     compareStoryBadge(title: "Score shift", body: reflectionSummary, accent: KatieColors.mint)
                     compareStoryBadge(title: "Structure shift", body: stepSummary, accent: KatieColors.accent)
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     compareStoryBadge(title: "Score shift", body: reflectionSummary, accent: KatieColors.mint)
                     compareStoryBadge(title: "Structure shift", body: stepSummary, accent: KatieColors.accent)
                 }
             }
         }
-        .padding(ReviewLayoutTokens.cardPadding)
-        .background(KatieColors.cardSecondary, in: RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .padding(12)
+        .background(KatieColors.cardSecondary, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareStoryBadge(title: String, body: String, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(accent)
@@ -464,49 +425,49 @@ struct ReviewRetakeView: View {
                 .foregroundStyle(KatieColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(accent.opacity(0.10), in: RoundedRectangle(cornerRadius: ReviewLayoutTokens.editorCornerRadius, style: .continuous))
+        .background(accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 
     private func compareScoreRibbon(anchor: PracticeSession, latest: PracticeSession) -> some View {
         let anchorReflection = anchor.selfReflection ?? SessionSelfReflection()
         let latestReflection = latest.selfReflection ?? SessionSelfReflection()
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
             Label("Before vs now", systemImage: "chart.bar.xaxis")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Three listener signals stay visible at a glance, so you can see your progress without digging through a wall of notes.")
+            Text("Three listener signals stay visible at a glance, so the compare reads like progress instead of a wall of notes.")
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
 
             ViewThatFits(in: .vertical) {
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_10) {
+                HStack(alignment: .top, spacing: 10) {
                     compareScoreMetric(title: "Listener", earlier: anchorReflection.listenerCatchScore, latest: latestReflection.listenerCatchScore, accent: KatieColors.mint)
                     compareScoreMetric(title: "Pace", earlier: anchorReflection.paceControlScore, latest: latestReflection.paceControlScore, accent: KatieColors.accent)
                     compareScoreMetric(title: "Confidence", earlier: anchorReflection.confidenceScore, latest: latestReflection.confidenceScore, accent: KatieColors.gold)
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     compareScoreMetric(title: "Listener", earlier: anchorReflection.listenerCatchScore, latest: latestReflection.listenerCatchScore, accent: KatieColors.mint)
                     compareScoreMetric(title: "Pace", earlier: anchorReflection.paceControlScore, latest: latestReflection.paceControlScore, accent: KatieColors.accent)
                     compareScoreMetric(title: "Confidence", earlier: anchorReflection.confidenceScore, latest: latestReflection.confidenceScore, accent: KatieColors.gold)
                 }
             }
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func compareScoreMetric(title: String, earlier: Int, latest: Int, accent: Color) -> some View {
         let delta = latest - earlier
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_8) {
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 8) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -525,14 +486,14 @@ struct ReviewRetakeView: View {
             compareScoreTrack(label: "Earlier", score: earlier, fill: KatieColors.cardSecondary)
             compareScoreTrack(label: "Now", score: latest, fill: accent)
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareScoreTrack(label: String, score: Int, fill: Color) -> some View {
-        HStack(alignment: .center, spacing: ReviewLayoutTokens.subSpacing) {
+        HStack(alignment: .center, spacing: 6) {
             Text(label)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -569,7 +530,7 @@ struct ReviewRetakeView: View {
 
     private func compareColumns(anchor: PracticeSession, latest: PracticeSession) -> some View {
         ViewThatFits(in: .vertical) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
+            HStack(alignment: .top, spacing: 12) {
                 compareColumn(
                     title: appViewModel.proofLabel(for: anchor, placement: .baseline),
                     session: anchor,
@@ -583,7 +544,7 @@ struct ReviewRetakeView: View {
                 )
             }
 
-            VStack(spacing: ReviewLayoutTokens.gridSpacing) {
+            VStack(spacing: 12) {
                 compareColumn(
                     title: appViewModel.proofLabel(for: anchor, placement: .baseline),
                     session: anchor,
@@ -602,14 +563,14 @@ struct ReviewRetakeView: View {
     @ViewBuilder
     private func compareSupportRail(anchor: PracticeSession, latest: PracticeSession) -> some View {
         if usesWideReviewCompareLayout {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 12) {
                     compareTimeline(anchor: anchor, latest: latest)
                     compareDeltaCard(anchor: anchor, latest: latest)
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     compareReplayStrip(anchor: anchor, latest: latest)
                     compareTruthNotice(anchor: anchor, latest: latest)
                 }
@@ -626,7 +587,7 @@ struct ReviewRetakeView: View {
     @ViewBuilder
     private func compareOverviewRail(anchor: PracticeSession?, latest: PracticeSession) -> some View {
         ViewThatFits(in: .vertical) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_10) {
+            HStack(alignment: .top, spacing: 10) {
                 compareOverviewFactCard(
                     title: anchor == nil ? "Proof mode" : "Compare mode",
                     detail: compareModeOverviewDetail(anchor: anchor, latest: latest),
@@ -644,7 +605,7 @@ struct ReviewRetakeView: View {
                 compareOverviewActionCard(anchor: anchor, latest: latest)
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 compareOverviewFactCard(
                     title: anchor == nil ? "Proof mode" : "Compare mode",
                     detail: compareModeOverviewDetail(anchor: anchor, latest: latest),
@@ -665,7 +626,7 @@ struct ReviewRetakeView: View {
     }
 
     private func compareOverviewFactCard(title: String, detail: String, systemImage: String, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+        VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: systemImage)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -675,14 +636,14 @@ struct ReviewRetakeView: View {
                 .foregroundStyle(KatieColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(accent)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func compareOverviewActionCard(anchor: PracticeSession?, latest: PracticeSession) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+        VStack(alignment: .leading, spacing: 10) {
             Label("Next move", systemImage: "arrow.forward.circle.fill")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -696,22 +657,22 @@ struct ReviewRetakeView: View {
                 appViewModel.openPractice(for: latest.scenario)
             }
             .font(.caption.weight(.semibold))
-            .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
-            .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .background(compareActionOverviewBackground(anchor: anchor, latest: latest))
             .foregroundStyle(compareActionOverviewForeground(anchor: anchor, latest: latest))
             .clipShape(Capsule())
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private var reflectionCard: some View {
         let reflection = appViewModel.latestSelfReflection
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
+        return VStack(alignment: .leading, spacing: 14) {
             Text("Listener readback")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -720,7 +681,7 @@ struct ReviewRetakeView: View {
                 .font(.subheadline)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            HStack(spacing: ReviewLayoutTokens.spacing_10) {
+            HStack(spacing: 10) {
                 reflectionMetric(title: "Listener", value: reflection.listenerCatchScore)
                 reflectionMetric(title: "Pace", value: reflection.paceControlScore)
                 reflectionMetric(title: "Confidence", value: reflection.confidenceScore)
@@ -736,7 +697,7 @@ struct ReviewRetakeView: View {
     private var transferCard: some View {
         let plan = appViewModel.currentConversationTransferPlan
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
+        return VStack(alignment: .leading, spacing: 14) {
             Text(plan.title)
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -744,7 +705,7 @@ struct ReviewRetakeView: View {
             Text(plan.summary)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 Label(plan.beforeYouSpeak, systemImage: "1.circle.fill")
                 Label(plan.whileSpeaking, systemImage: "2.circle.fill")
                 Label(plan.repairMove, systemImage: "3.circle.fill")
@@ -756,15 +717,15 @@ struct ReviewRetakeView: View {
     }
 
     private var oneOnOneTruthCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
+        VStack(alignment: .leading, spacing: 14) {
             Text("1:1 compare guardrails")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("A better retake should sound easier to answer, not more dramatic. Katie keeps the compare honest by saving what you noticed and one concrete ask.")
+            Text("A better retake should sound more answerable, not more dramatic. Katie keeps the compare honest by protecting the observed pattern and one concrete ask.")
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 Label("Before: did the friction land as an observed pattern instead of a vague stress summary?", systemImage: "1.circle.fill")
                 Label("After: is the support ask smaller and easier for a manager to answer live?", systemImage: "2.circle.fill")
                 Label("Boundary: transfer patterns stay a coaching hypothesis, not a diagnosis", systemImage: "3.circle.fill")
@@ -776,7 +737,7 @@ struct ReviewRetakeView: View {
     }
 
     private func reflectionMetric(title: String, value: Int) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -785,13 +746,13 @@ struct ReviewRetakeView: View {
                 .foregroundStyle(KatieColors.textPrimary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func reviewCueRow(title: String, body: String, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(accent)
@@ -799,27 +760,27 @@ struct ReviewRetakeView: View {
                 .font(.subheadline)
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareDeltaCard(anchor: PracticeSession, latest: PracticeSession) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Label("What changed", systemImage: "chart.line.uptrend.xyaxis")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
             ViewThatFits(in: .vertical) {
-                HStack(spacing: ReviewLayoutTokens.spacing_8) {
+                HStack(spacing: 8) {
                     compareDeltaPill(title: "Structure", value: structureDeltaLabel(anchor: anchor, latest: latest), systemImage: "flag.fill")
                     compareDeltaPill(title: "Length", value: transcriptDeltaLabel(anchor: anchor, latest: latest), systemImage: "text.word.spacing")
                     compareDeltaPill(title: "Pace", value: paceDeltaLabel(anchor: anchor, latest: latest), systemImage: "speedometer")
                     compareDeltaPill(title: "Replay", value: replayDeltaLabel(anchor: anchor, latest: latest), systemImage: "waveform")
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+                VStack(alignment: .leading, spacing: 8) {
                     compareDeltaPill(title: "Structure", value: structureDeltaLabel(anchor: anchor, latest: latest), systemImage: "flag.fill")
                     compareDeltaPill(title: "Length", value: transcriptDeltaLabel(anchor: anchor, latest: latest), systemImage: "text.word.spacing")
                     compareDeltaPill(title: "Pace", value: paceDeltaLabel(anchor: anchor, latest: latest), systemImage: "speedometer")
@@ -827,10 +788,10 @@ struct ReviewRetakeView: View {
                 }
             }
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func reviewStateTitle(anchor: PracticeSession?) -> String {
@@ -902,21 +863,21 @@ struct ReviewRetakeView: View {
     }
 
     private func compareTruthNotice(anchor: PracticeSession?, latest: PracticeSession) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+        VStack(alignment: .leading, spacing: 8) {
             KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
 
             Text(appViewModel.compareTruthLine(anchor: anchor, latest: latest))
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareStepLadderCard(anchor: PracticeSession, latest: PracticeSession) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Label("Step-by-step progress", systemImage: "point.3.connected.trianglepath.dotted")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -925,7 +886,7 @@ struct ReviewRetakeView: View {
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(appViewModel.currentMission.stepLabels.enumerated()), id: \.offset) { index, label in
                     compareStepRow(
                         title: label,
@@ -936,10 +897,10 @@ struct ReviewRetakeView: View {
                 }
             }
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func compareStepRow(title: String, index: Int, anchorUnlockedCount: Int, latestUnlockedCount: Int) -> some View {
@@ -947,7 +908,7 @@ struct ReviewRetakeView: View {
         let latestHasStep = index < latestUnlockedCount
         let isNewlyUnlocked = !anchorHasStep && latestHasStep
 
-        return HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
+        return HStack(alignment: .top, spacing: 12) {
             ZStack {
                 Circle()
                     .fill(isNewlyUnlocked ? KatieColors.accent : (latestHasStep ? KatieColors.mint.opacity(0.22) : KatieColors.cardSecondary))
@@ -958,8 +919,8 @@ struct ReviewRetakeView: View {
                     .foregroundStyle(isNewlyUnlocked ? Color.black : (latestHasStep ? KatieColors.mint : KatieColors.textSecondary))
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
-                HStack(alignment: .center, spacing: ReviewLayoutTokens.spacing_8) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .center, spacing: 8) {
                     Text(title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -982,10 +943,10 @@ struct ReviewRetakeView: View {
 
             Spacer(minLength: 0)
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(isNewlyUnlocked ? KatieColors.accent.opacity(0.12) : KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareStepStatusLabel(anchorHasStep: Bool, latestHasStep: Bool) -> String {
@@ -1006,8 +967,8 @@ struct ReviewRetakeView: View {
 
         if gained > 0 {
             return gained == 1
-                ? "The latest retake unlocked one more step, so Katie can show exactly where the pack moved forward."
-                : "The latest retake unlocked \(gained) more steps, so the progress list shows where the pack genuinely advanced."
+                ? "The latest retake unlocked one more scenario beat, so Katie can show exactly where the pack moved forward."
+                : "The latest retake unlocked \(gained) more scenario beats, so the progress ladder shows where the pack genuinely advanced."
         }
 
         if latest.unlockedStepCount == anchor.unlockedStepCount {
@@ -1018,7 +979,7 @@ struct ReviewRetakeView: View {
     }
 
     private func transcriptShiftCard(anchor: PracticeSession, latest: PracticeSession) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Label("Transcript shift", systemImage: "text.redaction")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1028,25 +989,25 @@ struct ReviewRetakeView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             ViewThatFits(in: .vertical) {
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_10) {
+                HStack(alignment: .top, spacing: 10) {
                     transcriptShiftColumn(title: "Earlier phrasing", session: anchor, accent: KatieColors.cardSecondary)
                     transcriptShiftColumn(title: "Latest phrasing", session: latest, accent: KatieColors.accent.opacity(0.16))
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     transcriptShiftColumn(title: "Earlier phrasing", session: anchor, accent: KatieColors.cardSecondary)
                     transcriptShiftColumn(title: "Latest phrasing", session: latest, accent: KatieColors.accent.opacity(0.16))
                 }
             }
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func transcriptShiftColumn(title: String, session: PracticeSession, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -1060,10 +1021,10 @@ struct ReviewRetakeView: View {
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(accent)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareFollowThroughChips(for scenario: PracticeScenario) -> some View {
@@ -1086,20 +1047,20 @@ struct ReviewRetakeView: View {
     }
 
     private var compareAnchorPicker: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("Choose earlier proof")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
             if usesWideReviewCompareLayout {
-                LazyVGrid(columns: compareAnchorGridColumns, alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+                LazyVGrid(columns: compareAnchorGridColumns, alignment: .leading, spacing: 12) {
                     ForEach(appViewModel.compareCandidates) { session in
                         compareAnchorPickerCard(session: session)
                     }
                 }
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: ReviewLayoutTokens.spacing_10) {
+                    HStack(spacing: 10) {
                         ForEach(appViewModel.compareCandidates) { session in
                             compareAnchorPickerCard(session: session, compactWidth: 180)
                         }
@@ -1120,8 +1081,8 @@ struct ReviewRetakeView: View {
         Button {
             appViewModel.selectCompareAnchor(session)
         } label: {
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_8) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 8) {
                     Text(session.scenario.packTitle)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1141,7 +1102,7 @@ struct ReviewRetakeView: View {
                     .foregroundStyle(KatieColors.textSecondary)
                     .lineLimit(3)
 
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_8) {
+                HStack(alignment: .top, spacing: 8) {
                     Text(appViewModel.freshnessLabel(for: session))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
@@ -1156,30 +1117,30 @@ struct ReviewRetakeView: View {
                         .lineLimit(2)
                 }
             }
-            .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
+            .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(width: compactWidth, alignment: .leading)
             .background(appViewModel.isSelectedAnchor(session) ? KatieColors.accent.opacity(0.18) : KatieColors.cardSecondary)
             .overlay(
-                RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(appViewModel.isSelectedAnchor(session) ? KatieColors.accent : Color.clear, lineWidth: 1.5)
             )
-            .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
     }
 
     private func compareColumn(title: String, session: PracticeSession, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 12) {
                 KatieScenarioArtwork(
                     systemImage: title.localizedCaseInsensitiveContains("latest") || title.localizedCaseInsensitiveContains("after") ? "sparkles" : "circle.lefthalf.filled",
                     accent: title.localizedCaseInsensitiveContains("latest") || title.localizedCaseInsensitiveContains("after") ? KatieColors.mint : KatieColors.gold,
                     secondary: KatieColors.accent
                 )
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     KatieSectionEyebrow(
                         title: title,
                         systemImage: title.localizedCaseInsensitiveContains("latest") || title.localizedCaseInsensitiveContains("after") ? "sparkles" : "pin.fill",
@@ -1198,7 +1159,7 @@ struct ReviewRetakeView: View {
                 }
             }
 
-            HStack(spacing: ReviewLayoutTokens.spacing_8) {
+            HStack(spacing: 8) {
                 KatieReplayBadge(
                     title: appViewModel.displayCompareReadinessTitle(for: session),
                     systemImage: appViewModel.displayCompareReadinessSystemImage(for: session),
@@ -1225,8 +1186,8 @@ struct ReviewRetakeView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
-                .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.cardBackground.opacity(0.8))
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -1245,13 +1206,13 @@ struct ReviewRetakeView: View {
     }
 
     private var highlightsCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Coach signal")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
             ForEach(appViewModel.latestSession.highlights) { highlight in
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text(highlight.title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1259,17 +1220,17 @@ struct ReviewRetakeView: View {
                         .font(.subheadline)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
-                .padding(ReviewLayoutTokens.editorPadding)
+                .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
         }
         .katieCard()
     }
 
     private var retakeMemoryCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Label("Retake memory", systemImage: "memorychip.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1284,14 +1245,14 @@ struct ReviewRetakeView: View {
                         appViewModel.selectCompareAnchor(session)
                     }
                 } label: {
-                    HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
+                    HStack(alignment: .top, spacing: 12) {
                         Text(index == 0 ? "Now" : index == 1 ? "1-step before" : "2-step before")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(index == 0 ? KatieColors.mint : KatieColors.textSecondary)
                             .frame(width: 92, alignment: .leading)
 
-                        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
-                            HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_8) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(alignment: .top, spacing: 8) {
                                 Text(session.scenario.packTitle)
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(KatieColors.textPrimary)
@@ -1310,7 +1271,7 @@ struct ReviewRetakeView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(KatieColors.textSecondary)
                                 .lineLimit(2)
-                            HStack(spacing: ReviewLayoutTokens.spacing_8) {
+                            HStack(spacing: 8) {
                                 Text(appViewModel.freshnessLabel(for: session))
                                     .font(.caption2.weight(.semibold))
                                     .foregroundStyle(KatieColors.textSecondary)
@@ -1325,14 +1286,14 @@ struct ReviewRetakeView: View {
                             }
                         }
                     }
-                    .padding(ReviewLayoutTokens.editorPadding)
+                    .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(appViewModel.isSelectedAnchor(session) ? KatieColors.accent.opacity(0.16) : index == 0 ? KatieColors.accent.opacity(0.12) : KatieColors.cardSecondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .stroke(appViewModel.isSelectedAnchor(session) ? KatieColors.accent : Color.clear, lineWidth: 1.5)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .disabled(!isSelectableAnchor)
@@ -1342,9 +1303,9 @@ struct ReviewRetakeView: View {
     }
 
     private var carryForwardCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Label("Protected line handoff", systemImage: "quote.opening")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1365,7 +1326,7 @@ struct ReviewRetakeView: View {
             }
 
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: ReviewLayoutTokens.spacing_10) {
+                HStack(alignment: .top, spacing: 10) {
                     reviewCueRow(
                         title: "Protected line",
                         body: "“\(appViewModel.latestSession.protectedLine)”",
@@ -1381,7 +1342,7 @@ struct ReviewRetakeView: View {
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     reviewCueRow(
                         title: "Protected line",
                         body: "“\(appViewModel.latestSession.protectedLine)”",
@@ -1402,8 +1363,8 @@ struct ReviewRetakeView: View {
     private var startingHypothesisSummaryCard: some View {
         let snapshot = appViewModel.languageAssessmentSnapshot
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Starting hypothesis")
                         .font(.subheadline.weight(.semibold))
@@ -1424,22 +1385,22 @@ struct ReviewRetakeView: View {
                 Text(appViewModel.transferHypothesisStatusTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, ReviewLayoutTokens.smallChipHorizontalPadding)
-                    .padding(.vertical, ReviewLayoutTokens.smallChipVerticalPadding)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                     .background(KatieColors.cardSecondary)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+            VStack(alignment: .leading, spacing: 8) {
                 Label("Sound focus first: \(snapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
                 Label("Language watch-out: \(snapshot.transferPattern)", systemImage: "arrow.triangle.branch")
             }
             .font(.footnote)
             .foregroundStyle(KatieColors.textPrimary)
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("Self-check in this pack")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
@@ -1452,18 +1413,18 @@ struct ReviewRetakeView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
             }
-            .padding(ReviewLayoutTokens.cardPadding)
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .katieCard()
     }
 
     private var reminderContinuityCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
-            HStack(alignment: .top, spacing: ReviewLayoutTokens.gridSpacing) {
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("Reminder continuity")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1502,8 +1463,8 @@ struct ReviewRetakeView: View {
                     openURL(url)
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
-                .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -1514,8 +1475,8 @@ struct ReviewRetakeView: View {
                             appViewModel.setReminderTone(tone)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, ReviewLayoutTokens.smallChipHorizontalPadding)
-                        .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
                         .background(appViewModel.reminderTone == tone ? KatieColors.accent : KatieColors.cardSecondary)
                         .foregroundStyle(appViewModel.reminderTone == tone ? .black : KatieColors.textPrimary)
                         .clipShape(Capsule())
@@ -1531,7 +1492,7 @@ struct ReviewRetakeView: View {
                     .foregroundStyle(KatieColors.textSecondary)
 
                 if appViewModel.remindersEnabled {
-                    VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Reminder time")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -1556,7 +1517,7 @@ struct ReviewRetakeView: View {
                             }
                         } else {
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: ReviewLayoutTokens.spacing_8) {
+                                HStack(spacing: 8) {
                                     ForEach(appViewModel.reminderQuickPresets) { preset in
                                         reviewReminderPresetChip(preset)
                                     }
@@ -1564,7 +1525,7 @@ struct ReviewRetakeView: View {
                             }
                         }
 
-                        Text("Adjust the reminder from Review so the next nudge arrives right when you need this rep.")
+                        Text("Adjust the reminder from Review so the next nudge lands in the exact real-world moment this rep needs.")
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
                     }
@@ -1579,7 +1540,7 @@ struct ReviewRetakeView: View {
                 .padding(.vertical, 10)
                 .background(reviewReminderActionBackground)
                 .foregroundStyle(reviewReminderActionForeground)
-                .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
         }
         .animation(.spring(response: 0.28, dampingFraction: 0.88), value: appViewModel.remindersEnabled)
@@ -1627,8 +1588,8 @@ struct ReviewRetakeView: View {
             appViewModel.updateReminderTime(preset.fireDate)
         }
         .font(.caption.weight(.semibold))
-        .padding(.horizontal, ReviewLayoutTokens.smallChipHorizontalPadding)
-        .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .background(KatieColors.cardSecondary)
         .foregroundStyle(KatieColors.textPrimary)
         .clipShape(Capsule())
@@ -1671,7 +1632,7 @@ struct ReviewRetakeView: View {
     private var retakeMissionCard: some View {
         let anchor = appViewModel.selectedCompareAnchor
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_14) {
+        return VStack(alignment: .leading, spacing: 14) {
             Text("Next rep")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1680,7 +1641,7 @@ struct ReviewRetakeView: View {
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 reviewCueRow(
                     title: anchor == nil ? "Benchmark to build from" : "Benchmark to protect",
                     body: anchor.map { "\($0.scenario.packTitle) stays pinned as the compare anchor while you tighten the next retake." }
@@ -1706,8 +1667,8 @@ struct ReviewRetakeView: View {
                     Text(label)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(index == appViewModel.recommendedPracticeStep ? KatieColors.textPrimary : KatieColors.textSecondary)
-                        .padding(.horizontal, ReviewLayoutTokens.smallChipHorizontalPadding)
-                        .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
                         .background(index == appViewModel.recommendedPracticeStep ? KatieColors.accent.opacity(0.2) : KatieColors.cardSecondary)
                         .overlay(
                             Capsule()
@@ -1727,7 +1688,7 @@ struct ReviewRetakeView: View {
                     .foregroundStyle(KatieColors.mint)
             }
 
-            HStack(spacing: ReviewLayoutTokens.spacing_10) {
+            HStack(spacing: 10) {
                 Button("Back to Practice") {
                     appViewModel.continuePracticeFromReview()
                 }
@@ -1736,7 +1697,7 @@ struct ReviewRetakeView: View {
                 .padding()
                 .background(KatieColors.accent)
                 .foregroundStyle(.black)
-                .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
                 Button("Open progress") {
                     appViewModel.openProgressFromReview()
@@ -1746,14 +1707,14 @@ struct ReviewRetakeView: View {
                 .padding()
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
         }
         .katieCard()
     }
 
     private var featuredWinCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Featured win")
                 .font(.headline)
 
@@ -1766,9 +1727,9 @@ struct ReviewRetakeView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+                VStack(alignment: .leading, spacing: 8) {
                     if appViewModel.hasEarnedCompare {
-                        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("Before")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.textSecondary)
@@ -1777,7 +1738,7 @@ struct ReviewRetakeView: View {
                                 .lineLimit(2)
                         }
 
-                        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("After")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.textSecondary)
@@ -1786,7 +1747,7 @@ struct ReviewRetakeView: View {
                                 .lineLimit(2)
                         }
                     } else {
-                        VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(appViewModel.hasEarnedFirstWin ? "Your first proof" : "Starter example")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.textSecondary)
@@ -1854,7 +1815,7 @@ struct ReviewRetakeView: View {
     }
 
     private var transcriptCard: some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Latest transcript")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1869,7 +1830,7 @@ struct ReviewRetakeView: View {
 
     private func compareTimeline(anchor: PracticeSession, latest: PracticeSession) -> some View {
         ViewThatFits(in: .vertical) {
-            HStack(alignment: .center, spacing: ReviewLayoutTokens.gridSpacing) {
+            HStack(alignment: .center, spacing: 12) {
                 compareTimelineStep(
                     title: "Earlier proof",
                     session: anchor,
@@ -1885,7 +1846,7 @@ struct ReviewRetakeView: View {
                 )
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.gridSpacing) {
+            VStack(alignment: .leading, spacing: 12) {
                 compareTimelineStep(
                     title: "Earlier proof",
                     session: anchor,
@@ -1968,7 +1929,7 @@ struct ReviewRetakeView: View {
             case (true, false):
                 return "Save one calmer latest rep on this iPhone to restore the missing replay side without breaking the compare trail."
             case (false, true):
-                return "Save another local retake so Review can keep hearing the before and after instead of only the newer side."
+                return "Save another local retake so Review can keep the audible before/after ritual instead of only the newer side."
             case (false, false):
                 return "One fresh local retake starts rebuilding replay for this compare while the transcript trail stays honest."
             case (true, true):
@@ -1996,9 +1957,9 @@ struct ReviewRetakeView: View {
     private func proofTruthStrip(for session: PracticeSession) -> some View {
         let truth = proofTruthCopy(for: session)
 
-        return VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+        return VStack(alignment: .leading, spacing: 10) {
             ViewThatFits(in: .vertical) {
-                HStack(alignment: .center, spacing: ReviewLayoutTokens.spacing_8) {
+                HStack(alignment: .center, spacing: 8) {
                     Label(truth.sourceTitle, systemImage: session.captureSource.systemImage)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -2010,7 +1971,7 @@ struct ReviewRetakeView: View {
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+                VStack(alignment: .leading, spacing: 6) {
                     Label(truth.sourceTitle, systemImage: session.captureSource.systemImage)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -2030,17 +1991,17 @@ struct ReviewRetakeView: View {
                     appViewModel.openPractice(for: session.scenario)
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
-                .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.accent)
                 .foregroundStyle(.black)
                 .clipShape(Capsule())
             }
         }
-        .padding(ReviewLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.72))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func proofTruthCopy(for session: PracticeSession) -> (sourceTitle: String, readinessTitle: String, body: String, actionTitle: String?) {
@@ -2099,7 +2060,7 @@ struct ReviewRetakeView: View {
             return (
                 sourceTitle,
                 readiness.title,
-                "This compare side came over as imported clips. Katie kept your recordings visible, but replay still needs a fresh local recording on this iPhone.",
+                "This compare side came over as imported continuity. Katie kept the proof trail visible, but replay still needs a fresh local recording on this iPhone.",
                 "Record replacement clip"
             )
         case .missingAudio:
@@ -2115,7 +2076,7 @@ struct ReviewRetakeView: View {
     }
 
     private func compareTimelineStep(title: String, session: PracticeSession, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -2131,14 +2092,14 @@ struct ReviewRetakeView: View {
 
             proofFactChip(appViewModel.compactReplayLabel(for: session), systemImage: appViewModel.displayCompareReadinessSystemImage(for: session))
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(accent)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func compareTimelineConnector(anchor: PracticeSession, latest: PracticeSession) -> some View {
-        VStack(spacing: ReviewLayoutTokens.spacing_8) {
+        VStack(spacing: 8) {
             Image(systemName: "arrow.forward")
                 .font(.caption.weight(.bold))
                 .foregroundStyle(KatieColors.mint)
@@ -2152,18 +2113,18 @@ struct ReviewRetakeView: View {
     }
 
     private func compareReplayStrip(anchor: PracticeSession, latest: PracticeSession) -> some View {
-        VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+        VStack(alignment: .leading, spacing: 10) {
             Label("Replay side-by-side", systemImage: "waveform.path.ecg.rectangle")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
 
             ViewThatFits(in: .vertical) {
-                HStack(spacing: ReviewLayoutTokens.spacing_10) {
+                HStack(spacing: 10) {
                     compareReplayButton(title: "Earlier proof", session: anchor)
                     compareReplayButton(title: "Latest retake", session: latest)
                 }
 
-                VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     compareReplayButton(title: "Earlier proof", session: anchor)
                     compareReplayButton(title: "Latest retake", session: latest)
                 }
@@ -2173,10 +2134,10 @@ struct ReviewRetakeView: View {
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(ReviewLayoutTokens.editorPadding)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.78))
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func compareReplayButton(title: String, session: PracticeSession) -> some View {
@@ -2199,7 +2160,7 @@ struct ReviewRetakeView: View {
                 appViewModel.openPractice(for: session.scenario)
             }
         } label: {
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.subSpacing) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -2216,7 +2177,7 @@ struct ReviewRetakeView: View {
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(compareReplayButtonBackground(session: session, isPlaying: isPlaying, hasPlayback: hasPlayback))
-            .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
     }
@@ -2239,7 +2200,7 @@ struct ReviewRetakeView: View {
         case (true, false):
             return "The earlier proof can replay now. Record one fresh retake on this iPhone to restore a full A/B listening loop."
         case (false, true):
-            return "The latest retake can replay now. Restore the older recording locally if you want to hear the full before and after again."
+            return "The latest retake can replay now. Restore the older proof locally if you want the full before/after listening ritual back."
         case (false, false):
             return "Replay is missing for both sides on this iPhone, so Katie keeps the compare trail visible and sends you back to Practice only when you want to rebuild it."
         }
@@ -2268,14 +2229,14 @@ struct ReviewRetakeView: View {
     @ViewBuilder
     private func proofFactChips(for session: PracticeSession) -> some View {
         ViewThatFits(in: .vertical) {
-            HStack(spacing: ReviewLayoutTokens.spacing_8) {
+            HStack(spacing: 8) {
                 proofFactChip(appViewModel.compactCaptureSourceLabel(for: session), systemImage: session.captureSource.systemImage)
                 proofFactChip(appViewModel.transcriptWordCountLabel(for: session), systemImage: "text.word.spacing")
                 proofFactChip(appViewModel.speakingPaceLabel(for: session), systemImage: "speedometer")
                 proofFactChip(appViewModel.compactReplayLabel(for: session), systemImage: appViewModel.displayCompareReadinessSystemImage(for: session))
             }
 
-            VStack(alignment: .leading, spacing: ReviewLayoutTokens.spacing_8) {
+            VStack(alignment: .leading, spacing: 8) {
                 proofFactChip(appViewModel.compactCaptureSourceLabel(for: session), systemImage: session.captureSource.systemImage)
                 proofFactChip(appViewModel.transcriptWordCountLabel(for: session), systemImage: "text.word.spacing")
                 proofFactChip(appViewModel.speakingPaceLabel(for: session), systemImage: "speedometer")
@@ -2288,8 +2249,8 @@ struct ReviewRetakeView: View {
         Label(title, systemImage: systemImage)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(KatieColors.textSecondary)
-            .padding(.horizontal, ReviewLayoutTokens.smallChipHorizontalPadding)
-            .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
             .background(KatieColors.cardBackground.opacity(0.78))
             .clipShape(Capsule())
     }
@@ -2304,11 +2265,11 @@ struct ReviewRetakeView: View {
                 .foregroundStyle(KatieColors.textPrimary)
                 .lineLimit(2)
         }
-        .padding(.horizontal, ReviewLayoutTokens.mediumChipHorizontalPadding)
+        .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: ReviewLayoutTokens.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func structureDeltaLabel(anchor: PracticeSession, latest: PracticeSession) -> String {
@@ -2431,8 +2392,8 @@ private struct ReviewActionChipStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.caption.weight(.semibold))
-            .padding(.horizontal, ReviewLayoutTokens.smallChipHorizontalPadding)
-            .padding(.vertical, ReviewLayoutTokens.mediumChipVerticalPadding)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
             .background(background)
             .foregroundStyle(foreground)
             .clipShape(Capsule())

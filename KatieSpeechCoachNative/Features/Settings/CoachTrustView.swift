@@ -1,20 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-private enum CoachLayoutTokens {
-    static let cardCornerRadius: CGFloat = 18
-    static let innerCardCornerRadius: CGFloat = 16
-    static let editorCornerRadius: CGFloat = 14
-    static let chipCornerRadius: CGFloat = 10
-    static let cardPadding: CGFloat = 12
-    static let editorPadding: CGFloat = 14
-    static let mediumChipVerticalPadding: CGFloat = 10
-    static let gridSpacing: CGFloat = 12
-    static let spacing_8: CGFloat = 8
-    static let spacing_10: CGFloat = 10
-    static let spacing_4: CGFloat = 4
-}
-
 struct CoachTrustView: View {
     private struct QuickRepRunwayStep: Identifiable {
         let title: String
@@ -65,7 +51,7 @@ struct CoachTrustView: View {
         KatieGlanceBoard(
             eyebrow: "Trust frame",
             title: "Keep the coaching context visible before you tweak it",
-            detail: "Your recordings stay on your phone, Katie knows which pack you're in, and it's clear which pack owns your reminders.",
+            detail: "Katie stays local-first, pack-aware, and explicit about reminder ownership so the settings surface still feels clinician-safe instead of slippery.",
             systemImage: "checkmark.shield.fill",
             accent: KatieColors.mint,
             secondary: KatieColors.gold,
@@ -77,23 +63,18 @@ struct CoachTrustView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: CoachLayoutTokens.gridSpacing) {
+                HStack(spacing: 12) {
                     Image(systemName: "checkmark.shield.fill")
                         .katieIconBadge(background: KatieColors.cardSecondary, foreground: KatieColors.mint, size: 34)
-                    // KAT-202: page title matches the tab label ("Coach").
-                    // The trust framing stays below as the eyebrow + section
-                    // name — the user lands on the same Coach tab, but the
-                    // page now reads "Coach · Trust frame" instead of
-                    // "Trust · Trust frame" (which was the KAT-153 parity bug).
-                    Text("Coach")
-                        .font(KatieType.title)
+                    Text("Trust")
+                        .font(.title.bold())
                         .foregroundStyle(KatieColors.textPrimary)
                     Spacer()
                 }
 
                 trustBoardCard
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Label("Clinician-safe coaching, not diagnosis", systemImage: "checkmark.shield.fill")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -136,7 +117,7 @@ struct CoachTrustView: View {
                     Text(appViewModel.profileContextBody)
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Language background")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -160,7 +141,7 @@ struct CoachTrustView: View {
                         .katieInput()
                     }
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Where this usually matters")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -185,7 +166,7 @@ struct CoachTrustView: View {
                             .foregroundStyle(KatieColors.textSecondary)
                     }
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Where this gets stressful")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -211,7 +192,7 @@ struct CoachTrustView: View {
                     }
                 }
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Primary communication goal")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -236,7 +217,7 @@ struct CoachTrustView: View {
                             .foregroundStyle(KatieColors.textSecondary)
                     }
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_8) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Label("Language background: \(appViewModel.learnerProfile.firstLanguage)\(appViewModel.learnerProfile.otherLanguages.isEmpty ? "" : " · \(appViewModel.learnerProfile.otherLanguages)")", systemImage: "globe")
                         Label("Goal: \(appViewModel.goalFocusTitle)", systemImage: "target")
                         Label("Starting pack: \(appViewModel.learnerProfile.focusScenario.packTitle)", systemImage: "flag.fill")
@@ -250,14 +231,14 @@ struct CoachTrustView: View {
                 }
 
                                 katieDrillDownSection(title: "Coaching signal", subtitle: "A quick read on what changed in your last steps.", systemImage: "chart.line.uptrend.xyaxis", isExpanded: $showEvidencePulse) {
-VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+VStack(alignment: .leading, spacing: 12) {
                     Text(appViewModel.coachingEvidencePulse.title)
                         .font(.headline)
 
                     Text(appViewModel.coachingEvidencePulse.summary)
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         ForEach(appViewModel.coachingEvidencePulse.points, id: \.self) { point in
                             Label(point, systemImage: "checkmark.circle.fill")
                                 .font(.footnote)
@@ -268,7 +249,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 }
 
                                 katieDrillDownSection(title: "Suggested pack", subtitle: "Keep your settings on track with one clear recommendation.", systemImage: "sparkles", isExpanded: $showSuggestedPack) {
-VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+VStack(alignment: .leading, spacing: 12) {
                     Text("Suggested pack for this context")
                         .font(.headline)
 
@@ -303,7 +284,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                             .modifier(KatieActionChipStyle(background: KatieColors.cardSecondary, foreground: KatieColors.textPrimary, horizontalPadding: 10))
                     }
 
-                    HStack(spacing: CoachLayoutTokens.spacing_10) {
+                    HStack(spacing: 10) {
                         Button(appViewModel.currentMission == appViewModel.recommendedScenarioForCurrentContext ? "Today already matches" : "Use this pack for Today") {
                             withAnimation(.spring(response: 0.24, dampingFraction: 0.86)) {
                                 appViewModel.selectScenario(appViewModel.recommendedScenarioForCurrentContext)
@@ -311,10 +292,10 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, CoachLayoutTokens.mediumChipVerticalPadding)
+                        .padding(.vertical, 10)
                         .background(KatieColors.cardSecondary)
                         .foregroundStyle(KatieColors.textPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.editorCornerRadius, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .disabled(appViewModel.currentMission == appViewModel.recommendedScenarioForCurrentContext)
 
                         Button(appViewModel.isRecommendedScenarioAlignedForStartingPack ? "Starting pack matches" : "Make it the starting pack") {
@@ -324,17 +305,17 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, CoachLayoutTokens.mediumChipVerticalPadding)
+                        .padding(.vertical, 10)
                         .background(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.cardBackground : KatieColors.accent)
                         .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textSecondary : .black)
-                        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.editorCornerRadius, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .disabled(appViewModel.isRecommendedScenarioAlignedForStartingPack)
                     }
                 }
                 }
 
                                 katieDrillDownSection(title: "Coaching priorities", subtitle: "What matters most for progress this week.", systemImage: "arrow.triangle.branch", isExpanded: $showCoachingPriorities) {
-VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+VStack(alignment: .leading, spacing: 12) {
                     Text("Coaching priorities")
                         .font(.headline)
 
@@ -367,14 +348,14 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 packContractSummaryCard
                 startingHypothesisSummaryCard
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Choose the pack Katie protects")
                         .font(.headline)
 
                     Text("Keep the starting pack broad, the live pack current, and reminder ownership obvious before you switch anything.")
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Starting pack")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -395,7 +376,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         }
                     }
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Live pack for Today")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.textPrimary)
@@ -422,7 +403,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 }
 
                                 katieDrillDownSection(title: "Trust boundaries", subtitle: "Clear boundaries make the app more reliable.", systemImage: "checkmark.shield", isExpanded: $showSafetyBoundaries) {
-VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+VStack(alignment: .leading, spacing: 12) {
                     Text("What Katie does not do")
                         .font(.headline)
 
@@ -440,7 +421,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 }
 
                                 katieDrillDownSection(title: "Clinical handoff", subtitle: "Know when a professional is the best next step.", systemImage: "heart.text.square.fill", isExpanded: $showHandOff) {
-VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+VStack(alignment: .leading, spacing: 12) {
                     Text("When Katie should hand off")
                         .font(.headline)
 
@@ -481,14 +462,14 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                 }
                 }
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Quick rep")
                         .font(.headline)
-                    Text("Want an easy start? Pick one short rep and see exactly how your next recording changes your recordings, compare, and reminders.")
+                    Text("Need a low-friction start? Pick one short rep and see exactly how the next save changes proof, compare, and reminders.")
                         .foregroundStyle(KatieColors.textSecondary)
 
                     if usesWideQuickRepGrid {
-                        LazyVGrid(columns: quickRepGridColumns, alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                        LazyVGrid(columns: quickRepGridColumns, alignment: .leading, spacing: 12) {
                             ForEach(appViewModel.quickRepRail) { prompt in
                                 let reminderProtected = appViewModel.reminderPlan?.scenario == prompt.scenario
                                 let isRecommended = prompt.scenario == appViewModel.recommendedScenarioForCurrentContext
@@ -497,7 +478,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         }
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: CoachLayoutTokens.gridSpacing) {
+                            HStack(spacing: 12) {
                                 ForEach(appViewModel.quickRepRail) { prompt in
                                     let reminderProtected = appViewModel.reminderPlan?.scenario == prompt.scenario
                                     let isRecommended = prompt.scenario == appViewModel.recommendedScenarioForCurrentContext
@@ -508,7 +489,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     }
                 }
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Trust status")
                         .font(.headline)
                     KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
@@ -540,21 +521,21 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("What stays on this iPhone")
                         .font(.headline)
-                    Text("Your recordings and compare history stay on your phone. If cloud sync is ever added, you'll get clear controls to export, delete, and manage how long things are kept.")
+                    Text("This native scaffold is local-first for audio and compare memory on this device. If synced storage arrives later, export, deletion, and retention controls should become visible product surfaces — not hidden settings.")
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Reminder handoff")
                         .font(.headline)
 
                     Text("Keep the nudge style honest and predictable across Today, Review, and Settings, then show the exact copy Katie would send before you schedule it.")
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    HStack(spacing: CoachLayoutTokens.spacing_8) {
+                    HStack(spacing: 8) {
                         ForEach(ReminderTone.allCases) { tone in
                             reminderToneButton(tone)
                         }
@@ -564,7 +545,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_8) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Label("Preview notification", systemImage: "bell.badge.fill")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.accent)
@@ -580,10 +561,10 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
                     }
-                    .padding(CoachLayoutTokens.editorPadding)
+                    .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
                     if usesWideReminderPresetLayout {
                         KatieWrap(spacing: 8, rowSpacing: 8) {
@@ -594,7 +575,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: CoachLayoutTokens.spacing_8) {
+                            HStack(spacing: 8) {
                                 ForEach(appViewModel.reminderQuickPresets) { preset in
                                     reminderPresetChip(preset)
                                 }
@@ -612,16 +593,16 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     }
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, CoachLayoutTokens.mediumChipVerticalPadding)
+                    .padding(.vertical, 10)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.editorCornerRadius, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
                 .katieCard()
 
                 reminderFlowBanner
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Data controls")
                         .font(.headline)
 
@@ -641,7 +622,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         .foregroundStyle(KatieColors.textSecondary)
 
                     if let pocketCopyStatusLine = appViewModel.pocketCopyStatusLine {
-                        VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_8) {
+                        VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Label("Pocket copy restore", systemImage: "arrow.triangle.2.circlepath.circle.fill")
                                     .font(.subheadline.bold())
@@ -660,21 +641,21 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                                 .font(.footnote)
                                 .foregroundStyle(KatieColors.textSecondary)
                         }
-                        .padding(CoachLayoutTokens.editorPadding)
+                        .padding(14)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(KatieColors.cardSecondary)
-                        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     }
 
-                    HStack(spacing: CoachLayoutTokens.spacing_8) {
+                    HStack(spacing: 8) {
                         ShareLink(item: appViewModel.exportPayload, subject: Text("Katie pocket copy"), message: Text("Local-first Katie continuity export")) {
                             Text("Export pocket copy")
                                 .fontWeight(.semibold)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, CoachLayoutTokens.mediumChipVerticalPadding)
+                                .padding(.vertical, 10)
                                 .background(KatieColors.cardSecondary)
                                 .foregroundStyle(KatieColors.textPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.editorCornerRadius, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
 
                         Button("Import pocket copy") {
@@ -682,23 +663,23 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, CoachLayoutTokens.mediumChipVerticalPadding)
+                        .padding(.vertical, 10)
                         .background(KatieColors.cardSecondary)
                         .foregroundStyle(KatieColors.textPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.editorCornerRadius, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
 
-                    HStack(spacing: CoachLayoutTokens.spacing_8) {
+                    HStack(spacing: 8) {
 
                         Button("Delete history on-device") {
                             showDeleteConfirmation = true
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, CoachLayoutTokens.mediumChipVerticalPadding)
+                        .padding(.vertical, 10)
                         .background(appViewModel.isPremiumUnlocked ? Color.red.opacity(0.24) : Color.red.opacity(0.12))
                         .foregroundStyle(appViewModel.isPremiumUnlocked ? .red : KatieColors.textPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.editorCornerRadius, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
 
                     Text("Trust rule: Katie speaks plainly about what is replay-ready here versus restored only from text or handoff.")
@@ -709,22 +690,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
             }
             .padding(16)
             .katieContentFrame(maxWidth: 1040)
-        .background(
-            LinearGradient(
-                colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .overlay {
-                ZStack {
-                    RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
-                    KatieAuroraBackground(accent: KatieColors.plum, secondary: KatieColors.mint)
-                        .opacity(0.45)
-                    KatieFloatingParticles()
-                }
-            }
-            .ignoresSafeArea()
-        )
+        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
         .confirmationDialog("Delete all local Katie history from this iPhone?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete all local data", role: .destructive) {
                 appViewModel.deleteAllOnDeviceData()
@@ -743,7 +709,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
 
 
     private var packContractSummaryCard: some View {
-        VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("Pack contract")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -776,10 +742,10 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
         .font(.footnote)
         .foregroundStyle(KatieColors.textPrimary)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(CoachLayoutTokens.editorPadding)
-        .background(KatieColors.cardSecondary.opacity(0.9), in: RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+        .padding(14)
+        .background(KatieColors.cardSecondary.opacity(0.9), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(KatieColors.cardBorder, lineWidth: 1)
         )
     }
@@ -787,9 +753,9 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
     private var startingHypothesisSummaryCard: some View {
         let snapshot = appViewModel.languageAssessmentSnapshot
 
-        return VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
-            HStack(alignment: .top, spacing: CoachLayoutTokens.gridSpacing) {
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_4) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Starting hypothesis")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -817,7 +783,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_8) {
+            VStack(alignment: .leading, spacing: 8) {
                 Label("Sound focus first: \(snapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
                 Label("Language watch-out: \(snapshot.transferPattern)", systemImage: "arrow.triangle.branch")
             }
@@ -837,16 +803,16 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
             }
-            .padding(CoachLayoutTokens.cardPadding)
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.innerCardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(CoachLayoutTokens.editorPadding)
-        .background(KatieColors.cardSecondary.opacity(0.9), in: RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+        .padding(14)
+        .background(KatieColors.cardSecondary.opacity(0.9), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(KatieColors.cardBorder, lineWidth: 1)
         )
     }
@@ -871,7 +837,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
         return Button {
             appViewModel.setReminderTone(tone)
         } label: {
-            VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_4) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(tone.title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -881,14 +847,14 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     .foregroundStyle(KatieColors.textSecondary)
                     .lineLimit(2)
             }
-            .padding(CoachLayoutTokens.cardPadding)
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(isSelected ? KatieColors.accent.opacity(0.18) : KatieColors.cardSecondary)
             .overlay(
-                RoundedRectangle(cornerRadius: CoachLayoutTokens.innerCardCornerRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(isSelected ? KatieColors.accent : KatieColors.cardBorder, lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.innerCardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
     }
@@ -917,8 +883,8 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
         Button {
             appViewModel.launchQuickRep(for: prompt.scenario)
         } label: {
-            VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_10) {
-                HStack(alignment: .top, spacing: CoachLayoutTokens.spacing_8) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 8) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(prompt.title)
                             .font(.subheadline.weight(.semibold))
@@ -961,7 +927,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                     .foregroundStyle(KatieColors.textSecondary)
                     .lineLimit(3)
 
-                VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_8) {
+                VStack(alignment: .leading, spacing: 8) {
                     Label("What stays in sync after this rep", systemImage: "point.3.filled.connected.trianglepath.dotted")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -984,15 +950,15 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
                         .lineLimit(2)
                 }
             }
-            .padding(CoachLayoutTokens.editorPadding)
+            .padding(14)
             .frame(maxWidth: compactWidth == nil ? .infinity : nil, alignment: .leading)
             .frame(width: compactWidth, alignment: .leading)
             .background(isRecommended ? KatieColors.gold.opacity(0.12) : KatieColors.cardSecondary)
             .overlay(
-                RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .stroke(isRecommended ? KatieColors.gold.opacity(0.35) : KatieColors.cardBorder, lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
         .buttonStyle(.plain)
     }
@@ -1027,7 +993,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
     }
 
     private func quickRepRunwayRow(_ step: QuickRepRunwayStep) -> some View {
-        HStack(alignment: .top, spacing: CoachLayoutTokens.spacing_8) {
+        HStack(alignment: .top, spacing: 8) {
             Image(systemName: step.systemImage)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(step.accent)
@@ -1053,7 +1019,7 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
 
     private func katieDrillDownSection<Content: View>(title: String, subtitle: String, systemImage: String, isExpanded: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) -> some View {
         DisclosureGroup(isExpanded: isExpanded) {
-            VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text(subtitle)
                     .font(.caption)
                     .foregroundStyle(KatieColors.textSecondary)
@@ -1069,15 +1035,15 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
     }
 
     private func clinicalFollowUpRow(title: String, body: String, systemImage: String, accent: Color) -> some View {
-        HStack(alignment: .top, spacing: CoachLayoutTokens.spacing_10) {
+        HStack(alignment: .top, spacing: 10) {
             Image(systemName: systemImage)
                 .font(.caption.weight(.bold))
                 .foregroundStyle(accent)
                 .frame(width: 28, height: 28)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.chipCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_4) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -1089,22 +1055,22 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
 
             Spacer(minLength: 0)
         }
-        .padding(CoachLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func trustPriorityRow(title: String, body: String, systemImage: String, accent: Color) -> some View {
-        HStack(alignment: .top, spacing: CoachLayoutTokens.spacing_10) {
+        HStack(alignment: .top, spacing: 10) {
             Image(systemName: systemImage)
                 .font(.caption.weight(.bold))
                 .foregroundStyle(accent)
                 .frame(width: 28, height: 28)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.chipCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            VStack(alignment: .leading, spacing: CoachLayoutTokens.spacing_4) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
@@ -1116,10 +1082,10 @@ VStack(alignment: .leading, spacing: CoachLayoutTokens.gridSpacing) {
 
             Spacer(minLength: 0)
         }
-        .padding(CoachLayoutTokens.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: CoachLayoutTokens.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

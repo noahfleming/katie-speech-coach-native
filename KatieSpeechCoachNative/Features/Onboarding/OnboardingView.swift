@@ -82,50 +82,48 @@ struct OnboardingView: View {
             endPoint: .bottomTrailing
         )
         .overlay {
-            ZStack {
-                RadialGradient(
-                    colors: [KatieColors.appBackgroundGlow, KatieColors.appBackgroundGlowSecondary, .clear],
-                    center: .topLeading,
-                    startRadius: 8,
-                    endRadius: 520
-                )
-                KatieAuroraBackground(accent: KatieColors.accent, secondary: KatieColors.plum)
-                    .opacity(0.65)
-                KatieFloatingParticles()
-            }
+            RadialGradient(
+                colors: [KatieColors.appBackgroundGlow, KatieColors.appBackgroundGlowSecondary, .clear],
+                center: .topLeading,
+                startRadius: 8,
+                endRadius: 520
+            )
         }
         .ignoresSafeArea()
     }
 
     private func heroCard(isWideLayout: Bool) -> some View {
         VStack(alignment: .leading, spacing: isWideLayout ? 18 : 16) {
-            HStack(alignment: .top, spacing: 16) {
-                KatieScenarioArtwork(
-                    systemImage: "message.and.waveform.fill",
-                    accent: KatieColors.accent,
-                    secondary: KatieColors.mint
-                )
-                .frame(width: isWideLayout ? 84 : 72, height: isWideLayout ? 84 : 72)
+            if isWideLayout {
+                HStack(alignment: .top, spacing: 16) {
+                    KatieScenarioArtwork(
+                        systemImage: "message.and.waveform.fill",
+                        accent: KatieColors.accent,
+                        secondary: KatieColors.mint
+                    )
+                    .frame(width: 84, height: 84)
 
-                VStack(alignment: .leading, spacing: 10) {
-                    KatieSectionEyebrow(title: "First sample setup", systemImage: "sparkles", accent: KatieColors.gold)
-
-                    Text("Katie")
-                        .font(isWideLayout ? .system(size: 44, weight: .bold, design: .rounded) : .largeTitle.bold())
-                        .foregroundStyle(KatieColors.textPrimary)
-
-                    Text("A speaking coach, built with speech therapists, for clearer work moments.")
-                        .font(isWideLayout ? .title3.weight(.semibold) : .headline)
-                        .foregroundStyle(KatieColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text("Practice work conversations · your recordings stay on your phone")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(KatieColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 10) {
+                        heroLeadCopy(isWideLayout: isWideLayout)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
                 }
+            } else {
+                VStack(alignment: .leading, spacing: 16) {
+                    KatieScenarioArtwork(
+                        systemImage: "message.and.waveform.fill",
+                        accent: KatieColors.accent,
+                        secondary: KatieColors.mint
+                    )
+                    .frame(width: 72, height: 72)
 
-                Spacer(minLength: 0)
+                    VStack(alignment: .leading, spacing: 10) {
+                        heroLeadCopy(isWideLayout: isWideLayout)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             if isWideLayout {
@@ -144,6 +142,51 @@ struct OnboardingView: View {
         }
         .katieCard()
         .katieHeroAura(accent: KatieColors.accent, secondary: KatieColors.mint)
+    }
+
+    private func heroLeadCopy(isWideLayout: Bool) -> some View {
+        Group {
+            // OPE-132: brighter eyebrow so "First sample setup" reads on first screen
+            // (audit: "First sample setup" badge was dark-on-dark — gold opacity was
+            // washed out against cardSecondary. Bumped accent opacity 0.28 → 0.55,
+            // gradient end to a brighter tertiary tint, and added a soft text shadow
+            // for legibility on the deep purple hero card.)
+            KatieSectionEyebrow(
+                title: "First sample setup",
+                systemImage: "sparkles",
+                accent: KatieColors.gold,
+                fillOpacity: 0.55,
+                endTint: KatieColors.cardTertiary.opacity(0.85),
+                strokeOpacity: 0.55
+            )
+
+            Text("Katie")
+                .font(isWideLayout ? .system(size: 44, weight: .bold, design: .rounded) : .largeTitle.bold())
+                .foregroundStyle(KatieColors.textPrimary)
+
+            // OPE-132: plain-language subtitle (audit: "SLP-informed" is clinical
+            // jargon — Katie coaches how your listener hears you, not a clinical
+            // model). Keep it compact on phones so the hero never bleeds off the
+            // right edge.
+            VStack(alignment: .leading, spacing: 4) {
+                Text("A coach for clearer work moments.")
+                Text("No accent erasure.")
+            }
+            .font(isWideLayout ? .title3.weight(.semibold) : .callout.weight(.semibold))
+            .foregroundStyle(KatieColors.textPrimary)
+            .fixedSize(horizontal: false, vertical: true)
+
+            Text("Work speaking · local-first")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(KatieColors.textSecondary)
+
+            // OPE-132 + KAT-155: privacy chip on the first screen, not just the
+            // first-recording surface. Audit: "Your recordings stay on this iPhone"
+            // was invisible until after onboarding. Same capsule style as
+            // FirstBaselineView, sized for the hero row.
+            privacyChip()
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private func heroPromiseCard(isWideLayout: Bool) -> some View {
@@ -178,7 +221,7 @@ struct OnboardingView: View {
                 )
                 heroFeatureTile(
                     title: "Proof over pep talks",
-                    detail: "Your first recording becomes the benchmark.",
+                    detail: "Your first save becomes the benchmark.",
                     systemImage: "person.crop.circle.badge.checkmark",
                     accent: KatieColors.gold
                 )
@@ -348,8 +391,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
                 eyebrow: "Your setup",
-                title: "Tell us a little about your speaking",
-                detail: "Katie uses your role, language background, and work context to set up your first practice without putting you in a box."
+                title: "Add enough context for a believable first coaching pass",
+                detail: "Katie uses your role, language background, and work context to frame the first sample without boxing you into a stereotype."
             )
 
             TextField("First name", text: profileBinding(\.firstName))
@@ -379,8 +422,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
                 eyebrow: "Work context",
-                title: "Tell us where speaking gets hard",
-                detail: "A clearer starting point helps Katie make your first recording feel grounded instead of generic."
+                title: "Tune the first listener-pressure lane",
+                detail: "A tighter first lane helps Katie make the first proof feel grounded instead of generic."
             )
 
             VStack(alignment: .leading, spacing: 10) {
@@ -560,7 +603,7 @@ struct OnboardingView: View {
             sectionHeader(
                 eyebrow: "Capture trust",
                 title: appViewModel.audioCaptureLane.title,
-                detail: "You can record right on your phone when you want to, and there's always a text-only option when you'd rather not."
+                detail: "Item 2 stays explicit here: real on-device capture is available when needed, and text-only fallback stays visible when it is not."
             )
 
             Label(appViewModel.audioCaptureLane.detail, systemImage: appViewModel.audioCaptureLane.systemImage)
@@ -650,7 +693,7 @@ struct OnboardingView: View {
                             .font(.headline)
                             .foregroundStyle(KatieColors.textPrimary)
 
-                        Text("Katie uses this as a starting point in \(appViewModel.learnerProfile.focusScenario.packTitle) until your first recording shows what actually helps the listener most.")
+                        Text("Katie uses this as a starting stance in \(appViewModel.learnerProfile.focusScenario.packTitle) until your first saved sample proves what actually helps the listener most.")
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -725,7 +768,7 @@ struct OnboardingView: View {
                     )
             )
 
-            Text("Choose the starting point that feels closest right now")
+            Text("Choose the starting stance that feels closest right now")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -793,6 +836,29 @@ struct OnboardingView: View {
         .katieCard()
     }
 
+    // OPE-132 + KAT-155: privacy chip used on the first screen (hero card).
+    // Mirrors the FirstBaselineView chip styling so the privacy signal is
+    // consistent from the very first tap. Mint accent reads as "safe" and
+    // "local" without leaning on copy-heavy framing.
+    private func privacyChip() -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "lock.shield.fill")
+                .foregroundStyle(KatieColors.mint)
+            Text("Recordings stay on this iPhone.")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(KatieColors.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(KatieColors.mint.opacity(0.14), in: Capsule())
+        .overlay(
+            Capsule().stroke(KatieColors.mint.opacity(0.40), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Privacy: recordings stay on this iPhone.")
+    }
+
     private func recommendedFirstRepStrip(isWideLayout: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .top, spacing: 12) {
@@ -803,7 +869,7 @@ struct OnboardingView: View {
                         .font(isWideLayout ? .title3.weight(.semibold) : .headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("One recording in \(appViewModel.learnerProfile.focusScenario.packTitle) is the moment Katie stops working from examples and starts coaching from a rep that's actually yours.")
+                    Text("One saved sample in \(appViewModel.learnerProfile.focusScenario.packTitle) is the moment Katie stops leaning on setup copy and starts coaching from evidence you actually own.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -962,7 +1028,7 @@ struct OnboardingView: View {
             sectionHeader(
                 eyebrow: "Full surface area",
                 title: "Speaking packs in Katie",
-                detail: "Katie covers more than interviews, so you can see every pack while you set up."
+                detail: "Katie should feel broader than interviews from the first tap, so every pack stays visible during setup."
             )
 
             ForEach(appViewModel.availableScenarios) { scenario in
@@ -1035,14 +1101,14 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
                 eyebrow: "Handoff",
-                title: "Make one real recording first",
-                detail: "Next, you’ll record one of your own in your starting pack so compare and reminders can point to a rep that's yours."
+                title: "Land one real proof before the premium loop expands",
+                detail: "Next, you’ll save one personal sample in your starting pack so compare, reminders, and premium framing can point to your own proof."
             )
 
             VStack(alignment: .leading, spacing: 10) {
-                Label("Your first rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
-                Label("Example recordings stay visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
-                Label("Everything builds on that first real recording", systemImage: "crown.fill")
+                Label("Your first saved rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
+                Label("Starter proof stays visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
+                Label("Premium copy stays tied to a believable first win", systemImage: "crown.fill")
             }
             .foregroundStyle(KatieColors.textSecondary)
 

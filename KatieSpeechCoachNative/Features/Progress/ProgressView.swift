@@ -12,34 +12,6 @@ struct ProgressView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var isPackLibraryExpanded = false
 
-    private enum Layout {
-        static let cardCornerRadius: CGFloat = 18
-        static let innerCardCornerRadius: CGFloat = 16
-        static let editorCornerRadius: CGFloat = 14
-        static let chipCornerRadius: CGFloat = 10
-        static let cornerRadius20: CGFloat = 20
-        static let cardPadding: CGFloat = 12
-        static let heroPadding: CGFloat = 16
-        static let mediumChipHorizontalPadding: CGFloat = 12
-        static let mediumChipVerticalPadding: CGFloat = 8
-        static let smallChipHorizontalPadding: CGFloat = 10
-        static let smallChipVerticalPadding: CGFloat = 6
-        static let tightChipHorizontalPadding: CGFloat = 8
-        static let tightChipVerticalPadding: CGFloat = 4
-        static let gridSpacing: CGFloat = 12
-        static let sectionSpacing: CGFloat = 16
-        static let cardSpacing: CGFloat = 12
-        static let subSpacing: CGFloat = 6
-        static let spacing_8: CGFloat = 8
-        static let spacing_10: CGFloat = 10
-        static let spacing_4: CGFloat = 4
-        static let spacing_14: CGFloat = 14
-        static let spacing_3: CGFloat = 3
-        static let spacing_5: CGFloat = 5
-    }
-
-    // MARK: - Layout (size class + computed metrics)
-
     private var activePackCount: Int {
         appViewModel.availableScenarios.filter { appViewModel.userOwnedSessionCount(in: $0) > 0 }.count
     }
@@ -114,13 +86,13 @@ struct ProgressView: View {
             KatieGlanceMetric(
                 title: "Active packs",
                 value: "\(activePackCount)",
-                detail: activePackCount == 1 ? "One pack already has your own recording." : "Packs with at least one of your own recordings.",
+                detail: activePackCount == 1 ? "One pack already has user-owned proof." : "Packs with at least one user-owned proof.",
                 accent: KatieColors.mint
             ),
             KatieGlanceMetric(
                 title: "Compare-ready",
                 value: "\(compareReadyCount)",
-                detail: compareReadyCount == 0 ? "Save one more recording in any pack to unlock a before-vs-now story." : "Packs with enough recordings for a real compare.",
+                detail: compareReadyCount == 0 ? "Save one more proof in any pack to unlock a before-vs-now story." : "Packs with enough proof for a real compare.",
                 accent: KatieColors.gold
             ),
             KatieGlanceMetric(
@@ -132,13 +104,11 @@ struct ProgressView: View {
         ]
     }
 
-    // MARK: - Subviews (boards, ladders, achievements)
-
     private var progressBoardCard: some View {
         KatieGlanceBoard(
             eyebrow: "Progress board",
-            title: "Glance first, then open the detail below",
-            detail: "See your top numbers at a glance, then open the longer compare and detailed cards when you want more.",
+            title: "Glance first, then open the deeper proof",
+            detail: "Katie keeps the top line readable on iPhone and iPad before you drop into the longer compare and clinician-style detail cards.",
             systemImage: "chart.line.uptrend.xyaxis",
             accent: KatieColors.mint,
             secondary: KatieColors.gold,
@@ -149,8 +119,8 @@ struct ProgressView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
-                HStack(spacing: Layout.gridSpacing) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 12) {
                     Image(systemName: "chart.line.uptrend.xyaxis")
                         .katieIconBadge(background: KatieColors.cardSecondary, foreground: KatieColors.mint, size: 34)
                     Text("Progress")
@@ -160,7 +130,6 @@ struct ProgressView: View {
                 }
 
                 progressBoardCard
-                progressRingsRow
 
                 switch progressStage {
                 case .starter:
@@ -171,60 +140,10 @@ struct ProgressView: View {
                     fullProgressContent
                 }
             }
-            .padding(Layout.heroPadding)
+            .padding(16)
             .katieContentFrame(maxWidth: 840)
         }
-        .background(
-            LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .overlay {
-                    ZStack {
-                        RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420)
-                        KatieFloatingParticles()
-                    }
-                }
-                .ignoresSafeArea()
-        )
-    }
-
-    private var progressRingsRow: some View {
-        HStack(spacing: 0) {
-            Spacer(minLength: 0)
-            progressRingCell(
-                progress: min(1.0, Double(activePackCount) / 5.0),
-                label: "\(activePackCount)",
-                title: "Active\npacks",
-                accent: KatieColors.mint
-            )
-            Spacer(minLength: 0)
-            progressRingCell(
-                progress: activePackCount > 0
-                    ? min(1.0, Double(compareReadyCount) / Double(activePackCount))
-                    : 0,
-                label: "\(compareReadyCount)",
-                title: "Compare\nready",
-                accent: KatieColors.gold
-            )
-            Spacer(minLength: 0)
-            progressRingCell(
-                progress: min(1.0, Double(replayReadyCount) / 10.0),
-                label: "\(replayReadyCount)",
-                title: "Replay\nclips",
-                accent: KatieColors.accent
-            )
-            Spacer(minLength: 0)
-        }
-        .padding(.vertical, KatieSpacing.xl)
-        .katieCard()
-    }
-
-    private func progressRingCell(progress: Double, label: String, title: String, accent: Color) -> some View {
-        VStack(spacing: KatieSpacing.base) {
-            KatieProgressRing(progress: progress, size: 68, lineWidth: 5, accent: accent, label: label)
-            Text(title)
-                .font(KatieType.label)
-                .foregroundStyle(KatieColors.textSecondary)
-                .multilineTextAlignment(.center)
-        }
+        .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
     }
 
     @ViewBuilder
@@ -339,19 +258,19 @@ struct ProgressView: View {
         @ViewBuilder secondary: () -> Secondary
     ) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: Layout.gridSpacing) {
-                VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 16) {
                     primary()
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
 
-                VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
+                VStack(alignment: .leading, spacing: 16) {
                     secondary()
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
 
-            VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+            VStack(alignment: .leading, spacing: 12) {
                 primary()
                 secondary()
             }
@@ -359,7 +278,7 @@ struct ProgressView: View {
     }
 
     private func snapshotPulseChip(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: Layout.subSpacing) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -368,14 +287,14 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func proofCountChip(title: String, value: Int, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_4) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(accent)
@@ -383,21 +302,21 @@ struct ProgressView: View {
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-        .padding(.vertical, Layout.spacing_10)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func proofConfidenceTile(title: String, score: Int, accent: Color) -> some View {
         let clampedScore = min(max(score, 0), 5)
 
-        return VStack(alignment: .leading, spacing: Layout.spacing_8) {
+        return VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
-            HStack(spacing: Layout.spacing_4) {
+            HStack(spacing: 4) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
                         .fill(index < clampedScore ? accent : KatieColors.textSecondary.opacity(0.16))
@@ -409,17 +328,17 @@ struct ProgressView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-        .padding(.vertical, Layout.spacing_10)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var evidenceLadderCard: some View {
         let pulse = appViewModel.coachingEvidencePulse
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
             Label(pulse.title, systemImage: "list.clipboard")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -427,7 +346,7 @@ struct ProgressView: View {
             Text(pulse.summary)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: Layout.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 ForEach(pulse.points, id: \.self) { point in
                     Label(point, systemImage: "checkmark.circle.fill")
                         .font(.footnote)
@@ -443,16 +362,16 @@ struct ProgressView: View {
         let importedCount = appViewModel.importedHistoryCount
         let seededCount = appViewModel.seededHistoryCount
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            Label("Where your recordings come from", systemImage: "checkmark.shield.fill")
+        return VStack(alignment: .leading, spacing: 12) {
+            Label("Proof provenance", systemImage: "checkmark.shield.fill")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
             Text(recordedCount > 0
-                 ? "Progress leads with recordings you made on this iPhone. Imported clips and samples stay visible, but clearly behind your own reps."
+                 ? "Progress leads with proof you recorded on this iPhone. Imported continuity and starter samples stay visible, but clearly behind your own reps."
                  : importedCount > 0
-                 ? "Imported clips can keep the pack warm, but Progress still needs a recording you saved here before it counts."
-                 : "Samples stay labeled as samples until you save your own recording.")
+                 ? "Imported continuity can keep the lane warm, but Progress still needs a locally saved proof before it should feel earned here."
+                 : "Starter samples stay labeled as prototype continuity until you save your own proof.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             if recordedCount > 0 {
@@ -461,7 +380,7 @@ struct ProgressView: View {
                     proofCountChip(title: "Imported", value: importedCount, accent: KatieColors.accent)
                 }
 
-                Text("Samples stay in the pack as smaller examples.")
+                Text("Starter proof stays in the lane as smaller prototype continuity.")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(KatieColors.gold)
             } else {
@@ -472,7 +391,7 @@ struct ProgressView: View {
                 }
             }
 
-            Text("We show your own recordings first, then imported clips, then samples.")
+            Text("Order of trust: recorded here first, imported continuity second, starter proof last.")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.gold)
         }
@@ -482,9 +401,9 @@ struct ProgressView: View {
     private var goalFocusCard: some View {
         let snapshot = appViewModel.currentGoalProgressSnapshot
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            HStack(alignment: .top, spacing: Layout.gridSpacing) {
-                VStack(alignment: .leading, spacing: Layout.spacing_4) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
                     Label("Goal focus", systemImage: "target")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -503,7 +422,7 @@ struct ProgressView: View {
             Text(snapshot.detail)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            VStack(alignment: .leading, spacing: Layout.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 progressDetailRow(
                     title: "Current lane",
                     body: snapshot.focusPackLine,
@@ -522,13 +441,13 @@ struct ProgressView: View {
             }
 
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: Layout.spacing_8) {
+                HStack(spacing: 8) {
                     ForEach(Array(snapshot.steps.enumerated()), id: \.offset) { index, step in
                         goalStepChip(title: step, isComplete: index < snapshot.completedSteps)
                     }
                 }
 
-                VStack(alignment: .leading, spacing: Layout.spacing_8) {
+                VStack(alignment: .leading, spacing: 8) {
                     ForEach(Array(snapshot.steps.enumerated()), id: \.offset) { index, step in
                         goalStepChip(title: step, isComplete: index < snapshot.completedSteps)
                     }
@@ -539,7 +458,7 @@ struct ProgressView: View {
     }
 
     private func goalStepChip(title: String, isComplete: Bool) -> some View {
-        HStack(spacing: Layout.spacing_8) {
+        HStack(spacing: 8) {
             Image(systemName: isComplete ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isComplete ? KatieColors.mint : KatieColors.textSecondary)
 
@@ -547,31 +466,31 @@ struct ProgressView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-        .padding(.vertical, Layout.spacing_10)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
         .background(isComplete ? KatieColors.mint.opacity(0.14) : KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var achievementsCard: some View {
         let achievements = appViewModel.progressAchievements
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
             Label("Achievements", systemImage: "rosette")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Small milestones that show when this pack has moved from samples to your own recordings.")
+            Text("Small, honest milestones that show when this pack has moved from starter flow to real user-owned proof.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             if usesWideProgressLayout {
-                LazyVGrid(columns: compareLibraryGridColumns, alignment: .leading, spacing: Layout.spacing_10) {
+                LazyVGrid(columns: compareLibraryGridColumns, alignment: .leading, spacing: 10) {
                     ForEach(achievements) { achievement in
                         achievementTile(achievement)
                     }
                 }
             } else {
-                VStack(alignment: .leading, spacing: Layout.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     ForEach(achievements) { achievement in
                         achievementTile(achievement)
                     }
@@ -584,25 +503,25 @@ struct ProgressView: View {
     private func achievementTile(_ achievement: ProgressAchievement) -> some View {
         let accent = achievementAccent(for: achievement)
 
-        return HStack(alignment: .top, spacing: Layout.gridSpacing) {
+        return HStack(alignment: .top, spacing: 12) {
             Image(systemName: achievement.systemImage)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(achievement.isUnlocked ? accent : KatieColors.textSecondary)
                 .frame(width: 30, height: 30)
                 .background((achievement.isUnlocked ? accent : KatieColors.cardBackground).opacity(achievement.isUnlocked ? 0.16 : 0.9))
-                .clipShape(RoundedRectangle(cornerRadius: Layout.chipCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            VStack(alignment: .leading, spacing: Layout.spacing_4) {
-                HStack(spacing: Layout.spacing_8) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
                     Text(achievement.title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text(achievement.isUnlocked ? "Live" : "Locked")
+                    Text(achievement.isUnlocked ? "Earned" : "Not yet")
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(achievement.isUnlocked ? accent : KatieColors.textSecondary)
-                        .padding(.horizontal, Layout.tightChipHorizontalPadding)
-                        .padding(.vertical, Layout.tightChipVerticalPadding)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                         .background(KatieColors.cardBackground.opacity(0.9))
                         .clipShape(Capsule())
                 }
@@ -613,14 +532,14 @@ struct ProgressView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
         .overlay(
-            RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke((achievement.isUnlocked ? accent : KatieColors.cardBackground).opacity(0.45), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func achievementAccent(for achievement: ProgressAchievement) -> Color {
@@ -634,14 +553,12 @@ struct ProgressView: View {
         }
     }
 
-    // MARK: - Analytics + comparison library (heavier surfaces)
-
     private var analyticsOverviewCard: some View {
         let analytics = appViewModel.currentScenarioAnalyticsSummary
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            HStack(alignment: .top, spacing: Layout.gridSpacing) {
-                VStack(alignment: .leading, spacing: Layout.subSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Label(analytics.title, systemImage: "chart.xyaxis.line")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -654,7 +571,7 @@ struct ProgressView: View {
                 Spacer(minLength: 0)
 
                 if analytics.points.isEmpty {
-                    Text("Locked")
+                    Text("Not yet")
                         .modifier(KatieCapsuleLabelStyle())
                 } else {
                     Text("Avg \(analytics.overallAverage)/5")
@@ -688,13 +605,13 @@ struct ProgressView: View {
 
     private func analyticsMetricRail(_ analytics: ScenarioAnalyticsSummary) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: Layout.spacing_10) {
+            HStack(spacing: 10) {
                 analyticsMetricTile(title: "Listener", score: analytics.listenerAverage, accent: KatieColors.gold)
                 analyticsMetricTile(title: "Pace", score: analytics.paceAverage, accent: KatieColors.mint)
                 analyticsMetricTile(title: "Confidence", score: analytics.confidenceAverage, accent: KatieColors.blush)
             }
 
-            VStack(alignment: .leading, spacing: Layout.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 analyticsMetricTile(title: "Listener", score: analytics.listenerAverage, accent: KatieColors.gold)
                 analyticsMetricTile(title: "Pace", score: analytics.paceAverage, accent: KatieColors.mint)
                 analyticsMetricTile(title: "Confidence", score: analytics.confidenceAverage, accent: KatieColors.blush)
@@ -703,12 +620,12 @@ struct ProgressView: View {
     }
 
     private func analyticsMetricTile(title: String, score: Int, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
-            HStack(spacing: Layout.spacing_4) {
+            HStack(spacing: 4) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
                         .fill(index < score ? accent : KatieColors.cardBackground.opacity(0.95))
@@ -720,22 +637,22 @@ struct ProgressView: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func analyticsChart(points: [ScenarioAnalyticsPoint]) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .bottom, spacing: Layout.spacing_10) {
+            HStack(alignment: .bottom, spacing: 10) {
                 ForEach(points) { point in
                     analyticsPointColumn(point)
                         .frame(maxWidth: .infinity, alignment: .bottom)
                 }
             }
 
-            VStack(alignment: .leading, spacing: Layout.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 ForEach(points) { point in
                     analyticsPointRow(point)
                 }
@@ -744,8 +661,8 @@ struct ProgressView: View {
     }
 
     private func analyticsPointColumn(_ point: ScenarioAnalyticsPoint) -> some View {
-        VStack(spacing: Layout.spacing_8) {
-            HStack(alignment: .bottom, spacing: Layout.spacing_5) {
+        VStack(spacing: 8) {
+            HStack(alignment: .bottom, spacing: 5) {
                 analyticsMetricBar(value: point.listenerScore, accent: KatieColors.gold)
                 analyticsMetricBar(value: point.paceScore, accent: KatieColors.mint)
                 analyticsMetricBar(value: point.confidenceScore, accent: KatieColors.blush)
@@ -766,13 +683,13 @@ struct ProgressView: View {
                     .foregroundStyle(KatieColors.mint)
             }
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func analyticsPointRow(_ point: ScenarioAnalyticsPoint) -> some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_8) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(point.label)
                     .font(.caption.weight(.semibold))
@@ -789,19 +706,19 @@ struct ProgressView: View {
             analyticsPointRowTrack(title: "Pace", value: point.paceScore, accent: KatieColors.mint)
             analyticsPointRowTrack(title: "Confidence", value: point.confidenceScore, accent: KatieColors.blush)
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func analyticsPointRowTrack(title: String, value: Int, accent: Color) -> some View {
-        HStack(spacing: Layout.spacing_8) {
+        HStack(spacing: 8) {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
                 .frame(width: 64, alignment: .leading)
 
-            HStack(spacing: Layout.spacing_3) {
+            HStack(spacing: 3) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
                         .fill(index < value ? accent : KatieColors.cardBackground.opacity(0.95))
@@ -828,12 +745,12 @@ struct ProgressView: View {
         let radar = appViewModel.currentSoundPatternRadar
         let transfer = appViewModel.currentConversationTransferPlan
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
             Label("Clinician lens", systemImage: "stethoscope")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Keep progress grounded in how you actually sound, what tends to carry over, and one answerable next step.")
+            Text("Keep progress grounded in sound-pattern coaching, likely transfer hypotheses, and one answerable next step.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             progressDetailRow(
@@ -864,7 +781,7 @@ struct ProgressView: View {
     }
 
     private var starterProgressHero: some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_14) {
+        VStack(alignment: .leading, spacing: 14) {
             Label(appViewModel.currentMission.packTitle, systemImage: "sparkles.rectangle.stack.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -880,7 +797,7 @@ struct ProgressView: View {
 
             currentPackRunwayRows
 
-            HStack(spacing: Layout.spacing_10) {
+            HStack(spacing: 10) {
                 snapshotMetric(title: "Saved packs", value: "0", detail: "No scenario has your own proof yet")
                 snapshotMetric(title: "Compare-ready", value: "0", detail: "A second save unlocks before/after")
             }
@@ -893,8 +810,8 @@ struct ProgressView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                .padding(.vertical, Layout.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.accent)
                 .foregroundStyle(.black)
                 .clipShape(Capsule())
@@ -903,8 +820,8 @@ struct ProgressView: View {
                     appViewModel.selectedTab = .today
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                .padding(.vertical, Layout.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -914,24 +831,24 @@ struct ProgressView: View {
     }
 
     private var progressUnlocksCard: some View {
-        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("What Progress unlocks next")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
             progressDetailRow(
-                title: "Today creates a recording",
+                title: "Today creates proof",
                 body: "Save one calm rep so Katie has something real to carry forward.",
                 systemImage: "mic.fill"
             )
             progressDetailRow(
                 title: "Review turns it into memory",
-                body: "Your first recording becomes the anchor for replay, compare, and reminder copy.",
+                body: "Your first proof becomes the honest anchor for replay, compare, and reminder copy.",
                 systemImage: "arrow.left.arrow.right.circle.fill"
             )
             progressDetailRow(
-                title: "Progress keeps the pack warm",
-                body: "Once you have a saved rep, this tab starts tracking your real practice instead of showing placeholder stats.",
+                title: "Progress keeps the continuity warm",
+                body: "Once you have a saved rep, this tab starts tracking pack warmth instead of showing theoretical analytics.",
                 systemImage: "chart.line.uptrend.xyaxis.circle.fill"
             )
         }
@@ -939,15 +856,15 @@ struct ProgressView: View {
     }
 
     private func progressDetailRow(title: String, body: String, systemImage: String) -> some View {
-        HStack(alignment: .top, spacing: Layout.gridSpacing) {
+        HStack(alignment: .top, spacing: 12) {
             Image(systemName: systemImage)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
                 .frame(width: 28, height: 28)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: Layout.chipCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            VStack(alignment: .leading, spacing: Layout.spacing_4) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -960,7 +877,7 @@ struct ProgressView: View {
     }
 
     private var currentPackRunwayRows: some View {
-        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             progressDetailRow(
                 title: appViewModel.transferHypothesisStatusTitle,
                 body: appViewModel.transferHypothesisFollowThroughLine,
@@ -975,7 +892,7 @@ struct ProgressView: View {
     }
 
     private var earlyProgressHero: some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_14) {
+        VStack(alignment: .leading, spacing: 14) {
             Label(appViewModel.currentMission.packTitle, systemImage: "waveform.badge.mic")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -991,12 +908,12 @@ struct ProgressView: View {
 
             currentPackRunwayRows
 
-            HStack(spacing: Layout.spacing_10) {
-                snapshotMetric(title: "Saved packs", value: "\(activePackCount)", detail: activePackCount == 1 ? "1 pack has your own recording" : "\(activePackCount) packs have your own recordings")
-                snapshotMetric(title: "Replay-ready", value: "\(replayReadyCount)", detail: replayReadyCount == 0 ? "Recordings are text-first so far" : replayReadyCount == 1 ? "1 clip replays on this iPhone" : "\(replayReadyCount) clips replay on this iPhone")
+            HStack(spacing: 10) {
+                snapshotMetric(title: "Saved packs", value: "\(activePackCount)", detail: activePackCount == 1 ? "1 pack has your own proof" : "\(activePackCount) packs have your own proof")
+                snapshotMetric(title: "Replay-ready", value: "\(replayReadyCount)", detail: replayReadyCount == 0 ? "Proof is text-first so far" : replayReadyCount == 1 ? "1 clip replays on this iPhone" : "\(replayReadyCount) clips replay on this iPhone")
             }
 
-            Text("Next unlock: save a second rep in one pack so Progress can open a real compare instead of a single-recording summary.")
+            Text("Next unlock: save a second rep in one pack so Progress can open a real compare instead of a single-proof summary.")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
         }
@@ -1006,28 +923,28 @@ struct ProgressView: View {
     @ViewBuilder
     private var compareStoryCard: some View {
         if let latestCompareEntry {
-            VStack(alignment: .leading, spacing: Layout.spacing_14) {
-                HStack(alignment: .top, spacing: Layout.gridSpacing) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .top, spacing: 12) {
                     Label("Latest compare story", systemImage: "arrow.triangle.2.circlepath")
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
 
                     Spacer(minLength: 0)
 
-                    VStack(alignment: .trailing, spacing: Layout.subSpacing) {
+                    VStack(alignment: .trailing, spacing: 6) {
                         Text(latestCompareEntry.scenario.packTitle)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.mint)
-                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                            .padding(.vertical, Layout.smallChipVerticalPadding)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
                             .background(KatieColors.mint.opacity(0.14))
                             .clipShape(Capsule())
 
                         Text(appViewModel.freshnessLabel(for: latestCompareEntry.latest))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.accent)
-                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                            .padding(.vertical, Layout.smallChipVerticalPadding)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
                             .background(KatieColors.accent.opacity(0.14))
                             .clipShape(Capsule())
                     }
@@ -1069,18 +986,18 @@ struct ProgressView: View {
     }
 
     private var progressSnapshotCard: some View {
-        return VStack(alignment: .leading, spacing: Layout.spacing_14) {
+        return VStack(alignment: .leading, spacing: 14) {
             Text("Progress snapshot")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Your real recordings at a glance, without the dashboard clutter or placeholder stats.")
+            Text("Live proof at a glance, without the dashboard clutter or fake analytics weight.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
 
             if let latestUserReflection = appViewModel.currentScenarioUserHistory.first?.selfReflection {
-                VStack(alignment: .leading, spacing: Layout.spacing_8) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Latest self-check")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
@@ -1105,12 +1022,12 @@ struct ProgressView: View {
                     body: replayReadyCount > 0 ? "\(replayReadyCount) clip\(replayReadyCount == 1 ? "" : "s") can replay on this iPhone." : "Save one local playback clip so Katie can coach from your real sound."
                 )
                 snapshotPulseChip(
-                    title: protectedScenario == nil ? "Save a pack" : "Saved right now",
-                    body: protectedScenario.map { "\($0.packTitle) is the pack Katie is already saving for reminders and replay." } ?? "Pick one pack to save so reminders stay grounded in a real rep."
+                    title: protectedScenario == nil ? "Protect a pack" : "Protected right now",
+                    body: protectedScenario.map { "\($0.packTitle) is the pack Katie is already protecting for reminders and replay continuity." } ?? "Turn one pack into the protected lane so reminders stay grounded in a real rep."
                 )
             }
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Layout.spacing_10) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 snapshotMetric(title: "Active packs", value: "\(activePackCount)", detail: activePackCount == 1 ? "1 pack has your own saved rep" : "\(activePackCount) packs have your own saved reps")
                 snapshotMetric(title: "Compare-ready", value: "\(compareReadyCount)", detail: compareReadyCount == 0 ? "Save a second rep to unlock before/after" : compareReadyCount == 1 ? "1 pack can open a true compare" : "\(compareReadyCount) packs can open true compare")
                 snapshotMetric(title: "Replay-ready clips", value: "\(replayReadyCount)", detail: replayReadyCount == 0 ? "No local clip is ready yet" : replayReadyCount == 1 ? "1 local clip can replay on this iPhone" : "\(replayReadyCount) local clips can replay on this iPhone")
@@ -1127,32 +1044,32 @@ struct ProgressView: View {
                         appViewModel.openReview(for: latestCompareEntry.scenario, anchor: latestCompareEntry.anchor)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
                 }
 
                 if let protectedScenario {
-                    Button("Open saved pack") {
+                    Button("Open protected pack") {
                         appViewModel.openProgress(for: protectedScenario)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
                 }
 
                 if let replayReadyScenario {
-                    Button("Steady Replay Practice") {
+                    Button("Practice replay") {
                         appViewModel.openPractice(for: replayReadyScenario)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(Capsule())
@@ -1161,8 +1078,8 @@ struct ProgressView: View {
                         appViewModel.openPractice(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(Capsule())
@@ -1175,9 +1092,9 @@ struct ProgressView: View {
     private var startingHypothesisSummaryCard: some View {
         let snapshot = appViewModel.languageAssessmentSnapshot
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            HStack(alignment: .top, spacing: Layout.gridSpacing) {
-                VStack(alignment: .leading, spacing: Layout.spacing_4) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Starting hypothesis")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1197,8 +1114,8 @@ struct ProgressView: View {
                 Text(appViewModel.transferHypothesisStatusTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
-                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                    .padding(.vertical, Layout.smallChipVerticalPadding)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                     .background(KatieColors.cardSecondary)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.trailing)
@@ -1216,7 +1133,7 @@ struct ProgressView: View {
                 systemImage: "arrow.triangle.branch"
             )
 
-            VStack(alignment: .leading, spacing: Layout.subSpacing) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("Self-check in this pack")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.mint)
@@ -1229,10 +1146,10 @@ struct ProgressView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
             }
-            .padding(Layout.cardPadding)
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .katieCard()
     }
@@ -1242,9 +1159,9 @@ struct ProgressView: View {
         let trendSessions = Array(appViewModel.currentScenarioUserHistory.prefix(3))
         let replayReadyCount = trendSessions.filter { appViewModel.hasPlayback(for: $0) }.count
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            HStack(alignment: .top, spacing: Layout.gridSpacing) {
-                VStack(alignment: .leading, spacing: Layout.subSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Label("Recent confidence trend", systemImage: "chart.line.uptrend.xyaxis")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
@@ -1272,7 +1189,7 @@ struct ProgressView: View {
                 )
             } else {
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .top, spacing: Layout.spacing_10) {
+                    HStack(alignment: .top, spacing: 10) {
                         ForEach(Array(trendSessions.enumerated()), id: \.element.id) { index, session in
                             confidenceTrendTile(
                                 label: confidenceTrendLabel(for: index),
@@ -1282,7 +1199,7 @@ struct ProgressView: View {
                         }
                     }
 
-                    VStack(alignment: .leading, spacing: Layout.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         ForEach(Array(trendSessions.enumerated()), id: \.element.id) { index, session in
                             confidenceTrendTile(
                                 label: confidenceTrendLabel(for: index),
@@ -1327,8 +1244,8 @@ struct ProgressView: View {
         let reflection = session.selfReflection ?? SessionSelfReflection()
         let score = min(max(reflection.confidenceScore, 0), 5)
 
-        return VStack(alignment: .leading, spacing: Layout.spacing_8) {
-            HStack(alignment: .top, spacing: Layout.spacing_8) {
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 8) {
                 Text(label)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(accent)
@@ -1351,7 +1268,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: Layout.spacing_4) {
+            HStack(spacing: 4) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
                         .fill(index < score ? accent : KatieColors.textSecondary.opacity(0.14))
@@ -1363,14 +1280,14 @@ struct ProgressView: View {
                 .font(.caption)
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var clarityStoryHero: some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_14) {
+        VStack(alignment: .leading, spacing: 14) {
             Label(appViewModel.currentMission.packTitle, systemImage: "chart.line.uptrend.xyaxis.circle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.mint)
@@ -1384,7 +1301,7 @@ struct ProgressView: View {
 
             KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
 
-            VStack(alignment: .leading, spacing: Layout.subSpacing) {
+            VStack(alignment: .leading, spacing: 6) {
                 Label("Next grounded move", systemImage: "arrow.forward.circle.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -1399,13 +1316,13 @@ struct ProgressView: View {
     }
 
     private var featuredWinSummary: some View {
-        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-            Text("Your first win")
+        VStack(alignment: .leading, spacing: 12) {
+            Text("First-win continuity")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
             if let featured = appViewModel.featuredWin {
-                HStack(spacing: Layout.spacing_8) {
+                HStack(spacing: 8) {
                     Text(featured.sourceTag)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.mint)
@@ -1413,8 +1330,8 @@ struct ProgressView: View {
                     Text(appViewModel.freshnessLabel(for: featured.latestSession))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
-                        .padding(.horizontal, Layout.tightChipHorizontalPadding)
-                        .padding(.vertical, Layout.tightChipVerticalPadding)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                         .background(KatieColors.cardSecondary)
                         .clipShape(Capsule())
                 }
@@ -1436,9 +1353,12 @@ struct ProgressView: View {
 
                 featuredWinProofTruth(for: featured)
 
-                if appViewModel.hasPlayback(for: featured.latestSession) || (featured.anchorSession != nil && appViewModel.hasPlayback(for: featured.anchorSession!)) {
+                let latestHasPlayback = appViewModel.hasPlayback(for: featured.latestSession)
+                let anchorHasPlayback = featured.anchorSession.map { appViewModel.hasPlayback(for: $0) } ?? false
+
+                if latestHasPlayback || anchorHasPlayback {
                     KatieWrap(spacing: 8, rowSpacing: 8) {
-                        if appViewModel.hasPlayback(for: featured.latestSession) {
+                        if latestHasPlayback {
                             Button(appViewModel.currentlyPlayingSessionID == featured.latestSession.id ? "Stop replay" : "Play latest proof") {
                                 if appViewModel.currentlyPlayingSessionID == featured.latestSession.id {
                                     appViewModel.stopPlayback()
@@ -1447,15 +1367,15 @@ struct ProgressView: View {
                                 }
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                            .padding(.vertical, Layout.mediumChipVerticalPadding)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
                         }
 
                         if let anchor = featured.anchorSession,
-                           appViewModel.hasPlayback(for: anchor) {
+                           anchorHasPlayback {
                             Button(appViewModel.currentlyPlayingSessionID == anchor.id ? "Stop earlier proof" : "Play earlier proof") {
                                 if appViewModel.currentlyPlayingSessionID == anchor.id {
                                     appViewModel.stopPlayback()
@@ -1464,8 +1384,8 @@ struct ProgressView: View {
                                 }
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                            .padding(.vertical, Layout.mediumChipVerticalPadding)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
                             .background(KatieColors.cardSecondary)
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -1510,7 +1430,7 @@ struct ProgressView: View {
                     )
                 }
             } else {
-                Text("Your first save in each scenario shows up here before the broader stats appear.")
+                Text("Your first save in each scenario appears as an honest progress object before broader analytics.")
                     .foregroundStyle(KatieColors.textSecondary)
             }
         }
@@ -1518,14 +1438,14 @@ struct ProgressView: View {
     }
 
     private var scenarioLanesCard: some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_14) {
-            HStack(alignment: .top, spacing: Layout.gridSpacing) {
-                VStack(alignment: .leading, spacing: Layout.subSpacing) {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("Pack library")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("Open the full pack list when you want to see every benchmark, compare, and reminder handoff.")
+                    Text("Keep Progress calm by opening the full pack list only when you want to inspect every benchmark, compare, and reminder handoff.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -1538,8 +1458,8 @@ struct ProgressView: View {
                     }
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                .padding(.vertical, Layout.mediumChipVerticalPadding)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
                 .clipShape(Capsule())
@@ -1552,7 +1472,7 @@ struct ProgressView: View {
                     .modifier(KatieCapsuleLabelStyle())
                 Text(compareReadyCount == 1 ? "1 compare-ready" : "\(compareReadyCount) compare-ready")
                     .modifier(KatieCapsuleLabelStyle())
-                Text(protectedScenario.map { "Saved pack: \($0.packTitle)" } ?? "No saved pack")
+                Text(protectedScenario.map { "Protected pack: \($0.packTitle)" } ?? "No protected pack")
                     .modifier(KatieCapsuleLabelStyle())
             }
 
@@ -1565,16 +1485,16 @@ struct ProgressView: View {
                     let anchor = Array(history.filter(\.isUserOwned).dropFirst()).first
                     let continuityStrip = appViewModel.continuityTruthStrip(for: scenario)
 
-                    VStack(alignment: .leading, spacing: Layout.spacing_10) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Button {
                             appViewModel.selectScenario(scenario)
                         } label: {
-                            HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                            HStack(alignment: .top, spacing: 12) {
                                 Image(systemName: scenario == appViewModel.currentMission ? "checkmark.circle.fill" : "circle")
                                     .foregroundStyle(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.textSecondary)
                                     .padding(.top, 2)
 
-                                VStack(alignment: .leading, spacing: Layout.subSpacing) {
+                                VStack(alignment: .leading, spacing: 6) {
                                     HStack {
                                         Text(scenario.packTitle)
                                             .font(.subheadline.weight(.semibold))
@@ -1597,7 +1517,7 @@ struct ProgressView: View {
 
 
                                     if scenario == .managerOneOnOne {
-                                        Label("Keep the compare on what you noticed plus one answerable ask, not a diagnosis.", systemImage: "checkmark.shield.fill")
+                                        Label("Guardrail: keep the compare on observed pattern + one answerable ask, not a diagnostic story.", systemImage: "checkmark.shield.fill")
                                             .font(.caption2.weight(.semibold))
                                             .foregroundStyle(KatieColors.gold)
                                     }
@@ -1612,16 +1532,16 @@ struct ProgressView: View {
                         }
                         .buttonStyle(.plain)
 
-                        HStack(spacing: Layout.spacing_10) {
+                        HStack(spacing: 10) {
                             Button(primaryScenarioActionTitle(for: scenario, latest: latest)) {
                                 handlePrimaryScenarioAction(for: scenario, latest: latest)
                             }
                             .font(.caption.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, Layout.spacing_10)
+                            .padding(.vertical, 10)
                             .background(primaryScenarioActionBackground(for: scenario))
                             .foregroundStyle(primaryScenarioActionForeground(for: scenario))
-                            .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                             progressActionsMenu(for: scenario, latest: latest, anchor: anchor, reminderTitle: followThroughReminderActionTitle(for: scenario), reminderAction: { handleFollowThroughReminderAction(for: scenario) }, label: "Peek")
                         }
@@ -1629,7 +1549,7 @@ struct ProgressView: View {
                     .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
             }
         }
@@ -1637,7 +1557,7 @@ struct ProgressView: View {
     }
 
     private var compareLibraryCard: some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_14) {
+        VStack(alignment: .leading, spacing: 14) {
             Text("Recent compare moments")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1645,21 +1565,21 @@ struct ProgressView: View {
             if !appViewModel.compareLibraryEntries.isEmpty {
                 compareLibraryEntriesRail
             } else {
-                VStack(alignment: .leading, spacing: Layout.gridSpacing) {
-                    Text("Samples and demo reps still show up in the cards above. The compare library only opens once a pack has two of your own saves from this iPhone.")
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Starter and demo reps still show up in the proof/provenance cards above. The compare library only opens once a pack has two user-owned saves from this iPhone.")
                     .foregroundStyle(KatieColors.textSecondary)
 
-                    Text("Save a real second rep in any pack and Katie will add it here as a before/after compare.")
+                    Text("Save a real second rep in any pack and Katie will promote it here as an honest before/after compare.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
 
-                    HStack(spacing: Layout.spacing_8) {
+                    HStack(spacing: 8) {
                         Button("Review transcript-only proof") {
                             appViewModel.openReview(for: appViewModel.currentMission)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                        .padding(.vertical, Layout.mediumChipVerticalPadding)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
                         .background(KatieColors.cardSecondary)
                         .foregroundStyle(KatieColors.textPrimary)
                         .clipShape(Capsule())
@@ -1668,8 +1588,8 @@ struct ProgressView: View {
                             appViewModel.openPractice(for: appViewModel.currentMission)
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                        .padding(.vertical, Layout.mediumChipVerticalPadding)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
                         .background(KatieColors.accent)
                         .foregroundStyle(.black)
                         .clipShape(Capsule())
@@ -1687,7 +1607,7 @@ struct ProgressView: View {
     @ViewBuilder
     private var compareLibraryEntriesRail: some View {
         if usesWideProgressLayout {
-            LazyVGrid(columns: compareLibraryGridColumns, alignment: .leading, spacing: Layout.gridSpacing) {
+            LazyVGrid(columns: compareLibraryGridColumns, alignment: .leading, spacing: 12) {
                 ForEach(appViewModel.compareLibraryEntries) { entry in
                     compareLibraryEntryCard(for: entry)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -1695,7 +1615,7 @@ struct ProgressView: View {
             }
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                HStack(alignment: .top, spacing: 12) {
                     ForEach(appViewModel.compareLibraryEntries) { entry in
                         compareLibraryEntryCard(for: entry)
                             .frame(width: compareLibraryCardWidth, alignment: .leading)
@@ -1706,16 +1626,16 @@ struct ProgressView: View {
     }
 
     private func compareLibraryEntryCard(for entry: CompareLibraryEntry) -> some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_10) {
+        VStack(alignment: .leading, spacing: 10) {
             Button {
                 appViewModel.selectScenario(entry.scenario)
                 if let anchor = entry.anchor {
                     appViewModel.selectCompareAnchor(anchor)
                 }
             } label: {
-                VStack(alignment: .leading, spacing: Layout.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     HStack {
-                        VStack(alignment: .leading, spacing: Layout.spacing_4) {
+                        VStack(alignment: .leading, spacing: 4) {
                             Text(entry.scenario.packTitle)
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.mint)
@@ -1737,7 +1657,7 @@ struct ProgressView: View {
                         .foregroundStyle(KatieColors.textPrimary)
                         .lineLimit(3)
 
-                    HStack(spacing: Layout.spacing_8) {
+                    HStack(spacing: 8) {
                         Text(entry.statusLabel)
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(KatieColors.mint)
@@ -1745,8 +1665,8 @@ struct ProgressView: View {
                         Text(appViewModel.freshnessLabel(for: entry.latest))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(KatieColors.textSecondary)
-                            .padding(.horizontal, Layout.tightChipHorizontalPadding)
-                            .padding(.vertical, Layout.tightChipVerticalPadding)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
                             .background(KatieColors.cardBackground.opacity(0.85))
                             .clipShape(Capsule())
 
@@ -1754,8 +1674,8 @@ struct ProgressView: View {
                             Text("Active compare")
                                 .font(.caption2.weight(.semibold))
                                 .foregroundStyle(.black)
-                                .padding(.horizontal, Layout.tightChipHorizontalPadding)
-                                .padding(.vertical, Layout.tightChipVerticalPadding)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
                                 .background(KatieColors.accent)
                                 .clipShape(Capsule())
                         }
@@ -1816,17 +1736,17 @@ struct ProgressView: View {
             }
             .buttonStyle(.plain)
 
-            VStack(spacing: Layout.spacing_8) {
-                HStack(spacing: Layout.spacing_8) {
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
                     Button(compareLibraryReviewActionTitle(anchor: entry.anchor, latest: entry.latest)) {
                         appViewModel.openReview(for: entry.scenario, anchor: entry.anchor)
                     }
                     .font(.caption.weight(.semibold))
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, Layout.spacing_10)
+                    .padding(.vertical, 10)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                     compareLibraryActionsMenu(for: entry)
                 }
@@ -1836,20 +1756,20 @@ struct ProgressView: View {
                 }
                 .font(.caption.weight(.semibold))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, Layout.spacing_10)
+                .padding(.vertical, 10)
                 .background(primaryScenarioActionBackground(for: entry.scenario))
                 .foregroundStyle(primaryScenarioActionForeground(for: entry.scenario))
-                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
         }
-        .padding(Layout.heroPadding)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(entry.scenario == appViewModel.currentMission ? KatieColors.accent.opacity(0.16) : KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 
     private var growthThemesCard: some View {
-        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("What’s getting stronger")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1858,11 +1778,11 @@ struct ProgressView: View {
                 Label(theme, systemImage: "sparkles")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
-                    .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                    .padding(.vertical, Layout.spacing_10)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
         }
         .katieCard()
@@ -1872,12 +1792,12 @@ struct ProgressView: View {
         let latest = appViewModel.currentScenarioHistory.first(where: \.isUserOwned) ?? appViewModel.currentScenarioHistory.first
         let anchor = Array(appViewModel.currentScenarioHistory.filter(\.isUserOwned).dropFirst()).first
 
-        return VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        return VStack(alignment: .leading, spacing: 12) {
             Text("Consistency")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            HStack(spacing: Layout.spacing_8) {
+            HStack(spacing: 8) {
                 ForEach(0..<7, id: \.self) { index in
                     Circle()
                         .fill(index < min(max(appViewModel.currentScenarioSnapshot.completedSessions, 1), 5) ? KatieColors.mint : KatieColors.cardSecondary)
@@ -1895,7 +1815,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.accent)
 
             if let latest {
-                HStack(spacing: Layout.spacing_8) {
+                HStack(spacing: 8) {
                     if appViewModel.hasPlayback(for: latest) {
                         Button(appViewModel.currentlyPlayingSessionID == latest.id ? "Stop" : "Play") {
                             if appViewModel.currentlyPlayingSessionID == latest.id {
@@ -1905,8 +1825,8 @@ struct ProgressView: View {
                             }
                         }
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                        .padding(.vertical, Layout.mediumChipVerticalPadding)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
                         .background(KatieColors.cardSecondary)
                         .foregroundStyle(KatieColors.textPrimary)
                         .clipShape(Capsule())
@@ -1916,8 +1836,8 @@ struct ProgressView: View {
                         appViewModel.openReview(for: appViewModel.currentMission, anchor: anchor)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
@@ -1926,8 +1846,8 @@ struct ProgressView: View {
                         handleCompareReminderAction(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                     .background(compareReminderActionBackground(for: appViewModel.currentMission))
                     .foregroundStyle(compareReminderActionForeground(for: appViewModel.currentMission))
                     .clipShape(Capsule())
@@ -1936,8 +1856,8 @@ struct ProgressView: View {
                         appViewModel.openPractice(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                     .background(KatieColors.accent)
                     .foregroundStyle(.black)
                     .clipShape(Capsule())
@@ -1946,8 +1866,8 @@ struct ProgressView: View {
                         appViewModel.openProgress(for: appViewModel.currentMission)
                     }
                     .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                    .padding(.vertical, Layout.mediumChipVerticalPadding)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                     .background(KatieColors.cardSecondary)
                     .foregroundStyle(KatieColors.textPrimary)
                     .clipShape(Capsule())
@@ -1958,7 +1878,7 @@ struct ProgressView: View {
     }
 
     private var premiumContinuityCard: some View {
-        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Keep the thread going")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -1969,7 +1889,7 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textSecondary)
 
             ForEach(appViewModel.premiumExperimentSurfaces) { experiment in
-                VStack(alignment: .leading, spacing: Layout.subSpacing) {
+                VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(experiment.title)
                             .font(.caption.weight(.semibold))
@@ -1987,14 +1907,14 @@ struct ProgressView: View {
                 .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: Layout.editorCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
         }
         .katieCard()
     }
 
     private var scenarioPackFollowThroughCard: some View {
-        VStack(alignment: .leading, spacing: Layout.gridSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Pack follow-through")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2008,12 +1928,12 @@ struct ProgressView: View {
                 let seedCount = history.filter { $0.captureSource == .seeded }.count
                 let continuityStrip = appViewModel.continuityTruthStrip(for: scenario)
 
-                HStack(alignment: .top, spacing: Layout.gridSpacing) {
+                HStack(alignment: .top, spacing: 12) {
                     Image(systemName: scenario == appViewModel.currentMission ? "checkmark.circle.fill" : "circle.dashed")
                         .foregroundStyle(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.textSecondary)
                         .padding(.top, 2)
 
-                    VStack(alignment: .leading, spacing: Layout.subSpacing) {
+                    VStack(alignment: .leading, spacing: 6) {
                         HStack {
                             Text(scenario.packTitle)
                                 .font(.subheadline.weight(.semibold))
@@ -2055,8 +1975,8 @@ struct ProgressView: View {
                                     }
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                                .padding(.vertical, Layout.mediumChipVerticalPadding)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
                                 .background(KatieColors.cardBackground.opacity(0.85))
                                 .foregroundStyle(KatieColors.textPrimary)
                                 .clipShape(Capsule())
@@ -2071,8 +1991,8 @@ struct ProgressView: View {
                                     }
                                 }
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                                .padding(.vertical, Layout.mediumChipVerticalPadding)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
                                 .background(KatieColors.cardBackground.opacity(0.85))
                                 .foregroundStyle(KatieColors.textPrimary)
                                 .clipShape(Capsule())
@@ -2082,8 +2002,8 @@ struct ProgressView: View {
                                 appViewModel.openReview(for: scenario, anchor: anchor)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                            .padding(.vertical, Layout.mediumChipVerticalPadding)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
                             .background(KatieColors.cardBackground.opacity(0.85))
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -2092,8 +2012,8 @@ struct ProgressView: View {
                                 handleFollowThroughReminderAction(for: scenario)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                            .padding(.vertical, Layout.mediumChipVerticalPadding)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
                             .background(followThroughReminderActionBackground(for: scenario))
                             .foregroundStyle(followThroughReminderActionForeground(for: scenario))
                             .clipShape(Capsule())
@@ -2102,8 +2022,8 @@ struct ProgressView: View {
                                 handlePrimaryScenarioAction(for: scenario, latest: latest)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                            .padding(.vertical, Layout.mediumChipVerticalPadding)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
                             .background(primaryScenarioActionBackground(for: scenario))
                             .foregroundStyle(primaryScenarioActionForeground(for: scenario))
                             .clipShape(Capsule())
@@ -2112,8 +2032,8 @@ struct ProgressView: View {
                                 appViewModel.openProgress(for: scenario)
                             }
                             .font(.caption.weight(.semibold))
-                            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-                            .padding(.vertical, Layout.mediumChipVerticalPadding)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
                             .background(KatieColors.cardBackground.opacity(0.85))
                             .foregroundStyle(KatieColors.textPrimary)
                             .clipShape(Capsule())
@@ -2123,7 +2043,7 @@ struct ProgressView: View {
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(KatieColors.cardSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
         }
         .katieCard()
@@ -2160,7 +2080,7 @@ struct ProgressView: View {
     @ViewBuilder
     private func featuredWinProofTruth(for featured: FeaturedWin) -> some View {
         ViewThatFits(in: .vertical) {
-            HStack(alignment: .top, spacing: Layout.spacing_10) {
+            HStack(alignment: .top, spacing: 10) {
                 if let anchor = featured.anchorSession {
                     featuredWinTruthCard(
                         title: "Earlier proof",
@@ -2176,7 +2096,7 @@ struct ProgressView: View {
                 )
             }
 
-            VStack(alignment: .leading, spacing: Layout.spacing_10) {
+            VStack(alignment: .leading, spacing: 10) {
                 if let anchor = featured.anchorSession {
                     featuredWinTruthCard(
                         title: "Earlier proof",
@@ -2195,8 +2115,8 @@ struct ProgressView: View {
     }
 
     private func featuredWinTruthCard(title: String, session: PracticeSession, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: Layout.spacing_10) {
-            HStack(alignment: .top, spacing: Layout.spacing_8) {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 8) {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -2223,14 +2143,14 @@ struct ProgressView: View {
                 .foregroundStyle(KatieColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(accent.opacity(0.12))
         .overlay(
-            RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(accent.opacity(0.22), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func featuredWinTruthLine(for featured: FeaturedWin) -> String {
@@ -2271,7 +2191,7 @@ struct ProgressView: View {
     private func featuredWinReplayNotice(anchor: PracticeSession?, latest: PracticeSession) -> some View {
         let prompt = appViewModel.compareReplayRecoveryPrompt(anchor: anchor, latest: latest)
 
-        return VStack(alignment: .leading, spacing: Layout.spacing_8) {
+        return VStack(alignment: .leading, spacing: 8) {
             Label(prompt?.title ?? "Replay needs a fresh clip", systemImage: "waveform.badge.exclamationmark")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2284,30 +2204,30 @@ struct ProgressView: View {
                 appViewModel.openPractice(for: latest.scenario)
             }
             .font(.caption.weight(.semibold))
-            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-            .padding(.vertical, Layout.mediumChipVerticalPadding)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
             .background(KatieColors.accent)
             .foregroundStyle(.black)
             .clipShape(Capsule())
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func proofFactChip(_ title: String, systemImage: String) -> some View {
         Label(title, systemImage: systemImage)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(KatieColors.textSecondary)
-            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-            .padding(.vertical, Layout.mediumChipVerticalPadding)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
             .background(KatieColors.cardSecondary)
             .clipShape(Capsule())
     }
 
     private func snapshotMetric(title: String, value: String, detail: String) -> some View {
-        VStack(alignment: .leading, spacing: Layout.subSpacing) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
@@ -2326,14 +2246,14 @@ struct ProgressView: View {
         .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
         .padding(14)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     @ViewBuilder
     private func compareScoreShiftStrip(anchor: PracticeSession, latest: PracticeSession) -> some View {
         if let anchorReflection = anchor.selfReflection, let latestReflection = latest.selfReflection {
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: Layout.spacing_10) {
+                HStack(alignment: .top, spacing: 10) {
                     compareScoreShiftMetric(
                         title: "Listener catch",
                         earlier: anchorReflection.listenerCatchScore,
@@ -2356,7 +2276,7 @@ struct ProgressView: View {
                     )
                 }
 
-                VStack(alignment: .leading, spacing: Layout.spacing_10) {
+                VStack(alignment: .leading, spacing: 10) {
                     compareScoreShiftMetric(
                         title: "Listener catch",
                         earlier: anchorReflection.listenerCatchScore,
@@ -2390,8 +2310,8 @@ struct ProgressView: View {
     private func compareScoreShiftMetric(title: String, earlier: Int, latest: Int, accent: Color) -> some View {
         let delta = latest - earlier
 
-        return VStack(alignment: .leading, spacing: Layout.spacing_8) {
-            HStack(alignment: .top, spacing: Layout.spacing_8) {
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 8) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
@@ -2401,8 +2321,8 @@ struct ProgressView: View {
                 Text(compareScoreDeltaLabel(delta))
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(delta >= 0 ? accent : KatieColors.textSecondary)
-                    .padding(.horizontal, Layout.tightChipHorizontalPadding)
-                    .padding(.vertical, Layout.tightChipVerticalPadding)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
                     .background(KatieColors.cardBackground.opacity(0.9))
                     .clipShape(Capsule())
             }
@@ -2410,20 +2330,20 @@ struct ProgressView: View {
             compareScoreTrack(label: "Before", score: earlier, fill: KatieColors.cardBackground.opacity(0.9))
             compareScoreTrack(label: "Now", score: latest, fill: accent)
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func compareScoreTrack(label: String, score: Int, fill: Color) -> some View {
-        HStack(alignment: .center, spacing: Layout.subSpacing) {
+        HStack(alignment: .center, spacing: 6) {
             Text(label)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
                 .frame(width: 44, alignment: .leading)
 
-            HStack(spacing: Layout.spacing_3) {
+            HStack(spacing: 3) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
                         .fill(index < compareScoreClamped(score) ? fill : KatieColors.cardBackground.opacity(0.95))
@@ -2486,8 +2406,8 @@ struct ProgressView: View {
         Text(title)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(foreground)
-            .padding(.horizontal, Layout.tightChipHorizontalPadding)
-            .padding(.vertical, Layout.tightChipVerticalPadding)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
             .background(background)
             .clipShape(Capsule())
     }
@@ -2530,11 +2450,11 @@ struct ProgressView: View {
         } label: {
             Label(label, systemImage: "ellipsis.circle")
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, Layout.mediumChipHorizontalPadding)
-                .padding(.vertical, Layout.spacing_10)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
                 .background(KatieColors.cardSecondary)
                 .foregroundStyle(KatieColors.textPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
     }
 
@@ -2596,7 +2516,7 @@ struct ProgressView: View {
     private func compareRecoveryNotice(anchor: PracticeSession?, latest: PracticeSession) -> some View {
         let prompt = appViewModel.compareReplayRecoveryPrompt(anchor: anchor, latest: latest)
 
-        return VStack(alignment: .leading, spacing: Layout.spacing_8) {
+        return VStack(alignment: .leading, spacing: 8) {
             Label(prompt?.title ?? "Replay needs a fresh clip", systemImage: "waveform.badge.exclamationmark")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textPrimary)
@@ -2609,16 +2529,16 @@ struct ProgressView: View {
                 appViewModel.openPractice(for: latest.scenario)
             }
             .font(.caption.weight(.semibold))
-            .padding(.horizontal, Layout.smallChipHorizontalPadding)
-            .padding(.vertical, Layout.mediumChipVerticalPadding)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
             .background(KatieColors.accent)
             .foregroundStyle(.black)
             .clipShape(Capsule())
         }
-        .padding(Layout.cardPadding)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(KatieColors.cardBackground.opacity(0.82))
-        .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func handleFollowThroughReminderAction(for scenario: PracticeScenario) {
@@ -2639,7 +2559,7 @@ struct ProgressView: View {
         case 0: return "New"
         case 1: return "Benchmark"
         case 2: return "Warming up"
-        default: return "Steady"
+        default: return "Sustained"
         }
     }
 

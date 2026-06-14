@@ -10,7 +10,7 @@ enum SessionCaptureSource: String, Codable {
     var title: String {
         switch self {
         case .seeded: return "Starter sample"
-        case .recorded: return "Recorded here"
+        case .recorded: return "Fresh on this iPhone"
         case .imported: return "Carried over"
         case .syntheticRetake: return "Text-only fallback"
         }
@@ -20,8 +20,8 @@ enum SessionCaptureSource: String, Codable {
         switch self {
         case .seeded: return "Just enough to show the compare flow before your own clips show up."
         case .recorded: return "Saved locally on this iPhone."
-        case .imported: return "Your coaching notes came over, but replay did not."
-        case .syntheticRetake: return "Text only, so your progress still counts when you skip audio."
+        case .imported: return "The coaching trail came over, but replay did not."
+        case .syntheticRetake: return "Text only, so progress stays honest when you skip audio."
         }
     }
 
@@ -437,7 +437,7 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
         case .interviewIntro:
             return "Keep your best short intro warm for the next high-stakes room."
         case .weeklyUpdate:
-            return "Save the clearest version of your decision update so the next meeting starts cleaner."
+            return "Protect the clearest version of your decision update so the next meeting starts cleaner."
         case .managerOneOnOne:
             return "Hold onto the version that names the pattern and lands a specific ask."
         case .presentationOpening:
@@ -466,7 +466,7 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .interviewIntro:
             return [
-                "Start with your role and context fast so the listener isn't still guessing who you are.",
+                "Start with the role and context fast so the listener is not still guessing who you are.",
                 "Give one concrete strength beat that sounds observed, not like a list of traits.",
                 "Close with why this role fits now, and stop before the ending turns into extra explanation."
             ]
@@ -480,7 +480,7 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
             return [
                 "Lead with the pattern your manager should notice so the conversation does not start in the weeds.",
                 "Describe the friction in concrete language that sounds observed, not self-critical or diagnostic.",
-                "Finish with one specific ask or experiment so the 1:1 ends with a next move."
+                "Finish with one specific ask or experiment so the 1:1 ends with a next move instead of a vague vent."
             ]
         case .presentationOpening:
             return [
@@ -502,9 +502,9 @@ enum PracticeScenario: String, CaseIterable, Identifiable, Codable {
         case .interviewIntro:
             return "Protect your first benchmark, then keep one cleaner version ready for live conversations."
         case .weeklyUpdate:
-            return "Keep one short decision benchmark you can revisit before real conversations."
+            return "Keep one short decision benchmark that makes your clearest meeting version easy to revisit before real conversations."
         case .managerOneOnOne:
-            return "Keep one clear 1:1 benchmark that names the friction and lands one concrete ask before the conversation gets muddy."
+            return "Keep one honest 1:1 benchmark that names the friction and lands one concrete ask before the conversation gets muddy."
         case .presentationOpening:
             return "Keep one steady opener you can reuse before higher-stakes walkthroughs and demos."
         case .customerRepair:
@@ -535,9 +535,9 @@ enum CompareReadiness: String, Codable {
         case .transcriptOnly:
             return "The wording and coaching survive, but the original audio is not attached here."
         case .transferredWithoutAudio:
-            return "Your notes came over, but the audio still needs to be re-recorded on this device."
+            return "The handoff kept your compare story honest, but audio still needs to be re-recorded on this device."
         case .missingAudio:
-            return "Your coaching notes are still here, but there's no audio to play back."
+            return "Katie still shows the coaching trail instead of pretending playback exists."
         }
     }
 
@@ -607,11 +607,11 @@ enum CommunicationEnvironment: String, Codable, CaseIterable, Identifiable {
 
     var detail: String {
         switch self {
-        case .oneOnOne: return "Tuned for quick context, steady pacing, and easier back-and-forth repair."
-        case .teamMeeting: return "Tuned for status clarity so the headline, blocker, and ask land on the first listen."
-        case .presentationRoom: return "Tuned for room-level clarity, cleaner emphasis, and strong sentence endings."
-        case .customerCall: return "Tuned for warmth under pressure and fast repair when trust matters."
-        case .hybridRoom: return "Tuned for remote and in-room listeners who can miss soft endings and rushed transitions."
+        case .oneOnOne: return "Optimize for quick context, steady pacing, and easier back-and-forth repair."
+        case .teamMeeting: return "Optimize for status clarity so the headline, blocker, and ask land on the first listen."
+        case .presentationRoom: return "Optimize for room-level clarity, cleaner emphasis, and strong sentence endings."
+        case .customerCall: return "Optimize for warmth under pressure and fast repair when trust matters."
+        case .hybridRoom: return "Optimize for remote + in-room listeners who can miss soft endings and rushed transitions."
         }
     }
 }
@@ -689,9 +689,15 @@ struct GoalPreset: Identifiable, Hashable {
 }
 
 struct PracticeHighlight: Identifiable, Hashable, Codable {
-    let id = UUID()
+    var id = UUID()
     let title: String
     let detail: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case detail
+    }
 }
 
 struct SessionSelfReflection: Hashable, Codable {
@@ -776,7 +782,7 @@ struct ScenarioAnalyticsSummary: Hashable {
 }
 
 struct PracticeSession: Identifiable, Hashable, Codable {
-    let id = UUID()
+    var id = UUID()
     var scenario: PracticeScenario
     var title: String
     var date: Date
@@ -802,6 +808,92 @@ struct PracticeSession: Identifiable, Hashable, Codable {
 
     var isUserOwned: Bool {
         captureSource == .recorded || captureSource == .syntheticRetake
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case scenario
+        case title
+        case date
+        case transcript
+        case benchmarkCue
+        case listenerOutcome
+        case structurePrompt
+        case highlights
+        case compareReadiness
+        case reminderLine
+        case carryoverLine
+        case protectedLine
+        case unlockedStepCount
+        case transcriptFootnote
+        case audioFileName
+        case durationSeconds
+        case captureSource
+        case selfReflection
+    }
+}
+
+extension PracticeHighlight {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        title = try container.decode(String.self, forKey: .title)
+        detail = try container.decode(String.self, forKey: .detail)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(title, forKey: .title)
+        try container.encode(detail, forKey: .detail)
+    }
+}
+
+extension PracticeSession {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        scenario = try container.decode(PracticeScenario.self, forKey: .scenario)
+        title = try container.decode(String.self, forKey: .title)
+        date = try container.decode(Date.self, forKey: .date)
+        transcript = try container.decode(String.self, forKey: .transcript)
+        benchmarkCue = try container.decode(String.self, forKey: .benchmarkCue)
+        listenerOutcome = try container.decode(String.self, forKey: .listenerOutcome)
+        structurePrompt = try container.decode(String.self, forKey: .structurePrompt)
+        highlights = try container.decode([PracticeHighlight].self, forKey: .highlights)
+        compareReadiness = try container.decode(CompareReadiness.self, forKey: .compareReadiness)
+        reminderLine = try container.decode(String.self, forKey: .reminderLine)
+        carryoverLine = try container.decode(String.self, forKey: .carryoverLine)
+        protectedLine = try container.decode(String.self, forKey: .protectedLine)
+        unlockedStepCount = try container.decode(Int.self, forKey: .unlockedStepCount)
+        transcriptFootnote = try container.decode(String.self, forKey: .transcriptFootnote)
+        audioFileName = try container.decodeIfPresent(String.self, forKey: .audioFileName)
+        durationSeconds = try container.decodeIfPresent(TimeInterval.self, forKey: .durationSeconds)
+        captureSource = try container.decode(SessionCaptureSource.self, forKey: .captureSource)
+        selfReflection = try container.decodeIfPresent(SessionSelfReflection.self, forKey: .selfReflection)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(scenario, forKey: .scenario)
+        try container.encode(title, forKey: .title)
+        try container.encode(date, forKey: .date)
+        try container.encode(transcript, forKey: .transcript)
+        try container.encode(benchmarkCue, forKey: .benchmarkCue)
+        try container.encode(listenerOutcome, forKey: .listenerOutcome)
+        try container.encode(structurePrompt, forKey: .structurePrompt)
+        try container.encode(highlights, forKey: .highlights)
+        try container.encode(compareReadiness, forKey: .compareReadiness)
+        try container.encode(reminderLine, forKey: .reminderLine)
+        try container.encode(carryoverLine, forKey: .carryoverLine)
+        try container.encode(protectedLine, forKey: .protectedLine)
+        try container.encode(unlockedStepCount, forKey: .unlockedStepCount)
+        try container.encode(transcriptFootnote, forKey: .transcriptFootnote)
+        try container.encodeIfPresent(audioFileName, forKey: .audioFileName)
+        try container.encodeIfPresent(durationSeconds, forKey: .durationSeconds)
+        try container.encode(captureSource, forKey: .captureSource)
+        try container.encodeIfPresent(selfReflection, forKey: .selfReflection)
     }
 }
 

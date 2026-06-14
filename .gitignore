@@ -1,21 +1,44 @@
-# Xcode
-*.xcodeproj/
-build_dd/
-DerivedData/
+# Katie Speech Coach Native - Transients and build artifacts
+# Per KAT-137: classify bootstrap transients so git baseline stays clear
 
-# macOS
+# Bootstrap / orchestrator meta (transient, not core source)
+AGENTS.md
+BOOTSTRAP.md
+DREAMS.md
+HEARTBEAT.md
+IDENTITY.md
+MEMORY.md
+SOUL.md
+STATUS.md
+TOOLS.md
+USER.md
+.openclaw/
+
+# Temp and generated
+.artifacts/
+build/
+tmp/
+test.tmp
+*.tmp
+docs/
+memory/
+
+# Xcode / macOS
 .DS_Store
+*.swp
+xcuserdata/
+*.xcuserstate
+DerivedData/
+**/.xcodeproj/project.xcworkspace/xcuserdata/
+**/.xcodeproj/xcuserdata/
 
 # Swift Package Manager
 .build/
-.swiftpm/
-Packages/
 Package.resolved
 
-# CocoaPods (not used but defensive)
-Pods/
+# Generated Xcode project
+**/*.xcodeproj
 
-# Fastlane
-fastlane/report.xml
-fastlane/screenshots/
-fastlane/test_output/
+# Logs
+*.log
+build_katie/

@@ -23,14 +23,14 @@ final class KatieNotificationDelegate: NSObject, UIApplicationDelegate, UNUserNo
             userInfo["scenarioID"] = scenarioID
         }
 
-        DispatchQueue.main.async {
+        Task { @MainActor in
             NotificationCenter.default.post(
                 name: .katieReminderTapped,
                 object: nil,
                 userInfo: userInfo.isEmpty ? nil : userInfo
             )
+            completionHandler()
         }
-        completionHandler()
     }
 }
 

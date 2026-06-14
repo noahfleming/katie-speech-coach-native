@@ -46,7 +46,6 @@ struct RootView: View {
                         startRadius: 20,
                         endRadius: 520
                     )
-                    KatieFloatingParticles()
                 }
             }
             .ignoresSafeArea()
