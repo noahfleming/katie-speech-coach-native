@@ -23,6 +23,7 @@ struct CoachTrustView: View {
     @State private var showCoachingPriorities = false
     @State private var showSafetyBoundaries = false
     @State private var showHandOff = false
+    @State private var showingInterviewMode = false
 
     private var trustBoardMetrics: [KatieGlanceMetric] {
         [
@@ -490,6 +491,40 @@ VStack(alignment: .leading, spacing: 12) {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
+                    Text("Specialized practice modes")
+                        .font(.headline)
+                    Text("When the standard flow feels too open-ended, switch into a mode that adds structure: timed answers, category-specific questions, and structured feedback.")
+                        .foregroundStyle(KatieColors.textSecondary)
+
+                    Button {
+                        showingInterviewMode = true
+                    } label: {
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: "person.wave.2.fill")
+                                .font(.title3)
+                                .foregroundStyle(KatieColors.gold)
+                                .frame(width: 36, height: 36)
+                                .background(KatieColors.gold.opacity(0.12), in: Circle())
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Try interview mode")
+                                    .font(.headline)
+                                    .foregroundStyle(KatieColors.textPrimary)
+                                Text("Four categories, two minutes per answer, and per-question clarity feedback. Filler words get tracked like the rest of practice.")
+                                    .font(.footnote)
+                                    .foregroundStyle(KatieColors.textSecondary)
+                            }
+                            Spacer(minLength: 8)
+                            Image(systemName: "chevron.right")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(KatieColors.textSecondary)
+                        }
+                        .padding(16)
+                        .background(KatieColors.cardSecondary, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Trust status")
                         .font(.headline)
                     KatieContinuityNotice(strip: appViewModel.currentContinuityStrip)
@@ -704,6 +739,9 @@ VStack(alignment: .leading, spacing: 12) {
             Task {
                 await appViewModel.importPocketCopy(from: url)
             }
+        }
+        .sheet(isPresented: $showingInterviewMode) {
+            InterviewPracticeView()
         }
     }
 
