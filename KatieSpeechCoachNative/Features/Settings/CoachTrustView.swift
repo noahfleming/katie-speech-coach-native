@@ -713,7 +713,7 @@ VStack(alignment: .leading, spacing: 12) {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(appViewModel.isPremiumUnlocked ? Color.red.opacity(0.24) : Color.red.opacity(0.12))
+                        .background(appViewModel.isPremiumUnlocked ? KatieColors.warning : KatieColors.warningMuted)
                         .foregroundStyle(appViewModel.isPremiumUnlocked ? .red : KatieColors.textPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }

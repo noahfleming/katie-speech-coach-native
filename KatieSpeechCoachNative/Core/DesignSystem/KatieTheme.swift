@@ -11,6 +11,26 @@ enum KatieColors {
     static let cardSecondary = Color(red: 0.176, green: 0.126, blue: 0.196)
     static let cardTertiary = Color(red: 0.242, green: 0.173, blue: 0.267)
     static let cardBorder = Color.white.opacity(0.10)
+    /// Subtle wash used for inner pill/card backgrounds (slightly lighter than the
+    /// card itself). Roughly 2.5x more transparent than `cardBorder`, so it shows
+    /// as a faint highlight rather than a stroke.
+    static let cardSurface = Color.white.opacity(0.04)
+    /// Hairline stroke color for dividers, sub-cards, and the most-quiet
+    /// outlines. Use this for borders that should recede behind content.
+    static let cardStroke = Color.white.opacity(0.06)
+    /// Slightly stronger hairline stroke for accent-bordered sub-cards that
+    /// still need to read as secondary chrome. Between `cardStroke` (0.06)
+    /// and `cardBorder` (0.10).
+    static let cardSubtle = Color.white.opacity(0.08)
+    /// Background fill for large icon chips (record-button dot, primary
+    /// action icons). Three stops brighter than `cardSurface` so a 72pt
+    /// circle reads as a real button surface, not a wash.
+    static let cardIconChip = Color.white.opacity(0.12)
+    /// Warning accent: warm red, used at full opacity for the unlocked-premium
+    /// "you're in risk territory" state.
+    static let warning = Color.red.opacity(0.24)
+    /// Muted warning, used for the locked / not-yet-active premium state.
+    static let warningMuted = Color.red.opacity(0.12)
 
     static let accent = Color(red: 0.95, green: 0.69, blue: 0.47)
     static let mint = Color(red: 0.59, green: 0.87, blue: 0.81)

@@ -240,7 +240,7 @@ struct FirstBaselineView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(KatieColors.cardSubtle, lineWidth: 1)
         )
     }
 
@@ -397,7 +397,7 @@ struct FirstBaselineView: View {
         .background(KatieColors.cardSecondary, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(KatieColors.cardSubtle, lineWidth: 1)
         )
         .foregroundStyle(KatieColors.textPrimary)
     }

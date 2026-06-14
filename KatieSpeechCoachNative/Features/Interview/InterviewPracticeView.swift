@@ -101,7 +101,7 @@ struct InterviewPracticeView: View {
                 prepRow(icon: "star.fill", text: "Clarity + coherence feedback")
             }
             .padding(20)
-            .background(Color.white.opacity(0.04))
+            .background(KatieColors.cardSurface)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .padding(.horizontal, 20)
 
@@ -238,7 +238,7 @@ struct InterviewPracticeView: View {
                         VStack(spacing: 6) {
                             ZStack {
                                 Circle()
-                                    .fill(Color.white.opacity(0.12))
+                                    .fill(KatieColors.cardIconChip)
                                     .frame(width: 72, height: 72)
                                 RoundedRectangle(cornerRadius: 6)
                                     .fill(Color.white)
@@ -319,11 +319,11 @@ struct InterviewPracticeView: View {
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.04))
+        .background(KatieColors.cardSurface)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                .stroke(KatieColors.cardStroke, lineWidth: 1)
         )
         .padding(.horizontal, 20)
     }
@@ -529,13 +529,13 @@ fileprivate struct KatieChip: View {
                 .background(
                     isSelected
                         ? accent.opacity(0.18)
-                        : Color.white.opacity(0.06)
+                        : KatieColors.cardStroke
                 )
                 .foregroundStyle(isSelected ? accent : .secondary)
                 .clipShape(Capsule())
                 .overlay(
                     Capsule()
-                        .stroke(isSelected ? accent.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                        .stroke(isSelected ? accent.opacity(0.4) : KatieColors.cardSubtle, lineWidth: 1)
                 )
         }
     }
