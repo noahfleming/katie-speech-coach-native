@@ -50,6 +50,9 @@ struct RootView: View {
             }
             .ignoresSafeArea()
         )
+        .sheet(isPresented: $appViewModel.isInterviewModePresented) {
+            InterviewPracticeView()
+        }
     }
 }
 

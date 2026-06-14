@@ -1365,6 +1365,32 @@ struct PracticeRecordView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
                     .lineLimit(2)
+
+                if appViewModel.currentMission == .interviewIntro {
+                    Button {
+                        appViewModel.isInterviewModePresented = true
+                    } label: {
+                        HStack(alignment: .center, spacing: 8) {
+                            Image(systemName: "person.wave.2.fill")
+                                .font(.subheadline)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Try structured interview mode")
+                                    .font(.subheadline.weight(.semibold))
+                                Text("Timed answers per question, four categories, per-question clarity feedback.")
+                                    .font(.caption)
+                                    .foregroundStyle(KatieColors.textSecondary)
+                            }
+                            Spacer(minLength: 8)
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(KatieColors.textSecondary)
+                        }
+                        .padding(12)
+                        .background(KatieColors.cardSecondary.opacity(0.6), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(KatieColors.textPrimary)
+                }
             }
         }
         .katieCard()

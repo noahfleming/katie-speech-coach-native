@@ -23,7 +23,8 @@ struct CoachTrustView: View {
     @State private var showCoachingPriorities = false
     @State private var showSafetyBoundaries = false
     @State private var showHandOff = false
-    @State private var showingInterviewMode = false
+    // Interview mode sheet is now driven by AppViewModel.isInterviewModePresented
+    // (so both this CTA and the Practice tab's cross-link can trigger the same sheet).
 
     private var trustBoardMetrics: [KatieGlanceMetric] {
         [
@@ -497,7 +498,7 @@ VStack(alignment: .leading, spacing: 12) {
                         .foregroundStyle(KatieColors.textSecondary)
 
                     Button {
-                        showingInterviewMode = true
+                        appViewModel.isInterviewModePresented = true
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
                             Image(systemName: "person.wave.2.fill")
@@ -739,9 +740,6 @@ VStack(alignment: .leading, spacing: 12) {
             Task {
                 await appViewModel.importPocketCopy(from: url)
             }
-        }
-        .sheet(isPresented: $showingInterviewMode) {
-            InterviewPracticeView()
         }
     }
 

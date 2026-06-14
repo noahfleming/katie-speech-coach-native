@@ -134,6 +134,10 @@ final class AppViewModel: ObservableObject {
     @Published private(set) var currentlyPlayingSessionID: UUID?
     @Published var isPremiumPreviewPresented = false
     @Published var isReviewPresented = false
+    /// Shared sheet state for the structured interview mode view. Both the Coach
+    /// tab CTA and the Practice tab's "Try interview mode" cross-link flip this
+    /// to true; RootView listens and presents the sheet.
+    @Published var isInterviewModePresented = false
     @Published var reminderTone: ReminderTone = .workday
     @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
     @Published private(set) var pocketCopyStatusLine: String?
