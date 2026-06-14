@@ -384,7 +384,7 @@ struct PracticeRecordView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(appViewModel.isRecording || appViewModel.isPreparingRecording ? KatieColors.cardSecondary : KatieColors.accent)
-                            .foregroundStyle(appViewModel.isRecording || appViewModel.isPreparingRecording ? KatieColors.textSecondary : .black)
+                            .foregroundStyle(appViewModel.isRecording || appViewModel.isPreparingRecording ? KatieColors.textSecondary : KatieColors.textOnAccent)
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             .disabled(appViewModel.isRecording || appViewModel.isPreparingRecording)
 
@@ -1262,7 +1262,7 @@ struct PracticeRecordView: View {
 
                                         Text(appViewModel.scenarioStatusLabel(for: scenario))
                                             .font(.caption.weight(.semibold))
-                                            .foregroundStyle(isSelected ? .black : KatieColors.mint)
+                                            .foregroundStyle(isSelected ? KatieColors.textOnAccent : KatieColors.mint)
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
                                             .background(isSelected ? KatieColors.accent : KatieColors.cardBackground.opacity(0.9))
@@ -1320,7 +1320,7 @@ struct PracticeRecordView: View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 8)
                                     .background(isSelected ? KatieColors.accent : KatieColors.cardBackground.opacity(0.9))
-                                    .foregroundStyle(isSelected ? .black : KatieColors.textPrimary)
+                                    .foregroundStyle(isSelected ? KatieColors.textOnAccent : KatieColors.textPrimary)
                                     .clipShape(Capsule())
                                     .disabled(isLockedByRecording)
 
@@ -1411,7 +1411,7 @@ struct PracticeRecordView: View {
                             }
                             .modifier(KatieActionChipStyle(
                                 background: appViewModel.draftReflectionStickyMoment == option ? KatieColors.accent : KatieColors.cardSecondary,
-                                foreground: appViewModel.draftReflectionStickyMoment == option ? .black : KatieColors.textPrimary,
+                                foreground: appViewModel.draftReflectionStickyMoment == option ? KatieColors.textOnAccent : KatieColors.textPrimary,
                                 horizontalPadding: 10
                             ))
                         }
@@ -1436,7 +1436,7 @@ struct PracticeRecordView: View {
                     }
                     .modifier(KatieActionChipStyle(
                         background: score == value ? KatieColors.accent : KatieColors.cardSecondary,
-                        foreground: score == value ? .black : KatieColors.textPrimary,
+                        foreground: score == value ? KatieColors.textOnAccent : KatieColors.textPrimary,
                         horizontalPadding: 10
                     ))
                 }
@@ -1526,7 +1526,7 @@ struct PracticeRecordView: View {
 
     private func practiceReminderActionForeground(for scenario: PracticeScenario) -> Color {
         appViewModel.reminderPlan?.scenario == scenario
-            ? .black
+            ? KatieColors.textOnAccent
             : KatieColors.textPrimary
     }
 
@@ -1706,7 +1706,7 @@ struct PracticeRecordView: View {
                 .padding(.vertical, 10)
                 .frame(maxWidth: .infinity)
                 .background(appViewModel.remindersEnabled ? KatieColors.accent : KatieColors.cardSecondary)
-                .foregroundStyle(appViewModel.remindersEnabled ? .black : KatieColors.textPrimary)
+                .foregroundStyle(appViewModel.remindersEnabled ? KatieColors.textOnAccent : KatieColors.textPrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                 if appViewModel.remindersEnabled {
@@ -1753,7 +1753,7 @@ struct PracticeRecordView: View {
                         .font(.caption.weight(.semibold))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
-                        .foregroundStyle(isActive ? Color.black : isReached ? KatieColors.textPrimary : KatieColors.textSecondary)
+                        .foregroundStyle(isActive ? KatieColors.textOnAccent : isReached ? KatieColors.textPrimary : KatieColors.textSecondary)
                         .background(isActive ? KatieColors.accent : isReached ? KatieColors.accent.opacity(0.25) : KatieColors.cardSecondary)
                         .overlay(
                             Capsule()
@@ -1827,7 +1827,7 @@ struct PracticeRecordView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(KatieColors.accent.opacity(appViewModel.canMoveToNextPracticeStep ? 1 : 0.2))
-                .foregroundStyle(appViewModel.canMoveToNextPracticeStep ? .black : KatieColors.textSecondary)
+                .foregroundStyle(appViewModel.canMoveToNextPracticeStep ? KatieColors.textOnAccent : KatieColors.textSecondary)
                 .clipShape(Capsule())
                 .disabled(!appViewModel.canMoveToNextPracticeStep)
             }

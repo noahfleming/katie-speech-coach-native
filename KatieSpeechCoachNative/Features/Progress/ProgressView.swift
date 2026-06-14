@@ -813,7 +813,7 @@ struct ProgressView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(KatieColors.accent)
-                .foregroundStyle(.black)
+                .foregroundStyle(KatieColors.textOnAccent)
                 .clipShape(Capsule())
 
                 Button("Review Today queue") {
@@ -1071,7 +1071,7 @@ struct ProgressView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(KatieColors.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(Capsule())
                 } else {
                     Button("Record first replay") {
@@ -1081,7 +1081,7 @@ struct ProgressView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(KatieColors.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(Capsule())
                 }
             }
@@ -1402,7 +1402,7 @@ struct ProgressView: View {
                         Button(repairActionTitle) {
                             appViewModel.openPractice(for: featured.scenario)
                         }
-                        .modifier(KatieActionChipStyle(background: KatieColors.accent, foreground: .black, horizontalPadding: 10))
+                        .modifier(KatieActionChipStyle(background: KatieColors.accent, foreground: KatieColors.textOnAccent, horizontalPadding: 10))
                     }
 
                     Button(compareLibraryReviewActionTitle(anchor: featured.anchorSession, latest: featured.latestSession)) {
@@ -1591,7 +1591,7 @@ struct ProgressView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
                         .background(KatieColors.accent)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(KatieColors.textOnAccent)
                         .clipShape(Capsule())
                     }
                 }
@@ -1673,7 +1673,7 @@ struct ProgressView: View {
                         if entry.anchor != nil && entry.scenario == appViewModel.currentMission {
                             Text("Active compare")
                                 .font(.caption2.weight(.semibold))
-                                .foregroundStyle(.black)
+                                .foregroundStyle(KatieColors.textOnAccent)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(KatieColors.accent)
@@ -1745,7 +1745,7 @@ struct ProgressView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
                     .background(KatieColors.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                     compareLibraryActionsMenu(for: entry)
@@ -1859,7 +1859,7 @@ struct ProgressView: View {
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .background(KatieColors.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(Capsule())
 
                     Button("Open progress") {
@@ -2207,7 +2207,7 @@ struct ProgressView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
             .background(KatieColors.accent)
-            .foregroundStyle(.black)
+            .foregroundStyle(KatieColors.textOnAccent)
             .clipShape(Capsule())
         }
         .padding(12)
@@ -2346,7 +2346,7 @@ struct ProgressView: View {
             HStack(spacing: 3) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
-                        .fill(index < compareScoreClamped(score) ? fill : KatieColors.cardBackground.opacity(0.95))
+                        .fill(index < compareScoreClamped(score) ? fill: KatieColors.cardBackground.opacity(0.95))
                         .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
                 }
             }
@@ -2397,7 +2397,7 @@ struct ProgressView: View {
             }
 
             if appViewModel.reminderPlan?.scenario == scenario {
-                proofStatusChip("Reminder on", background: KatieColors.accent, foreground: .black)
+                proofStatusChip("Reminder on", background: KatieColors.accent, foreground: KatieColors.textOnAccent)
             }
         }
     }
@@ -2494,7 +2494,7 @@ struct ProgressView: View {
 
     private func followThroughReminderActionForeground(for scenario: PracticeScenario) -> Color {
         appViewModel.reminderPlan?.scenario == scenario
-            ? .black
+            ? KatieColors.textOnAccent
             : KatieColors.textPrimary
     }
 
@@ -2532,7 +2532,7 @@ struct ProgressView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
             .background(KatieColors.accent)
-            .foregroundStyle(.black)
+            .foregroundStyle(KatieColors.textOnAccent)
             .clipShape(Capsule())
         }
         .padding(12)
@@ -2602,7 +2602,7 @@ struct ProgressView: View {
             return KatieColors.textPrimary
         }
 
-        return scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary
+        return scenario == appViewModel.currentMission ? KatieColors.textOnAccent : KatieColors.textPrimary
     }
 
     private func handlePrimaryScenarioAction(for scenario: PracticeScenario, latest: PracticeSession?) {
@@ -2661,7 +2661,7 @@ struct ProgressView: View {
 
     private func compareReminderActionForeground(for scenario: PracticeScenario) -> Color {
         appViewModel.reminderPlan?.scenario == scenario
-            ? .black
+            ? KatieColors.textOnAccent
             : KatieColors.textPrimary
     }
 

@@ -115,7 +115,7 @@ struct InterviewPracticeView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(KatieColors.gold)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .padding(.horizontal, 20)
@@ -280,7 +280,7 @@ struct InterviewPracticeView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(KatieColors.gold)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(KatieColors.textOnAccent)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
                 .padding(.horizontal, 20)

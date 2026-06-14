@@ -1008,7 +1008,7 @@ struct TodayMissionView: View {
                         }
                         .modifier(KatieActionChipStyle(
                             background: appViewModel.isRecommendedScenarioAlignedForToday ? KatieColors.cardBackground : KatieColors.accent,
-                            foreground: appViewModel.isRecommendedScenarioAlignedForToday ? KatieColors.textSecondary : .black,
+                            foreground: appViewModel.isRecommendedScenarioAlignedForToday ? KatieColors.textSecondary : KatieColors.textOnAccent,
                             horizontalPadding: 10
                         ))
                         .disabled(appViewModel.isRecommendedScenarioAlignedForToday)
@@ -1206,7 +1206,7 @@ struct TodayMissionView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
                     .background(KatieColors.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
                 .padding(14)
@@ -1890,7 +1890,7 @@ struct TodayMissionView: View {
                     }
                     .modifier(KatieActionChipStyle(
                         background: appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.cardBackground : KatieColors.accent,
-                        foreground: appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textSecondary : .black,
+                        foreground: appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textSecondary : KatieColors.textOnAccent,
                         horizontalPadding: 10
                     ))
                     .disabled(appViewModel.isRecommendedScenarioAlignedForStartingPack)
@@ -2039,7 +2039,7 @@ struct TodayMissionView: View {
                     Button("Practice") {
                         appViewModel.openPractice(for: appViewModel.currentMission)
                     }
-                    .modifier(KatieActionChipStyle(background: KatieColors.accent, foreground: .black, horizontalPadding: 10))
+                    .modifier(KatieActionChipStyle(background: KatieColors.accent, foreground: KatieColors.textOnAccent, horizontalPadding: 10))
 
                     Button("Open progress") {
                         appViewModel.openProgress(for: appViewModel.currentMission)
@@ -2181,7 +2181,7 @@ struct TodayMissionView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardBackground)
-                            .foregroundStyle(scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary)
+                            .foregroundStyle(scenario == appViewModel.currentMission ? KatieColors.textOnAccent : KatieColors.textPrimary)
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                             todayActionsMenu(for: scenario, latest: latest, anchor: anchor, label: "Peek")
@@ -2195,7 +2195,7 @@ struct TodayMissionView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardBackground)
-                            .foregroundStyle(scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary)
+                            .foregroundStyle(scenario == appViewModel.currentMission ? KatieColors.textOnAccent : KatieColors.textPrimary)
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                             todayActionsMenu(for: scenario, latest: latest, anchor: anchor, label: "Peek")
@@ -2440,7 +2440,7 @@ struct TodayMissionView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(KatieColors.accent)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(KatieColors.textOnAccent)
                         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                         .disabled(appViewModel.premiumActionButtonDisabled || isPremiumActionRunning || isRefreshingPremiumStore || isRestoringPremiumPurchases)
 
@@ -3058,7 +3058,7 @@ private extension TodayMissionView {
     func todayQueueActionForeground(for entry: TodayQueueEntry) -> Color {
         switch entry.action {
         case .recordFirstRep, .recordFreshProof, .enableReminder:
-            return .black
+            return KatieColors.textOnAccent
         case .openProof, .openCompare, .keepWarm:
             return KatieColors.textPrimary
         }
@@ -3087,7 +3087,7 @@ private extension TodayMissionView {
 
     func todayReminderActionForeground(for scenario: PracticeScenario) -> Color {
         appViewModel.reminderPlan?.scenario == scenario
-            ? .black
+            ? KatieColors.textOnAccent
             : KatieColors.textPrimary
     }
 

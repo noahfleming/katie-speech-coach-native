@@ -205,7 +205,7 @@ struct ReviewRetakeView: View {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: reviewStateSystemImage(anchor: anchor, latest: latest))
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(needsReplayRecovery ? KatieColors.textPrimary : Color.black)
+                    .foregroundStyle(needsReplayRecovery ? KatieColors.textPrimary : KatieColors.textOnAccent)
                     .frame(width: 36, height: 36)
                     .background(needsReplayRecovery ? KatieColors.cardBackground.opacity(0.88) : KatieColors.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -231,7 +231,7 @@ struct ReviewRetakeView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(KatieColors.accent)
-                .foregroundStyle(.black)
+                .foregroundStyle(KatieColors.textOnAccent)
                 .clipShape(Capsule())
             }
         }
@@ -502,7 +502,7 @@ struct ReviewRetakeView: View {
             HStack(spacing: 3) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
-                        .fill(index < compareScoreClamped(score) ? fill : KatieColors.cardBackground.opacity(0.9))
+                        .fill(index < compareScoreClamped(score) ? fill: KatieColors.cardBackground.opacity(0.9))
                         .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
                 }
             }
@@ -916,7 +916,7 @@ struct ReviewRetakeView: View {
 
                 Image(systemName: latestHasStep ? (isNewlyUnlocked ? "sparkles" : "checkmark") : "circle")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(isNewlyUnlocked ? Color.black : (latestHasStep ? KatieColors.mint : KatieColors.textSecondary))
+                    .foregroundStyle(isNewlyUnlocked ? KatieColors.textOnAccent : (latestHasStep ? KatieColors.mint : KatieColors.textSecondary))
             }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -928,7 +928,7 @@ struct ReviewRetakeView: View {
                     if isNewlyUnlocked {
                         Text("New")
                             .font(.caption2.weight(.bold))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(KatieColors.textOnAccent)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(KatieColors.accent)
@@ -1037,7 +1037,7 @@ struct ReviewRetakeView: View {
             Button(appViewModel.comparePracticeActionTitle(for: appViewModel.latestSession)) {
                 appViewModel.openPractice(for: scenario)
             }
-            .modifier(ReviewActionChipStyle(background: scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardSecondary, foreground: scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary))
+            .modifier(ReviewActionChipStyle(background: scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardSecondary, foreground: scenario == appViewModel.currentMission ? KatieColors.textOnAccent : KatieColors.textPrimary))
 
             Button("Open progress") {
                 appViewModel.openProgress(for: scenario)
@@ -1478,7 +1478,7 @@ struct ReviewRetakeView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
                         .background(appViewModel.reminderTone == tone ? KatieColors.accent : KatieColors.cardSecondary)
-                        .foregroundStyle(appViewModel.reminderTone == tone ? .black : KatieColors.textPrimary)
+                        .foregroundStyle(appViewModel.reminderTone == tone ? KatieColors.textOnAccent : KatieColors.textPrimary)
                         .clipShape(Capsule())
                     }
                 }
@@ -1616,7 +1616,7 @@ struct ReviewRetakeView: View {
     }
 
     private var reviewReminderActionForeground: Color {
-        appViewModel.remindersEnabled ? KatieColors.textPrimary : .black
+        appViewModel.remindersEnabled ? KatieColors.textPrimary : KatieColors.textOnAccent
     }
 
     private func handleReviewReminderAction() {
@@ -1696,7 +1696,7 @@ struct ReviewRetakeView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(KatieColors.accent)
-                .foregroundStyle(.black)
+                .foregroundStyle(KatieColors.textOnAccent)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
                 Button("Open progress") {
@@ -1799,7 +1799,7 @@ struct ReviewRetakeView: View {
                     Button("Practice") {
                         appViewModel.openPractice(for: featured.scenario)
                     }
-                    .modifier(ReviewActionChipStyle(background: featured.scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardSecondary, foreground: featured.scenario == appViewModel.currentMission ? .black : KatieColors.textPrimary))
+                    .modifier(ReviewActionChipStyle(background: featured.scenario == appViewModel.currentMission ? KatieColors.accent : KatieColors.cardSecondary, foreground: featured.scenario == appViewModel.currentMission ? KatieColors.textOnAccent : KatieColors.textPrimary))
 
                     Button("Open progress") {
                         appViewModel.openProgress(for: featured.scenario)
@@ -1951,7 +1951,7 @@ struct ReviewRetakeView: View {
     }
 
     private func compareActionOverviewForeground(anchor: PracticeSession?, latest: PracticeSession) -> Color {
-        reviewStateNeedsReplayRecovery(anchor: anchor, latest: latest) ? .black : KatieColors.textPrimary
+        reviewStateNeedsReplayRecovery(anchor: anchor, latest: latest) ? KatieColors.textOnAccent : KatieColors.textPrimary
     }
 
     private func proofTruthStrip(for session: PracticeSession) -> some View {
@@ -1994,7 +1994,7 @@ struct ReviewRetakeView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(KatieColors.accent)
-                .foregroundStyle(.black)
+                .foregroundStyle(KatieColors.textOnAccent)
                 .clipShape(Capsule())
             }
         }
@@ -2166,10 +2166,10 @@ struct ReviewRetakeView: View {
                     .foregroundStyle(KatieColors.textSecondary)
                 Text(actionTitle)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(hasPlayback && isPlaying ? .black : KatieColors.textPrimary)
+                    .foregroundStyle(hasPlayback && isPlaying ? KatieColors.textOnAccent : KatieColors.textPrimary)
                 Text(detailLine)
                     .font(.caption)
-                    .foregroundStyle(hasPlayback && isPlaying ? Color.black.opacity(0.72) : KatieColors.textSecondary)
+                    .foregroundStyle(hasPlayback && isPlaying ? KatieColors.textOnAccent.opacity(0.72) : KatieColors.textSecondary)
                     .lineLimit(hasPlayback ? 2 : 4)
                     .fixedSize(horizontal: false, vertical: true)
             }

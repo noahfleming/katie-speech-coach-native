@@ -807,7 +807,7 @@ struct OnboardingView: View {
                             HStack(spacing: 8) {
                                 Text(isSelected ? "Active now" : "Tap to use")
                                     .font(.caption2.weight(.semibold))
-                                    .foregroundStyle(isSelected ? .black : KatieColors.textSecondary)
+                                    .foregroundStyle(isSelected ? KatieColors.textOnAccent : KatieColors.textSecondary)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
                                     .background(isSelected ? KatieColors.accent : KatieColors.cardBackground, in: Capsule())
@@ -1016,7 +1016,7 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
             .background(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.cardSecondary : KatieColors.accent)
-            .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textPrimary : .black)
+            .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textPrimary : KatieColors.textOnAccent)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .disabled(appViewModel.isRecommendedScenarioAlignedForStartingPack)
         }

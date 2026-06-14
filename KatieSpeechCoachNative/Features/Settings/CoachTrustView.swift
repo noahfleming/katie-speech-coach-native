@@ -308,7 +308,7 @@ VStack(alignment: .leading, spacing: 12) {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                         .background(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.cardBackground : KatieColors.accent)
-                        .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textSecondary : .black)
+                        .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textSecondary : KatieColors.textOnAccent)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .disabled(appViewModel.isRecommendedScenarioAlignedForStartingPack)
                     }

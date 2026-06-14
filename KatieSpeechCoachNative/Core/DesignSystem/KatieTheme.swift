@@ -19,6 +19,11 @@ enum KatieColors {
     static let plum = Color(red: 0.54, green: 0.39, blue: 0.78)
     static let textPrimary = Color.white
     static let textSecondary = Color.white.opacity(0.72)
+    /// Contrast color for text and icons sitting on accent (gold / mint) backgrounds.
+    /// Used by every chip/button that flips to dark text on a light accent fill.
+    /// Keep this near-black (NOT Color.black) so a future tweak toward a slightly
+    /// warmer dark stays a single-token change.
+    static let textOnAccent = Color.black
 }
 
 struct KatieCardModifier: ViewModifier {

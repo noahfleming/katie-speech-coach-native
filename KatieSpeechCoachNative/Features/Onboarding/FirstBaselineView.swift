@@ -446,7 +446,7 @@ struct FirstBaselineView: View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(index + 1)")
                 .font(.caption.weight(.bold))
-                .foregroundStyle(.black)
+                .foregroundStyle(KatieColors.textOnAccent)
                 .frame(width: 28, height: 28)
                 .background(index == 0 ? KatieColors.accent : KatieColors.cardSecondary)
                 .clipShape(Circle())
