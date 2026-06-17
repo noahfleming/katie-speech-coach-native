@@ -93,7 +93,7 @@ private enum KatieHaptic {
 @MainActor
 final class AppViewModel: ObservableObject {
     enum AppTab: String, Codable, Hashable {
-        case today, practice, progress, coach
+        case today, practice, progress, coach, interview
     }
 
     private static let persistenceKey = "katie.native.persisted-state.v1"
@@ -138,6 +138,20 @@ final class AppViewModel: ObservableObject {
     /// tab CTA and the Practice tab's "Try interview mode" cross-link flip this
     /// to true; RootView listens and presents the sheet.
     @Published var isInterviewModePresented = false
+
+    /// Centralized exit from Interview mode — used by the Interview tab's Close
+    /// button and by the legacy sheet presentation (Coach settings, Practice
+    /// "Try structured interview mode" link). Cleans up via the view's
+    /// `.onDisappear` when the tab content is removed, so we only need to
+    /// flip presentation state and return the user to Today.
+    func requestExitInterviewMode() {
+        if isInterviewModePresented {
+            isInterviewModePresented = false
+        }
+        if selectedTab == .interview {
+            selectedTab = .today
+        }
+    }
     @Published var reminderTone: ReminderTone = .workday
     @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
     @Published private(set) var pocketCopyStatusLine: String?
@@ -538,11 +552,11 @@ final class AppViewModel: ObservableObject {
     }
 
     var recommendedScenarioCoachOrderLine: String {
-        "Start with \(recommendedScenarioForCurrentContext.stepLabels.first ?? recommendedScenarioForCurrentContext.title.lowercased()), protect one listener-critical line, and leave prosody polish for the second pass."
+        "Start with \(recommendedScenarioForCurrentContext.stepLabels.first ?? recommendedScenarioForCurrentContext.title.lowercased()), protect one listener-critical line, and leave pacing for the second pass."
     }
 
     var coachingFrameAdjustmentLine: String {
-        "For a \(communicationEnvironmentTitle.lowercased()) with \(listenerPressureTitle.lowercased()), Katie should stabilize the listener-critical words first, keep transfer framing hypothesis-only, and only polish prosody after the wording is easy to catch."
+        "For a \(communicationEnvironmentTitle.lowercased()) with \(listenerPressureTitle.lowercased()), Katie should stabilize the listener-critical words first, treat language carryover as a guess, and only work on pacing after the wording is easy to catch."
     }
 
     var currentSoundPatternRadar: SoundPatternRadar {
@@ -560,7 +574,7 @@ final class AppViewModel: ObservableObject {
             bullets: [
                 "Language-transfer cue: \(languageAssessmentSnapshot.transferPattern)",
                 "Sound first: \(languageAssessmentSnapshot.soundFocus)",
-                "Prosody second: \(languageAssessmentSnapshot.prosodyFocus)"
+                "Pacing second: \(languageAssessmentSnapshot.prosodyFocus)"
             ]
         )
     }
@@ -1414,7 +1428,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var trustBoundaryLine: String {
-        "Katie is an SLP-informed speaking coach, not therapy or diagnosis. It starts with sound-pattern coaching for your \(communicationEnvironmentTitle.lowercased()) moments, keeps language-transfer framing hypothesis-only, and treats prosody as a second pass."
+        "Katie is a speaking coach, not therapy or diagnosis. It starts with sound patterns for your \(communicationEnvironmentTitle.lowercased()) moments, treats language carryover as a guess, and saves pacing for later."
     }
 
     var trustMethodLine: String {
@@ -1744,7 +1758,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var reminderClinicalBoundaryLine: String {
-        "Reminders are clinician-informed coaching support, not therapy, diagnosis, or emergency guidance."
+        "Reminders are coaching support, not therapy, diagnosis, or emergency guidance."
     }
 
     var momentumSummaryLine: String {

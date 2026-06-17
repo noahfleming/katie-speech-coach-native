@@ -728,7 +728,7 @@ struct ReviewRetakeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label("Before: did the friction land as an observed pattern instead of a vague stress summary?", systemImage: "1.circle.fill")
                 Label("After: is the support ask smaller and easier for a manager to answer live?", systemImage: "2.circle.fill")
-                Label("Boundary: transfer patterns stay a coaching hypothesis, not a diagnosis", systemImage: "3.circle.fill")
+                Label("Boundary: these patterns stay a coaching guess, not a diagnosis", systemImage: "3.circle.fill")
             }
             .font(.footnote)
             .foregroundStyle(KatieColors.textSecondary)
@@ -1395,7 +1395,7 @@ struct ReviewRetakeView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Label("Sound focus first: \(snapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
-                Label("Language watch-out: \(snapshot.transferPattern)", systemImage: "arrow.triangle.branch")
+                Label("Sound carryover to watch: \(snapshot.transferPattern)", systemImage: "arrow.triangle.branch")
             }
             .font(.footnote)
             .foregroundStyle(KatieColors.textPrimary)

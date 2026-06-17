@@ -53,7 +53,7 @@ struct CoachTrustView: View {
         KatieGlanceBoard(
             eyebrow: "Trust frame",
             title: "Keep the coaching context visible before you tweak it",
-            detail: "Katie stays local-first, pack-aware, and explicit about reminder ownership so the settings surface still feels clinician-safe instead of slippery.",
+            detail: "Katie stays local-first, pack-aware, and explicit about reminder ownership so the settings surface still feels grounded instead of slippery.",
             systemImage: "checkmark.shield.fill",
             accent: KatieColors.mint,
             secondary: KatieColors.gold,
@@ -77,7 +77,7 @@ struct CoachTrustView: View {
                 trustBoardCard
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("Clinician-safe coaching, not diagnosis", systemImage: "checkmark.shield.fill")
+                    Label("Coaching, not diagnosis", systemImage: "checkmark.shield.fill")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
@@ -321,7 +321,7 @@ VStack(alignment: .leading, spacing: 12) {
                     Text("Coaching priorities")
                         .font(.headline)
 
-                    Text("Keep the clinician-safe order obvious everywhere: sound patterns first, language transfer as a hypothesis, prosody only after the listener-critical words are stable.")
+                    Text("Keep the order obvious: sound patterns first, language carryover as a guess, pacing only after the listener-critical words are stable.")
                         .foregroundStyle(KatieColors.textSecondary)
 
                     trustPriorityRow(
@@ -339,7 +339,7 @@ VStack(alignment: .leading, spacing: 12) {
                     )
 
                     trustPriorityRow(
-                        title: "3. Prosody later",
+                        title: "3. Pacing later",
                         body: appViewModel.languageAssessmentSnapshot.prosodyFocus,
                         systemImage: "waveform",
                         accent: KatieColors.accent

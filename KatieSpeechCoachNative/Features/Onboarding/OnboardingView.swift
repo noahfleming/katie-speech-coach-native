@@ -981,7 +981,7 @@ struct OnboardingView: View {
                 Label("Sound focus first: \(appViewModel.languageAssessmentSnapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
                 Label("Listener friction to watch: \(appViewModel.listenerFrictionPointTitle)", systemImage: "ear.fill")
                 Label(appViewModel.transferHypothesisPreviewLine, systemImage: selectedTransferHypothesisFeedback.systemImage)
-                Label("Prosody stays secondary until the core pattern is steadier", systemImage: "waveform.path")
+                Label("Pacing and stress come later, once the core pattern is steadier", systemImage: "waveform.path")
             }
             .font(.footnote)
             .foregroundStyle(KatieColors.textSecondary)
@@ -1108,7 +1108,7 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label("Your first saved rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
                 Label("Starter proof stays visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
-                Label("Premium copy stays tied to a believable first win", systemImage: "crown.fill")
+                Label("Save one real rep before premium features unlock", systemImage: "crown.fill")
             }
             .foregroundStyle(KatieColors.textSecondary)
 
@@ -1148,7 +1148,7 @@ struct OnboardingView: View {
             sectionHeader(
                 eyebrow: "Coaching order",
                 title: "What Katie listens for",
-                detail: "Sound patterns first. Likely transfer patterns second. Prosody matters, but it stays in the second pass."
+                detail: "Sound patterns first. Pacing and stress come later, once the core sound is steady."
             )
         }
         .katieCard()

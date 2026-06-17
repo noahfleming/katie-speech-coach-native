@@ -39,6 +39,15 @@ struct MainTabView: View {
                 Label("Coach", systemImage: "person.crop.circle.badge.checkmark")
             }
             .tag(AppViewModel.AppTab.coach)
+
+            // Interview tab: InterviewPracticeView already wraps itself in
+            // a NavigationStack so it can be presented as a sheet from
+            // RootView without modification. Don't double-wrap here.
+            InterviewPracticeView()
+                .tabItem {
+                    Label("Interview", systemImage: "person.wave.2.fill")
+                }
+                .tag(AppViewModel.AppTab.interview)
         }
         .tint(KatieColors.accent)
         // KAT-154: tab bar background kept as .ultraThinMaterial (system chrome, not custom glass)

@@ -108,7 +108,7 @@ struct ProgressView: View {
         KatieGlanceBoard(
             eyebrow: "Progress board",
             title: "Glance first, then open the deeper proof",
-            detail: "Katie keeps the top line readable on iPhone and iPad before you drop into the longer compare and clinician-style detail cards.",
+            detail: "Katie keeps the top line readable on iPhone and iPad before you drop into the longer compare and detail cards.",
             systemImage: "chart.line.uptrend.xyaxis",
             accent: KatieColors.mint,
             secondary: KatieColors.gold,
@@ -391,7 +391,7 @@ struct ProgressView: View {
                 }
             }
 
-            Text("Order of trust: recorded here first, imported continuity second, starter proof last.")
+            Text("What counts first: your own recording, then carried-over samples, then the example.")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.gold)
         }
@@ -746,7 +746,7 @@ struct ProgressView: View {
         let transfer = appViewModel.currentConversationTransferPlan
 
         return VStack(alignment: .leading, spacing: 12) {
-            Label("Clinician lens", systemImage: "stethoscope")
+            Label("Full breakdown", systemImage: "stethoscope")
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
@@ -759,7 +759,7 @@ struct ProgressView: View {
                 systemImage: "dot.radiowaves.left.and.right"
             )
             progressDetailRow(
-                title: "Likely transfer pattern",
+                title: "Sound carryover to watch",
                 body: language.transferPattern,
                 systemImage: "arrow.triangle.branch"
             )

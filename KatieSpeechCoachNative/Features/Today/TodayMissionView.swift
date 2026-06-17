@@ -846,7 +846,7 @@ struct TodayMissionView: View {
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
-                    Text("Today already has enough to ship the next rep. Open the SLP-informed detail only when you want the sound-pattern brief, transfer plan, and pack-specific coaching stack.")
+                    Text("Today already has enough to ship the next rep. Open the deeper scan when you want the sound-pattern brief, carryover notes, and pack-specific coaching.")
                         .font(.footnote)
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -950,7 +950,7 @@ struct TodayMissionView: View {
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
                     Text(keepsCompactHome && !isLanguageFocusExpanded
-                         ? "Goal, context, and SLP-informed framing stay tucked away until you want the deeper read."
+                         ? "Goal, context, and deeper coaching stay tucked away until you want the full read."
                          : "Keep the plan compact: one real context, one sound-first hypothesis, one pack to protect.")
                         .foregroundStyle(KatieColors.textSecondary)
                 }
@@ -1014,7 +1014,7 @@ struct TodayMissionView: View {
                         .disabled(appViewModel.isRecommendedScenarioAlignedForToday)
                     }
 
-                    Label("Guardrail: Katie offers SLP-informed coaching for clearer speech and professional communication. It reflects observed patterns and carryover risk, not therapy or diagnosis.", systemImage: "checkmark.shield.fill")
+                    Label("Katie is a speaking coach, not therapy or diagnosis. It reflects patterns in your own speech, not a label.", systemImage: "checkmark.shield.fill")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(KatieColors.gold)
                 }
@@ -1400,12 +1400,12 @@ struct TodayMissionView: View {
                 .font(.headline)
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Keep the rep clinician-safe and useful: name the observed pattern, point to the friction, then end with one answerable ask.")
+            Text("Keep the rep grounded: name the pattern you heard, point to the friction, then end with one clear ask.")
                 .foregroundStyle(KatieColors.textSecondary)
 
             VStack(alignment: .leading, spacing: 10) {
                 Label("Pattern to name first: \(appViewModel.languageAssessmentSnapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
-                Label("Transfer watch-out, not a diagnosis: \(appViewModel.languageAssessmentSnapshot.transferPattern)", systemImage: "arrow.triangle.branch")
+                Label("Watch-out, not a diagnosis: \(appViewModel.languageAssessmentSnapshot.transferPattern)", systemImage: "arrow.triangle.branch")
                 Label("Close on one manager decision, not a broad vent", systemImage: "checkmark.bubble.fill")
             }
             .font(.footnote)
@@ -1556,7 +1556,7 @@ struct TodayMissionView: View {
                     Text("Sound focus")
                         .font(.headline)
                         .foregroundStyle(KatieColors.textPrimary)
-                    Text("Ground today’s work in likely transfer patterns and keep prosody in the second pass.")
+                    Text("Ground today’s work in the sound carryovers we listen for, and keep pacing in the second pass.")
                         .foregroundStyle(KatieColors.textSecondary)
                 }
 
@@ -1582,7 +1582,7 @@ struct TodayMissionView: View {
 
                 VStack(alignment: .leading, spacing: 10) {
                     languageFocusRow(
-                        title: "Likely transfer pattern",
+                        title: "Sound carryover to watch",
                         body: appViewModel.languageAssessmentSnapshot.transferPattern,
                         systemImage: "arrow.triangle.branch"
                     )
@@ -1592,7 +1592,7 @@ struct TodayMissionView: View {
                         systemImage: "dot.radiowaves.left.and.right"
                     )
                     languageFocusRow(
-                        title: "Prosody later",
+                        title: "Pacing later",
                         body: appViewModel.languageAssessmentSnapshot.prosodyFocus,
                         systemImage: "waveform"
                     )
@@ -1610,7 +1610,7 @@ struct TodayMissionView: View {
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
 
-                Text("Open the deeper scan when you want transfer patterns, prosody notes, and the SLP-informed coaching context.")
+                Text("Open the deeper scan for sound carryovers, pacing notes, and the coaching context.")
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
             }

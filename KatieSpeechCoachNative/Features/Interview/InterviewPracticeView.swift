@@ -35,8 +35,7 @@ struct InterviewPracticeView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
-                        cleanupInterviewSession()
-                        dismiss()
+                        appViewModel.requestExitInterviewMode()
                     }
                 }
             }

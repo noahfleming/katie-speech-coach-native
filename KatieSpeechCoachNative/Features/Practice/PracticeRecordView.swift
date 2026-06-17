@@ -1188,7 +1188,7 @@ struct PracticeRecordView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Label("Sound first: \(plan.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
-                Label("Prosody second: \(plan.prosodyFocus)", systemImage: "waveform")
+                Label("Pacing second: \(plan.prosodyFocus)", systemImage: "waveform")
             }
             .font(.footnote)
             .foregroundStyle(KatieColors.textSecondary)
