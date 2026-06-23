@@ -539,6 +539,18 @@ extension View {
     }
 
     func katieContentFrame(maxWidth: CGFloat = 760) -> some View {
+        // KAT-283 audit fix: the original pattern
+        //   `.frame(maxWidth: maxWidth).frame(maxWidth: .infinity, alignment: .center)`
+        // centers a 760pt-wide frame in the parent. On a 402pt iPhone 17
+        // screen, this means the content frame is at x=-179 (off-screen on
+        // both sides). The inner content's natural width (e.g. a 447pt text
+        // rendered by `practiceHeroSummary`) is also larger than 402pt, so
+        // the centered text bleeds past the right edge of the screen.
+        //
+        // The fix is to use a smaller max-width on iPhone (matching the
+        // screen width minus padding) so the centered frame stays within
+        // the screen. iPad gets the larger 760pt for the wide layout.
+        // The caller passes the appropriate maxWidth based on size class.
         frame(maxWidth: maxWidth, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .center)
     }

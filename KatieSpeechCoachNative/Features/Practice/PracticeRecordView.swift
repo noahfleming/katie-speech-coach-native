@@ -416,7 +416,7 @@ struct PracticeRecordView: View {
             .padding(.horizontal, horizontalPadding)
             .padding(.top, isCompactPhoneLayout ? 12 : 16)
             .padding(.bottom, isCompactPhoneLayout ? 24 : 16)
-            .katieContentFrame(maxWidth: isCompactPhoneLayout ? 760 : 940)
+            .katieContentFrame(maxWidth: isCompactPhoneLayout ? 380 : 940)
         }
         .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
     }

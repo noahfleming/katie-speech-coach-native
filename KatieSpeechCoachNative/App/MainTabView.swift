@@ -50,11 +50,14 @@ struct MainTabView: View {
                 .tag(AppViewModel.AppTab.interview)
         }
         .tint(KatieColors.accent)
-        // KAT-154: tab bar background kept as .ultraThinMaterial (system chrome, not custom glass)
-        // .glassEffect(.liquid) is for custom glass in a GlassEffectContainer, not system toolbars.
-        // Liquid Glass audit deferred to KAT-154 follow-up — see ticket for full scope.
-        .toolbarBackground(.ultraThinMaterial, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
+        // KAT-283 audit: remove the iOS 26 Liquid Glass floating tab bar
+        // behavior. The previous `.toolbarBackground(.ultraThinMaterial, for: .tabBar)`
+        // + `.toolbarBackground(.visible, for: .tabBar)` combo triggered the
+        // floating glass tab bar (rendered at ~80% width, floating in the
+        // middle of the screen). With KatieSpeechCoachNativeApp.init() now
+        // using `configureWithOpaqueBackground()` + `isTranslucent = false`,
+        // the tab bar returns to the traditional full-width bottom style.
+        // Tab bar appearance is configured globally in KatieSpeechCoachNativeApp.init().
         .onChange(of: appViewModel.selectedTab) { _, _ in
             appViewModel.persistSelectedTab()
         }

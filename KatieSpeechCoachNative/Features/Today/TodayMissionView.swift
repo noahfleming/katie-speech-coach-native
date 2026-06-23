@@ -152,7 +152,13 @@ struct TodayMissionView: View {
                 }
                 .padding(.horizontal, horizontalPadding)
                 .padding(.top, 20)
-                .padding(.bottom, isCompactPhoneLayout ? 32 : 24)
+                // KAT-283 audit: bumped bottom padding 32 → 160 to clear the
+                // floating iOS 26 Liquid Glass tab bar (rendered at y=384-480
+                // in the AX tree on iPhone17Test iOS 26.5). Without this,
+                // the content card extends behind the tab bar and the
+                // 'Katie keeps Decision pack in focus...' paragraph is
+                // partially obscured by the tab bar's translucent overlay.
+                .padding(.bottom, isCompactPhoneLayout ? 160 : 140)
                 .katieContentFrame(maxWidth: todayContentMaxWidth)
             }
         }
