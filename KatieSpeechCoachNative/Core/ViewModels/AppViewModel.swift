@@ -527,7 +527,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var recommendedScenarioLaneLine: String {
-        "Recommended lane: \(recommendedScenarioForCurrentContext.title)"
+        "Suggested pack: \(recommendedScenarioForCurrentContext.title)"
     }
 
     var isRecommendedScenarioAlignedForToday: Bool {
@@ -1284,7 +1284,7 @@ final class AppViewModel: ObservableObject {
 
     var latestReviewActionTitle: String {
         if activeScenarioUserRepCount <= 0 {
-            return "Open starter proof"
+            return "Open Katie's sample line"
         }
         if activeScenarioUserRepCount == 1 {
             return "Open latest proof"
@@ -1308,17 +1308,17 @@ final class AppViewModel: ObservableObject {
 
     var starterProofStatusLine: String {
         if activeScenarioUserRepCount > 0 {
-            return "Starter proof is now secondary. Katie should center your own saved reps first."
+            return "Katie's sample line is now secondary. Katie should center your own saved reps first."
         }
         if activeScenarioPrototypeSeedCount > 0 {
-            return "This pack opens with starter proof so the flow is visible before you record your own rep."
+            return "This pack opens with Katie's sample line so the flow is visible before you record your own rep."
         }
-        return "This pack has no starter proof loaded. Your next save becomes the benchmark."
+        return "This pack has no Katie's sample line loaded. Your next save becomes the benchmark."
     }
 
     var firstWinHeadline: String {
         if activeScenarioUserRepCount <= 0 {
-            return activeScenarioPrototypeSeedCount > 0 ? "Starter proof loaded → make it yours" : "Start your first proof"
+            return activeScenarioPrototypeSeedCount > 0 ? "Katie's sample line loaded → make it yours" : "Start your first save"
         }
         if activeScenarioUserRepCount == 1 {
             return "First proof saved → protect the benchmark"
@@ -1490,7 +1490,7 @@ final class AppViewModel: ObservableObject {
 
         if history.contains(where: { $0.captureSource == .seeded || $0.captureSource == .imported }) {
             return KatieContinuityStrip(
-                title: "Starter proof is visible, not final",
+                title: "Katie's sample line is visible, not final",
                 message: "This pack can show sample or carried-over proof, but your own first saved sample is what makes Today, Review, and reminders feel honestly yours. Next move: \(nextMove)",
                 systemImage: "sparkles.rectangle.stack.fill",
                 accent: .accent
@@ -2339,7 +2339,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var firstBaselineSecondaryActionTitle: String {
-        "Continue with starter proof only"
+        "Continue with Katie's sample line only"
     }
 
     func completeOnboarding() {
@@ -3213,7 +3213,7 @@ final class AppViewModel: ObservableObject {
 
                 let statusLabel: String
                 if ownedCount == 0 {
-                    statusLabel = hasStarterProof ? "Starter proof, not final" : "First save sets benchmark"
+                    statusLabel = hasStarterProof ? "Katie's sample line, not final" : "First save sets the comparison line"
                 } else if ownedCount == 1 {
                     statusLabel = replayReadyCount > 0 ? "1 proof · replay ready" : "1 proof · transcript first"
                 } else if replayReadyCount > 0 {
@@ -3267,7 +3267,7 @@ final class AppViewModel: ObservableObject {
                 QuickRepRunwayStepDescriptor(
                     title: "Save one real line",
                     detail: hasStarterProof
-                        ? "Replace the starter proof with your own benchmark for this pack."
+                        ? "Replace the Katie's sample line with your own benchmark for this pack."
                         : "Create the first benchmark so this pack stops reading like a placeholder.",
                     systemImage: "1.circle.fill",
                     accent: .gold
@@ -3355,7 +3355,7 @@ final class AppViewModel: ObservableObject {
         }
 
         if history.contains(where: { $0.captureSource == .seeded || $0.captureSource == .imported }) {
-            return "Starter proof is still visible. Save one real rep so \(quickRepSharedBenchmarkSurfaceList) can point to your own benchmark."
+            return "Katie's sample line is still visible. Save one real rep so \(quickRepSharedBenchmarkSurfaceList) can point to your own benchmark."
         }
 
         return "This pack wakes up after your first sample. Save one short rep so \(quickRepSharedBenchmarkSurfaceList) can follow a real line instead of a placeholder."
@@ -3553,7 +3553,7 @@ final class AppViewModel: ObservableObject {
             }
 
             if seededCount > 0 {
-                return "\(textTruth) · starter proof is still visible until you record a fresh clip"
+                return "\(textTruth) · Katie's sample line is still visible until you record a fresh clip"
             }
 
             return "\(textTruth) · replay still needs one fresh local clip"
@@ -3563,7 +3563,7 @@ final class AppViewModel: ObservableObject {
             let importedTruth = "\(countLabel(importedCount, singular: "imported continuity rep")) carried over here"
 
             if seededCount > 0 {
-                return "\(importedTruth) · starter proof stays secondary until you record"
+                return "\(importedTruth) · Katie's sample line stays secondary until you record"
             }
 
             return "\(importedTruth) · replay still needs one fresh local recording"
@@ -3571,7 +3571,7 @@ final class AppViewModel: ObservableObject {
 
         if userOwnedSessionCount(for: scenario) == 0 {
             if seededCount > 0 {
-                return "Starter proof is still leading this pack until you save your own rep."
+                return "Katie's sample line is still leading this pack until you save your own rep."
             }
             return "Save one rep to make this pack yours."
         }
@@ -3642,10 +3642,10 @@ final class AppViewModel: ObservableObject {
 
         if ownedCount == 0 {
             if microphonePermissionState == .denied {
-                return "\(prefix)save one text-only rep so starter proof stops leading this pack, then record here later to attach honest replay."
+                return "\(prefix)save one text-only rep so Katie's sample line stops leading this pack, then record here later to attach honest replay."
             }
 
-            return "\(prefix)save one rep so starter proof stops leading this pack and your own benchmark can take the lead."
+            return "\(prefix)save one rep so Katie's sample line stops leading this pack and your own benchmark can take the lead."
         }
 
         if ownedCount == 1 {
@@ -4090,7 +4090,7 @@ final class AppViewModel: ObservableObject {
     private static func placeholderSampleSession(for scenario: PracticeScenario) -> PracticeSession {
         PracticeSession(
             scenario: scenario,
-            title: "Starter proof",
+            title: "Katie's sample line",
             date: .now,
             transcript: scenario.missionPrompt,
             benchmarkCue: "Keep the line short enough to replay and compare later.",

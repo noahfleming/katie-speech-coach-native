@@ -380,7 +380,7 @@ struct ProgressView: View {
                     proofCountChip(title: "Imported", value: importedCount, accent: KatieColors.accent)
                 }
 
-                Text("Starter proof stays in the lane as smaller prototype continuity.")
+                Text("Katie's sample line stays in the lane as smaller prototype continuity.")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(KatieColors.gold)
             } else {

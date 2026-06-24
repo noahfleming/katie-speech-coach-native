@@ -2929,7 +2929,7 @@ private extension TodayMissionView {
         }
 
         return featured.latestSession.captureSource == .seeded
-            ? "Starter proof stays transcript-first here"
+            ? "Katie's sample line stays transcript-first here"
             : "Replay needs a fresh local clip"
     }
 

@@ -879,7 +879,7 @@ struct OnboardingView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     KatieSectionEyebrow(title: "Recommended first rep", systemImage: "sparkles", accent: KatieColors.mint)
 
-                    Text("Turn the starter cue into your own proof")
+                    Text("Turn the Katie's first sample into your own proof")
                         .font(isWideLayout ? .title3.weight(.semibold) : .headline)
                         .foregroundStyle(KatieColors.textPrimary)
 
@@ -984,16 +984,16 @@ struct OnboardingView: View {
     private var startingPackPreviewCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
-                eyebrow: "Pack preview",
+                eyebrow: "Sample pack",
                 title: appViewModel.learnerProfile.focusScenario.packTitle,
                 detail: appViewModel.learnerProfile.focusScenario.listenerOutcome
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Label("Structure to protect first: \(appViewModel.learnerProfile.focusScenario.structurePrompt)", systemImage: "point.3.connected.trianglepath.dotted")
-                Label("First listener-critical step: \(appViewModel.learnerProfile.focusScenario.stepLabels.first ?? appViewModel.learnerProfile.focusScenario.title)", systemImage: "flag.fill")
-                Label("Sound focus first: \(appViewModel.languageAssessmentSnapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
-                Label("Listener friction to watch: \(appViewModel.listenerFrictionPointTitle)", systemImage: "ear.fill")
+                Label("Structure to use first: \(appViewModel.learnerProfile.focusScenario.structurePrompt)", systemImage: "point.3.connected.trianglepath.dotted")
+                Label("First step for the listener: \(appViewModel.learnerProfile.focusScenario.stepLabels.first ?? appViewModel.learnerProfile.focusScenario.title)", systemImage: "flag.fill")
+                Label("Sound to work on first: \(appViewModel.languageAssessmentSnapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
+                Label("What to listen for: \(appViewModel.listenerFrictionPointTitle)", systemImage: "ear.fill")
                 Label(appViewModel.transferHypothesisPreviewLine, systemImage: selectedTransferHypothesisFeedback.systemImage)
                 Label("Pacing and stress come later, once the core pattern is steadier", systemImage: "waveform.path")
             }
@@ -1006,7 +1006,7 @@ struct OnboardingView: View {
     private var recommendedScenarioCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
-                eyebrow: "Recommended lane",
+                eyebrow: "Suggested pack",
                 title: appViewModel.recommendedScenarioForCurrentContext.packTitle,
                 detail: appViewModel.recommendedScenarioReason
             )
@@ -1023,7 +1023,7 @@ struct OnboardingView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            Button(appViewModel.isRecommendedScenarioAlignedForStartingPack ? "Starting pack already matches" : "Use this as my starting pack") {
+            Button(appViewModel.isRecommendedScenarioAlignedForStartingPack ? "Already your first pack" : "Use this as my first pack") {
                 appViewModel.alignRecommendedScenarioAcrossExperience()
             }
             .fontWeight(.semibold)
@@ -1040,7 +1040,7 @@ struct OnboardingView: View {
     private var speakingPacksCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
-                eyebrow: "Full surface area",
+                eyebrow: "All speaking packs",
                 title: "Speaking packs in Katie",
                 detail: "Katie should feel broader than interviews from the first tap, so every pack stays visible during setup."
             )
@@ -1060,7 +1060,7 @@ struct OnboardingView: View {
                         Spacer(minLength: 8)
 
                         if scenario == appViewModel.recommendedScenarioForCurrentContext {
-                            Text("Recommended")
+                            Text("Suggested")
                                 .font(.caption2.weight(.semibold))
                                 .foregroundStyle(KatieColors.textPrimary)
                                 .padding(.horizontal, 8)
@@ -1070,7 +1070,7 @@ struct OnboardingView: View {
                         }
 
                         if scenario == appViewModel.learnerProfile.focusScenario {
-                            Text("Starting")
+                            Text("Your first")
                                 .modifier(KatieCapsuleLabelStyle())
                         }
                     }
@@ -1090,7 +1090,7 @@ struct OnboardingView: View {
                         }
                     }
 
-                    Button(scenario == appViewModel.learnerProfile.focusScenario ? "Current starting pack" : "Set as starting pack") {
+                    Button(scenario == appViewModel.learnerProfile.focusScenario ? "Current first pack" : "Set as my first pack") {
                         appViewModel.updateFocusScenario(scenario)
                     }
                     .font(.caption.weight(.semibold))
@@ -1114,14 +1114,14 @@ struct OnboardingView: View {
     private var firstWinHandoffCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
-                eyebrow: "Handoff",
+                eyebrow: "What's next",
                 title: "Land one real proof before the premium loop expands",
                 detail: "Next, you’ll save one personal sample in your starting pack so compare, reminders, and premium framing can point to your own proof."
             )
 
             VStack(alignment: .leading, spacing: 10) {
                 Label("Your first saved rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
-                Label("Starter proof stays visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
+                Label("Katie's sample line stays visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
                 Label("Save one real rep before premium features unlock", systemImage: "crown.fill")
             }
             .foregroundStyle(KatieColors.textSecondary)
