@@ -7,6 +7,13 @@ struct OnboardingView: View {
         GeometryReader { proxy in
             let isWideLayout = proxy.size.width >= 920
             let contentBottomPadding: CGFloat = isWideLayout ? 128 : 24
+            // KAT-286 fix: the original `maxWidth: 760` was larger than an iPhone
+            // 17 screen (~402pt). The inner content then over-flowed the right
+            // edge of every card. Cap the content width to the actual screen
+            // width on iPhone, and keep the wide 1160pt for iPad / Mac mirroring.
+            let contentMaxWidth: CGFloat = isWideLayout
+                ? 1160
+                : min(760, proxy.size.width - 32)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
@@ -63,7 +70,7 @@ struct OnboardingView: View {
                 }
                 .padding(isWideLayout ? 24 : 16)
                 .padding(.bottom, contentBottomPadding)
-                .katieContentFrame(maxWidth: isWideLayout ? 1160 : 760)
+                .katieContentFrame(maxWidth: contentMaxWidth)
             }
             .safeAreaInset(edge: .bottom) {
                 if isWideLayout {
@@ -176,7 +183,7 @@ struct OnboardingView: View {
             .foregroundStyle(KatieColors.textPrimary)
             .fixedSize(horizontal: false, vertical: true)
 
-            Text("Work speaking · local-first")
+            Text("Speaking at work · stays on this iPhone")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -208,20 +215,20 @@ struct OnboardingView: View {
                 spacing: 10
             ) {
                 heroFeatureTile(
-                    title: "Listener-first feedback",
+                    title: "Clear for the listener",
                     detail: "Katie keeps the first listen easy to follow.",
                     systemImage: "ear.fill",
                     accent: KatieColors.mint
                 )
                 heroFeatureTile(
-                    title: "Identity intact",
-                    detail: "Clarity and confidence, not accent erasure.",
+                    title: "Your voice, your way",
+                    detail: "Clearer speaking without losing your accent.",
                     systemImage: "heart.text.square.fill",
                     accent: KatieColors.blush
                 )
                 heroFeatureTile(
-                    title: "Proof over pep talks",
-                    detail: "Your first save becomes the benchmark.",
+                    title: "Builds on your saves",
+                    detail: "Your first save becomes the comparison line.",
                     systemImage: "person.crop.circle.badge.checkmark",
                     accent: KatieColors.gold
                 )
@@ -269,28 +276,28 @@ struct OnboardingView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 startingStepRow(
-                    title: "Goal focus",
+                    title: "Your goal",
                     detail: appViewModel.goalFocusTitle,
                     systemImage: "target",
                     accent: KatieColors.gold
                 )
 
                 startingStepRow(
-                    title: "First structure",
+                    title: "Structure to use first",
                     detail: appViewModel.learnerProfile.focusScenario.structurePrompt,
                     systemImage: "point.3.connected.trianglepath.dotted",
                     accent: KatieColors.mint
                 )
 
                 startingStepRow(
-                    title: "Sound focus",
+                    title: "Sound to work on",
                     detail: appViewModel.languageAssessmentSnapshot.soundFocus,
                     systemImage: "dot.radiowaves.left.and.right",
                     accent: KatieColors.blush
                 )
 
                 startingStepRow(
-                    title: "Capture path",
+                    title: "How you record",
                     detail: appViewModel.audioCaptureLane.title,
                     systemImage: appViewModel.audioCaptureLane.systemImage,
                     accent: KatieColors.gold
@@ -342,11 +349,11 @@ struct OnboardingView: View {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
-                    .lineLimit(1)
+                    .lineLimit(2)
                 Text(detail)
                     .font(.caption)
                     .foregroundStyle(KatieColors.textSecondary)
-                    .lineLimit(2)
+                    .lineLimit(3)
             }
         }
         .padding(12)
@@ -391,8 +398,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
                 eyebrow: "Your setup",
-                title: "Add enough context for a believable first coaching pass",
-                detail: "Katie uses your role, language background, and work context to frame the first sample without boxing you into a stereotype."
+                title: "Add a few details so Katie's first pass feels useful",
+                detail: "Katie uses your role, languages, and work context to choose a good first sample, without putting you in a box."
             )
 
             TextField("First name", text: profileBinding(\.firstName))
@@ -411,9 +418,16 @@ struct OnboardingView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            Text(appViewModel.trustBoundaryLine)
-                .font(.footnote)
-                .foregroundStyle(KatieColors.textSecondary)
+            // KAT-288 fix: turn the ASHA-aligned scope disclaimer into a clearly
+            // labeled block instead of a footnote. The previous version read as
+            // generic helper text and could be missed by a learner who needs to
+            // know Katie is not therapy or diagnosis before onboarding.
+            KatieInlineNotice(
+                title: "What Katie is, and what it is not",
+                message: appViewModel.trustBoundaryLine,
+                systemImage: "checkmark.shield.fill",
+                accent: KatieColors.gold
+            )
         }
         .katieCard()
     }
@@ -421,13 +435,13 @@ struct OnboardingView: View {
     private var contextCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
-                eyebrow: "Work context",
-                title: "Tune the first listener-pressure lane",
-                detail: "A tighter first lane helps Katie make the first proof feel grounded instead of generic."
+                eyebrow: "Speaking at work",
+                title: "Pick where speaking feels hardest",
+                detail: "A clear first setting helps Katie give useful feedback from the start."
             )
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Where this usually matters")
+                Text("Where this usually happens")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
 
@@ -495,13 +509,13 @@ struct OnboardingView: View {
     private var goalCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader(
-                eyebrow: "Goal framing",
-                title: "Choose the first communication win",
-                detail: "Katie starts with one visible change worth protecting before it widens into pacing, polish, and replay depth."
+                eyebrow: "Your main goal",
+                title: "Pick the first change to work on",
+                detail: "Katie starts with one clear change to protect, then adds pacing and polish once that change is steady."
             )
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Primary communication goal")
+                Text("Main speaking goal")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
 
@@ -601,9 +615,9 @@ struct OnboardingView: View {
     private var captureTrustCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
-                eyebrow: "Capture trust",
+                eyebrow: "How recording works",
                 title: appViewModel.audioCaptureLane.title,
-                detail: "Item 2 stays explicit here: real on-device capture is available when needed, and text-only fallback stays visible when it is not."
+                detail: "Real recording on this iPhone is available when you allow it. Text-only practice stays available when you do not."
             )
 
             Label(appViewModel.audioCaptureLane.detail, systemImage: appViewModel.audioCaptureLane.systemImage)
@@ -623,16 +637,16 @@ struct OnboardingView: View {
     private var valuesCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionHeader(
-                eyebrow: "Trust + boundaries",
+                eyebrow: "What to expect",
                 title: "Set the tone before the first recording",
-                detail: "The app should feel warm and premium without making credibility feel fuzzy."
+                detail: "Katie should feel calm and useful, without making claims it cannot back up."
             )
 
             VStack(alignment: .leading, spacing: 10) {
-                valueRow(title: "Built for work speaking, not one scenario", systemImage: "briefcase.fill", accent: KatieColors.gold)
-                valueRow(title: "No accent-erasure promise", systemImage: "heart.text.square.fill", accent: KatieColors.blush)
+                valueRow(title: "Built for many kinds of speaking, not just one", systemImage: "briefcase.fill", accent: KatieColors.gold)
+                valueRow(title: "Katie will not change your accent", systemImage: "heart.text.square.fill", accent: KatieColors.blush)
                 valueRow(title: "Microphone permission only when needed", systemImage: "mic.fill", accent: KatieColors.mint)
-                valueRow(title: "Local-first by default", systemImage: "icloud.slash.fill", accent: KatieColors.plum)
+                valueRow(title: "Stays on this iPhone by default", systemImage: "icloud.slash.fill", accent: KatieColors.plum)
             }
         }
         .katieCard()
@@ -650,7 +664,7 @@ struct OnboardingView: View {
     private var focusSnapshotCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(
-                eyebrow: "Starting hypothesis",
+                eyebrow: "Katie's starting guess",
                 title: appViewModel.languageAssessmentSnapshot.title,
                 detail: appViewModel.profileContextTrustLine
             )
@@ -665,7 +679,7 @@ struct OnboardingView: View {
             }
             .foregroundStyle(KatieColors.textSecondary)
 
-            Text("Later, Katie may also help with pacing and stress: \(appViewModel.languageAssessmentSnapshot.prosodyFocus)")
+            Text("Later, Katie can also help with pacing and stress: \(appViewModel.languageAssessmentSnapshot.prosodyFocus)")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
         }
@@ -679,21 +693,21 @@ struct OnboardingView: View {
 
         return VStack(alignment: .leading, spacing: 14) {
             sectionHeader(
-                eyebrow: "Self-check",
-                title: "Does that sound like your real speaking under pressure?",
-                detail: "Pick how much weight Katie should give this cue before your first saved rep."
+                eyebrow: "Quick check",
+                title: "Does that match how you actually speak under pressure?",
+                detail: "Pick how much Katie should focus on this before your first save."
             )
 
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top, spacing: 12) {
                     VStack(alignment: .leading, spacing: 8) {
-                        KatieSectionEyebrow(title: "Starter cue live now", systemImage: "sparkles", accent: KatieColors.mint)
+                        KatieSectionEyebrow(title: "Katie's first sample is active", systemImage: "sparkles", accent: KatieColors.mint)
 
                         Text(appViewModel.transferHypothesisStatusTitle)
                             .font(.headline)
                             .foregroundStyle(KatieColors.textPrimary)
 
-                        Text("Katie uses this as a starting stance in \(appViewModel.learnerProfile.focusScenario.packTitle) until your first saved sample proves what actually helps the listener most.")
+                        Text("Katie uses this as a starting point in \(appViewModel.learnerProfile.focusScenario.packTitle) until you save your own sample.")
                             .font(.footnote)
                             .foregroundStyle(KatieColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -768,7 +782,7 @@ struct OnboardingView: View {
                     )
             )
 
-            Text("Choose the starting stance that feels closest right now")
+            Text("Pick the starting point that feels closest right now")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -1146,9 +1160,9 @@ struct OnboardingView: View {
     private var listeningCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             sectionHeader(
-                eyebrow: "Coaching order",
+                eyebrow: "What Katie listens for",
                 title: "What Katie listens for",
-                detail: "Sound patterns first. Pacing and stress come later, once the core sound is steady."
+                detail: "Start with sounds in your speech. Then check if any sounds come from your first language. Pacing and stress come later, after the sounds are clearer."
             )
         }
         .katieCard()
@@ -1232,7 +1246,7 @@ struct OnboardingView: View {
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(KatieColors.mint)
 
-                            Text("Your first save sets the benchmark for Today, Review, and reminders.")
+                            Text("Your first save becomes the comparison line for Today, Review, and reminders.")
                                 .font(.footnote)
                                 .foregroundStyle(KatieColors.textSecondary)
                         }
@@ -1250,7 +1264,7 @@ struct OnboardingView: View {
                                 .foregroundStyle(KatieColors.mint)
                                 .lineLimit(1)
 
-                            Text("First save turns the starter cue into proof for Today, Review, and reminders.")
+                            Text("Your first save turns Katie's sample into your own line for Today, Review, and reminders.")
                                 .font(.caption)
                                 .foregroundStyle(KatieColors.textSecondary)
                                 .lineLimit(2)

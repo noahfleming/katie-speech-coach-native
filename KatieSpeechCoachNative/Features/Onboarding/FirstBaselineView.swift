@@ -27,11 +27,15 @@ struct FirstBaselineView: View {
         horizontalSizeClass == .regular
     }
 
-    private var baselineContentMaxWidth: CGFloat {
-        usesWideBaselineLayout ? 1180 : 760
+    // KAT-286 fix: cap the iPhone content width to the actual screen width
+    // (minus padding). The previous `760` was wider than an iPhone 17 screen
+    // and pushed card text past the right edge.
+    private func baselineContentMaxWidth(screenWidth: CGFloat) -> CGFloat {
+        usesWideBaselineLayout ? 1180 : min(760, screenWidth - 40)
     }
 
     var body: some View {
+        GeometryReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 firstBaselineHeroCard
@@ -58,7 +62,8 @@ struct FirstBaselineView: View {
                 }
             }
             .padding(20)
-            .katieContentFrame(maxWidth: baselineContentMaxWidth)
+            .katieContentFrame(maxWidth: baselineContentMaxWidth(screenWidth: proxy.size.width))
+        }
         }
         .background(
             LinearGradient(
@@ -360,11 +365,11 @@ struct FirstBaselineView: View {
                 .katieIconBadge(background: KatieColors.cardBackground, foreground: KatieColors.textSecondary, size: 32)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Keep exploring \(appViewModel.currentMission.packTitle) with starter proof")
+                Text("Keep exploring \(appViewModel.currentMission.packTitle) with Katie's sample line")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(KatieColors.textPrimary)
 
-                Text("You can keep browsing without losing your place. Today and Review stay honest about starter proof until you save your own line here.")
+                Text("You can keep browsing without losing your place. Today and Review stay honest about Katie's sample line until you save your own line here.")
                     .font(.footnote)
                     .foregroundStyle(KatieColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -435,7 +440,7 @@ struct FirstBaselineView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KatieColors.cardSecondary.opacity(0.42), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-            Text("Prototype note: once your first personal sample is saved, starter proof becomes the reference, not the headline.")
+            Text("After your first personal sample is saved, it becomes the line Katie compares against.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
         }
@@ -479,7 +484,7 @@ struct FirstBaselineView: View {
                 .font(.title3.weight(.bold))
                 .foregroundStyle(KatieColors.textPrimary)
 
-            Text("Pick the path that matches this moment. Katie keeps starter proof honest until you create your own anchor, then everything pivots to that line.")
+            Text("Pick the path that matches this moment. Katie keeps Katie's sample line honest until you create your own saved line, then everything pivots to that line.")
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
@@ -496,8 +501,8 @@ struct FirstBaselineView: View {
             )
 
             firstPathCard(
-                title: "Keep exploring \(appViewModel.currentMission.packTitle) with starter proof",
-                detail: "Today and Review stay anchored to starter proof in \(appViewModel.currentMission.packTitle), and reminder ownership stays open until you save your own line here.",
+                title: "Keep exploring \(appViewModel.currentMission.packTitle) with Katie's sample line",
+                detail: "Today and Review stay using Katie's sample line in \(appViewModel.currentMission.packTitle), and reminder ownership stays open until you save your own line here.",
                 points: [
                     "You can browse \(appViewModel.currentMission.packTitle) now without pretending your first benchmark already exists.",
                     "Review keeps using starter material for \(appViewModel.currentMission.packTitle) until you record a real clip.",
@@ -539,18 +544,18 @@ struct FirstBaselineView: View {
             return [
                 FirstBaselineRunwayStep(
                     title: "Record your first benchmark",
-                    detail: "This pack gets a replay-ready local clip on this iPhone, so starter proof stops acting like the main story.",
+                    detail: "This pack gets a local clip you can play back on this iPhone, so Katie's sample line stops acting like the main story.",
                     systemImage: "mic.circle.fill",
                     accent: KatieColors.mint
                 ),
                 FirstBaselineRunwayStep(
                     title: "Today and Review pivot to your own proof",
-                    detail: "Your saved line becomes the anchor for the active pack across the app instead of demo or carried-over material.",
+                    detail: "Your saved line becomes the comparison line for the active pack across the app instead of demo or carried-over lines.",
                     systemImage: "arrow.triangle.branch",
                     accent: KatieColors.accent
                 ),
                 FirstBaselineRunwayStep(
-                    title: "Reminders and compare have a real anchor",
+                    title: "Reminders and compare have a real line",
                     detail: "Katie can protect this exact line for a live moment now, and one later retake can turn it into an honest before-vs-now compare.",
                     systemImage: "bell.badge.fill",
                     accent: KatieColors.gold
@@ -560,13 +565,13 @@ struct FirstBaselineView: View {
             return [
                 FirstBaselineRunwayStep(
                     title: "The first tap decides the proof mode",
-                    detail: "Katie only asks for microphone access when you start recording, so this save becomes replay-ready if allowed and transcript-first if blocked.",
+                    detail: "Katie only asks for microphone access when you start recording, so this save becomes playable if allowed and transcript-first if blocked.",
                     systemImage: "questionmark.circle.fill",
                     accent: KatieColors.gold
                 ),
                 FirstBaselineRunwayStep(
                     title: "Your own benchmark replaces the placeholder",
-                    detail: "Today and Review immediately switch to your real line instead of starter proof once this first save lands.",
+                    detail: "Today and Review immediately switch to your real line instead of Katie's sample line once this first save lands.",
                     systemImage: "arrow.triangle.branch",
                     accent: KatieColors.accent
                 ),
@@ -609,7 +614,7 @@ struct FirstBaselineView: View {
 
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Starting hypothesis")
+                    Text("Katie's starting guess")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textPrimary)
 
@@ -727,7 +732,7 @@ struct FirstBaselineView: View {
             return [
                 appViewModel.goalFocusTitle,
                 "Today opens with your benchmark",
-                "Review gets a real compare anchor"
+                "Review gets a real compare line"
             ]
         case .unknown:
             return [
@@ -748,22 +753,22 @@ struct FirstBaselineView: View {
 
         switch appViewModel.microphonePermissionState {
         case .denied:
-            return "Save a text-first benchmark in \(pack) now so Katie can start \(goal) from your own words, or keep browsing while starter proof stays clearly labeled."
+            return "Save a text-first benchmark in \(pack) now so Katie can start \(goal) from your own words, or keep browsing while Katie's sample line stays clearly labeled."
         case .granted:
-            return "One tap opens the recorder for your first real benchmark in \(pack), giving Katie an honest anchor for \(goal) without losing your place."
+            return "One tap opens the recorder for your first real benchmark in \(pack), giving Katie an saved line for \(goal) without losing your place."
         case .unknown:
-            return "Katie only asks for microphone access when recording starts in \(pack), and the first save still becomes the honest anchor for \(goal)."
+            return "Katie only asks for microphone access when recording starts in \(pack), and the first save still becomes the saved line for \(goal)."
         }
     }
 
     private var firstBaselineProofModeTitle: String {
         switch appViewModel.microphonePermissionState {
         case .denied:
-            return "Transcript-first"
+            return "Saved as text"
         case .granted:
-            return "Replay-ready"
+            return "Playable on this iPhone"
         case .unknown:
-            return "Permission-aware"
+            return "Depends on what you allow"
         }
     }
 
@@ -797,7 +802,7 @@ struct FirstBaselineView: View {
             return [
                 FirstBaselineContractItem(
                     title: "Right now",
-                    detail: "Katie starts with starter proof in \(pack) and names that honestly until you save your own words.",
+                    detail: "Katie starts with Katie's sample line in \(pack) and names that honestly until you save your own words.",
                     systemImage: "sparkles.rectangle.stack.fill",
                     accent: KatieColors.plum
                 ),
@@ -818,7 +823,7 @@ struct FirstBaselineView: View {
             return [
                 FirstBaselineContractItem(
                     title: "Right now",
-                    detail: "Katie begins in \(pack) with starter proof while you decide whether to record your own anchor.",
+                    detail: "Katie begins in \(pack) with Katie's sample line while you decide whether to record your own saved line.",
                     systemImage: "sparkles.rectangle.stack.fill",
                     accent: KatieColors.plum
                 ),
@@ -839,13 +844,13 @@ struct FirstBaselineView: View {
             return [
                 FirstBaselineContractItem(
                     title: "Right now",
-                    detail: "Katie keeps starter proof visible while the first recording decision is still open in \(pack).",
+                    detail: "Katie keeps Katie's sample line visible while the first recording decision is still open in \(pack).",
                     systemImage: "sparkles.rectangle.stack.fill",
                     accent: KatieColors.plum
                 ),
                 FirstBaselineContractItem(
                     title: "After one save",
-                    detail: "If you allow recording, Katie pivots to replay-ready proof. If not, your transcript still becomes the new anchor.",
+                    detail: "If you allow recording, Katie pivots to a playable recording. If not, your transcript still becomes the new saved line.",
                     systemImage: "questionmark.circle.fill",
                     accent: KatieColors.accent
                 ),
@@ -864,7 +869,7 @@ struct FirstBaselineView: View {
         case .denied:
             return "Save text-only proof now"
         case .granted:
-            return "Record replay-ready proof now"
+            return "Record playable recording now"
         case .unknown:
             return "Record your first proof now"
         }
@@ -877,7 +882,7 @@ struct FirstBaselineView: View {
         case .denied:
             return "Katie saves a text benchmark for \(pack) right away, then keeps replay labels honest until you can record on this iPhone later."
         case .granted:
-            return "Katie opens the recorder for a real local clip in \(pack) so Today, Review, and Progress can treat this as replay-ready proof instead of starter material."
+            return "Katie opens the recorder for a real local clip in \(pack) so Today, Review, and Progress can treat this as playable recording instead of starter material."
         case .unknown:
             return "Katie only asks for microphone access when recording starts in \(pack). If you allow it, this first save becomes the local proof that powers replay and compare."
         }
@@ -893,14 +898,14 @@ struct FirstBaselineView: View {
             ]
         case .granted:
             return [
-                "Today opens with your own replay-ready benchmark instead of starter proof.",
-                "Review gets a real before/after compare anchor tied to this iPhone.",
+                "Today opens with your own playable line instead of Katie's sample line.",
+                "Review gets a real before/after compare line tied to this iPhone.",
                 "Reminders can point back to the exact saved line and clip you recorded here."
             ]
         case .unknown:
             return [
                 "Katie waits to ask for mic access until the moment you start recording.",
-                "If you allow it, Today and Review immediately pivot to your own replay-ready proof.",
+                "If you allow it, Today and Review immediately pivot to your own playable recording.",
                 "If recording is blocked, Katie still keeps your transcript trail visible without pretending audio exists."
             ]
         }

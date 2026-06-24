@@ -1428,7 +1428,11 @@ final class AppViewModel: ObservableObject {
     }
 
     var trustBoundaryLine: String {
-        "Katie is a speaking coach, not therapy or diagnosis. It starts with sound patterns for your \(communicationEnvironmentTitle.lowercased()) moments, treats language carryover as a guess, and saves pacing for later."
+        // KAT-288 + KAT-289: ASHA-aligned scope statement, rewritten in short
+        // sentences with common words so a second-language speaker can read
+        // it cleanly. Says what Katie is, what it is not, and points to an
+        // SLP for speech or language concerns.
+        "Katie is a speaking practice app. It is not speech therapy and does not diagnose speech or language conditions. It listens to your own recordings and helps you practice clearer speaking at work. If you have a concern about your speech or language, please see a speech-language pathologist."
     }
 
     var trustMethodLine: String {
@@ -1515,7 +1519,7 @@ final class AppViewModel: ObservableObject {
 
     private func continuityNextMoveLine(for scenario: PracticeScenario, userOwnedCount: Int, replayReadyCount: Int) -> String {
         if userOwnedCount == 0 {
-            return "Save your own first rep so starter proof stops carrying this pack."
+            return "Save one sample line of your own so the Katie sample stops showing as the main one."
         }
 
         if replayReadyCount == 0 {
@@ -1664,7 +1668,7 @@ final class AppViewModel: ObservableObject {
             PremiumExperimentSurface(
                 title: "First-win premium",
                 badge: hasEarnedFirstWin ? "Proof-led" : "Starter-led",
-                detail: "The paywall opens off a believable win instead of generic pressure, closer to the calmer subscription apps that let the user feel value first.",
+                detail: "Katie Plus opens after you save a real sample line, not before, so you can feel the value first.",
                 bullets: [
                     firstWinTrustLine,
                     premiumHeroSummary,
@@ -1672,19 +1676,19 @@ final class AppViewModel: ObservableObject {
                 ]
             ),
             PremiumExperimentSurface(
-                title: "Cross-pack continuity",
-                badge: "Work-life breadth",
-                detail: "Premium framing should sell continuity across real speaking moments, not just more repetitions of one interview drill.",
+                title: "Across all speaking moments",
+                badge: "Work and life",
+                detail: "Katie Plus covers all your speaking moments, not just one type of interview practice.",
                 bullets: [
                     "Current pack: \(currentMission.packTitle)",
                     "Also visible: \(availableScenarios.filter { $0 != currentMission }.prefix(2).map(\.packTitle).joined(separator: " · "))",
-                    "Reminder continuity follows one protected line, not generic motivation."
+                    "Reminders can protect one exact line for the moment you choose."
                 ]
             ),
             PremiumExperimentSurface(
-                title: "Calm App Store framing",
-                badge: premiumAccessState == .entitled ? "StoreKit-backed" : "Preview copy",
-                detail: "The premium surface stays polished and benefit-led, while the trust note keeps the prototype honest about preview mode versus a real entitlement.",
+                title: "App Store listing",
+                badge: premiumAccessState == .entitled ? "You have Plus" : "Preview is on",
+                detail: "The premium screen stays calm and clear. Preview mode shows you what Plus adds before you buy.",
                 bullets: [
                     premiumCTASecondaryLine,
                     premiumStatusLine,
