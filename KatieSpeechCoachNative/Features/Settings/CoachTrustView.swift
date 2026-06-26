@@ -407,6 +407,26 @@ VStack(alignment: .leading, spacing: 12) {
 
                                 katieDrillDownSection(title: "Trust boundaries", subtitle: "Clear boundaries make the app more reliable.", systemImage: "checkmark.shield", isExpanded: $showSafetyBoundaries) {
 VStack(alignment: .leading, spacing: 12) {
+                    // KAT-292 (OPE-345): promote the ASHA-aligned scope
+                    // statement to a labeled block at the top of the Trust
+                    // boundaries drill-down. The acronym is spelled out so
+                    // any learner can read the boundary cleanly without
+                    // having to look up what ASHA or SLP stand for.
+                    //
+                    // ASHA = American Speech-Language-Hearing Association.
+                    // Their scope-of-practice guidance covers what SLPs
+                    // (speech-language pathologists) diagnose and treat;
+                    // Katie does not. The full clinical handoff list
+                    // (sudden speech changes, pain/hoarseness, stuttering,
+                    // memory/language/hearing/swallowing concerns) lives
+                    // directly below in the next drill-down.
+                    KatieInlineNotice(
+                        title: "What Katie is — and is not",
+                        message: "Katie is an elective speaking-clarity coaching app for real work moments. It does not diagnose speech or language conditions, does not act in place of a speech-language pathologist (SLP), and does not follow the scope of practice set by the American Speech-Language-Hearing Association (ASHA). For speech, language, voice, hearing, or swallowing concerns, please see a licensed clinician.",
+                        systemImage: "checkmark.shield.fill",
+                        accent: KatieColors.gold
+                    )
+
                     Text("What Katie does not do")
                         .font(.headline)
 
