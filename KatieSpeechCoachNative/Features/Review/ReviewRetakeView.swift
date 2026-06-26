@@ -48,6 +48,7 @@ struct ReviewRetakeView: View {
     }
 
     var body: some View {
+        GeometryReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
@@ -87,9 +88,10 @@ struct ReviewRetakeView: View {
                 retakeMissionCard
             }
             .padding(16)
-            .katieContentFrame(maxWidth: 820)
+            .katieContentFrame(maxWidth: usesWideReviewLayout ? 820 : min(820, proxy.size.width - 32))
         }
         .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
+        }
     }
 
     @ViewBuilder

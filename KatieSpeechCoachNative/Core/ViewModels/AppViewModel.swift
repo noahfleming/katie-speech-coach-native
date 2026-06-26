@@ -527,7 +527,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var recommendedScenarioLaneLine: String {
-        "Suggested pack: \(recommendedScenarioForCurrentContext.title)"
+        "Recommended lane: \(recommendedScenarioForCurrentContext.title)"
     }
 
     var isRecommendedScenarioAlignedForToday: Bool {
@@ -1284,7 +1284,7 @@ final class AppViewModel: ObservableObject {
 
     var latestReviewActionTitle: String {
         if activeScenarioUserRepCount <= 0 {
-            return "Open Katie's sample line"
+            return "Open starter proof"
         }
         if activeScenarioUserRepCount == 1 {
             return "Open latest proof"
@@ -1308,17 +1308,17 @@ final class AppViewModel: ObservableObject {
 
     var starterProofStatusLine: String {
         if activeScenarioUserRepCount > 0 {
-            return "Katie's sample line is now secondary. Katie should center your own saved reps first."
+            return "Starter proof is now secondary. Katie should center your own saved reps first."
         }
         if activeScenarioPrototypeSeedCount > 0 {
-            return "This pack opens with Katie's sample line so the flow is visible before you record your own rep."
+            return "This pack opens with starter proof so the flow is visible before you record your own rep."
         }
-        return "This pack has no Katie's sample line loaded. Your next save becomes the benchmark."
+        return "This pack has no starter proof loaded. Your next save becomes the benchmark."
     }
 
     var firstWinHeadline: String {
         if activeScenarioUserRepCount <= 0 {
-            return activeScenarioPrototypeSeedCount > 0 ? "Katie's sample line loaded → make it yours" : "Start your first save"
+            return activeScenarioPrototypeSeedCount > 0 ? "Starter proof loaded → make it yours" : "Start your first proof"
         }
         if activeScenarioUserRepCount == 1 {
             return "First proof saved → protect the benchmark"
@@ -1428,11 +1428,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var trustBoundaryLine: String {
-        // KAT-288 + KAT-289: ASHA-aligned scope statement, rewritten in short
-        // sentences with common words so a second-language speaker can read
-        // it cleanly. Says what Katie is, what it is not, and points to an
-        // SLP for speech or language concerns.
-        "Katie is a speaking practice app. It is not speech therapy and does not diagnose speech or language conditions. It listens to your own recordings and helps you practice clearer speaking at work. If you have a concern about your speech or language, please see a speech-language pathologist."
+        "Katie is a speaking coach, not therapy or diagnosis. It starts with sound patterns for your \(communicationEnvironmentTitle.lowercased()) moments, treats language carryover as a guess, and saves pacing for later."
     }
 
     var trustMethodLine: String {
@@ -1490,7 +1486,7 @@ final class AppViewModel: ObservableObject {
 
         if history.contains(where: { $0.captureSource == .seeded || $0.captureSource == .imported }) {
             return KatieContinuityStrip(
-                title: "Katie's sample line is visible, not final",
+                title: "Starter proof is visible, not final",
                 message: "This pack can show sample or carried-over proof, but your own first saved sample is what makes Today, Review, and reminders feel honestly yours. Next move: \(nextMove)",
                 systemImage: "sparkles.rectangle.stack.fill",
                 accent: .accent
@@ -1519,7 +1515,7 @@ final class AppViewModel: ObservableObject {
 
     private func continuityNextMoveLine(for scenario: PracticeScenario, userOwnedCount: Int, replayReadyCount: Int) -> String {
         if userOwnedCount == 0 {
-            return "Save one sample line of your own so the Katie sample stops showing as the main one."
+            return "Save your own first rep so starter proof stops carrying this pack."
         }
 
         if replayReadyCount == 0 {
@@ -1668,7 +1664,7 @@ final class AppViewModel: ObservableObject {
             PremiumExperimentSurface(
                 title: "First-win premium",
                 badge: hasEarnedFirstWin ? "Proof-led" : "Starter-led",
-                detail: "Katie Plus opens after you save a real sample line, not before, so you can feel the value first.",
+                detail: "The paywall opens off a believable win instead of generic pressure, closer to the calmer subscription apps that let the user feel value first.",
                 bullets: [
                     firstWinTrustLine,
                     premiumHeroSummary,
@@ -1676,19 +1672,19 @@ final class AppViewModel: ObservableObject {
                 ]
             ),
             PremiumExperimentSurface(
-                title: "Across all speaking moments",
-                badge: "Work and life",
-                detail: "Katie Plus covers all your speaking moments, not just one type of interview practice.",
+                title: "Cross-pack continuity",
+                badge: "Work-life breadth",
+                detail: "Premium framing should sell continuity across real speaking moments, not just more repetitions of one interview drill.",
                 bullets: [
                     "Current pack: \(currentMission.packTitle)",
                     "Also visible: \(availableScenarios.filter { $0 != currentMission }.prefix(2).map(\.packTitle).joined(separator: " · "))",
-                    "Reminders can protect one exact line for the moment you choose."
+                    "Reminder continuity follows one protected line, not generic motivation."
                 ]
             ),
             PremiumExperimentSurface(
-                title: "App Store listing",
-                badge: premiumAccessState == .entitled ? "You have Plus" : "Preview is on",
-                detail: "The premium screen stays calm and clear. Preview mode shows you what Plus adds before you buy.",
+                title: "Calm App Store framing",
+                badge: premiumAccessState == .entitled ? "StoreKit-backed" : "Preview copy",
+                detail: "The premium surface stays polished and benefit-led, while the trust note keeps the prototype honest about preview mode versus a real entitlement.",
                 bullets: [
                     premiumCTASecondaryLine,
                     premiumStatusLine,
@@ -2339,7 +2335,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var firstBaselineSecondaryActionTitle: String {
-        "Continue with Katie's sample line only"
+        "Continue with starter proof only"
     }
 
     func completeOnboarding() {
@@ -3213,7 +3209,7 @@ final class AppViewModel: ObservableObject {
 
                 let statusLabel: String
                 if ownedCount == 0 {
-                    statusLabel = hasStarterProof ? "Katie's sample line, not final" : "First save sets the comparison line"
+                    statusLabel = hasStarterProof ? "Starter proof, not final" : "First save sets benchmark"
                 } else if ownedCount == 1 {
                     statusLabel = replayReadyCount > 0 ? "1 proof · replay ready" : "1 proof · transcript first"
                 } else if replayReadyCount > 0 {
@@ -3267,7 +3263,7 @@ final class AppViewModel: ObservableObject {
                 QuickRepRunwayStepDescriptor(
                     title: "Save one real line",
                     detail: hasStarterProof
-                        ? "Replace the Katie's sample line with your own benchmark for this pack."
+                        ? "Replace the starter proof with your own benchmark for this pack."
                         : "Create the first benchmark so this pack stops reading like a placeholder.",
                     systemImage: "1.circle.fill",
                     accent: .gold
@@ -3355,7 +3351,7 @@ final class AppViewModel: ObservableObject {
         }
 
         if history.contains(where: { $0.captureSource == .seeded || $0.captureSource == .imported }) {
-            return "Katie's sample line is still visible. Save one real rep so \(quickRepSharedBenchmarkSurfaceList) can point to your own benchmark."
+            return "Starter proof is still visible. Save one real rep so \(quickRepSharedBenchmarkSurfaceList) can point to your own benchmark."
         }
 
         return "This pack wakes up after your first sample. Save one short rep so \(quickRepSharedBenchmarkSurfaceList) can follow a real line instead of a placeholder."
@@ -3553,7 +3549,7 @@ final class AppViewModel: ObservableObject {
             }
 
             if seededCount > 0 {
-                return "\(textTruth) · Katie's sample line is still visible until you record a fresh clip"
+                return "\(textTruth) · starter proof is still visible until you record a fresh clip"
             }
 
             return "\(textTruth) · replay still needs one fresh local clip"
@@ -3563,7 +3559,7 @@ final class AppViewModel: ObservableObject {
             let importedTruth = "\(countLabel(importedCount, singular: "imported continuity rep")) carried over here"
 
             if seededCount > 0 {
-                return "\(importedTruth) · Katie's sample line stays secondary until you record"
+                return "\(importedTruth) · starter proof stays secondary until you record"
             }
 
             return "\(importedTruth) · replay still needs one fresh local recording"
@@ -3571,7 +3567,7 @@ final class AppViewModel: ObservableObject {
 
         if userOwnedSessionCount(for: scenario) == 0 {
             if seededCount > 0 {
-                return "Katie's sample line is still leading this pack until you save your own rep."
+                return "Starter proof is still leading this pack until you save your own rep."
             }
             return "Save one rep to make this pack yours."
         }
@@ -3642,10 +3638,10 @@ final class AppViewModel: ObservableObject {
 
         if ownedCount == 0 {
             if microphonePermissionState == .denied {
-                return "\(prefix)save one text-only rep so Katie's sample line stops leading this pack, then record here later to attach honest replay."
+                return "\(prefix)save one text-only rep so starter proof stops leading this pack, then record here later to attach honest replay."
             }
 
-            return "\(prefix)save one rep so Katie's sample line stops leading this pack and your own benchmark can take the lead."
+            return "\(prefix)save one rep so starter proof stops leading this pack and your own benchmark can take the lead."
         }
 
         if ownedCount == 1 {
@@ -4090,7 +4086,7 @@ final class AppViewModel: ObservableObject {
     private static func placeholderSampleSession(for scenario: PracticeScenario) -> PracticeSession {
         PracticeSession(
             scenario: scenario,
-            title: "Katie's sample line",
+            title: "Starter proof",
             date: .now,
             transcript: scenario.missionPrompt,
             benchmarkCue: "Keep the line short enough to replay and compare later.",

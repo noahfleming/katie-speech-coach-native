@@ -63,6 +63,7 @@ struct CoachTrustView: View {
     }
 
     var body: some View {
+        GeometryReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
@@ -725,7 +726,7 @@ VStack(alignment: .leading, spacing: 12) {
                 .katieCard()
             }
             .padding(16)
-            .katieContentFrame(maxWidth: 1040)
+            .katieContentFrame(maxWidth: usesWideTrustLayout ? 1040 : min(1040, proxy.size.width - 32))
         .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
         .confirmationDialog("Delete all local Katie history from this iPhone?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete all local data", role: .destructive) {
@@ -740,6 +741,7 @@ VStack(alignment: .leading, spacing: 12) {
             Task {
                 await appViewModel.importPocketCopy(from: url)
             }
+        }
         }
     }
 
@@ -896,6 +898,10 @@ VStack(alignment: .leading, spacing: 12) {
     }
 
     private var usesWideQuickRepGrid: Bool {
+        horizontalSizeClass == .regular
+    }
+
+    private var usesWideTrustLayout: Bool {
         horizontalSizeClass == .regular
     }
 

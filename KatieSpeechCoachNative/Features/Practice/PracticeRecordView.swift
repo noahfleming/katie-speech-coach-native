@@ -68,7 +68,7 @@ struct PracticeRecordView: View {
             ),
             KatieGlanceMetric(
                 title: "Review lane",
-                value: appViewModel.hasEarnedCompare ? "Ready to compare" : (appViewModel.hasEarnedFirstWin ? "One more save" : "Sample line only"),
+                value: appViewModel.hasEarnedCompare ? "Compare ready" : (appViewModel.hasEarnedFirstWin ? "One more proof" : "Starter proof only"),
                 detail: appViewModel.latestReviewSummaryLine,
                 accent: KatieColors.mint
             )

@@ -118,6 +118,7 @@ struct ProgressView: View {
     }
 
     var body: some View {
+        GeometryReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
@@ -141,9 +142,10 @@ struct ProgressView: View {
                 }
             }
             .padding(16)
-            .katieContentFrame(maxWidth: 840)
+            .katieContentFrame(maxWidth: usesWideProgressLayout ? 840 : min(840, proxy.size.width - 32))
         }
         .background(LinearGradient(colors: [KatieColors.appBackgroundTop, KatieColors.appBackgroundBottom], startPoint: .topLeading, endPoint: .bottomTrailing).overlay { RadialGradient(colors: [KatieColors.appBackgroundGlow, .clear], center: .topLeading, startRadius: 8, endRadius: 420) }.ignoresSafeArea())
+        }
     }
 
     @ViewBuilder
@@ -380,7 +382,7 @@ struct ProgressView: View {
                     proofCountChip(title: "Imported", value: importedCount, accent: KatieColors.accent)
                 }
 
-                Text("Katie's sample line stays in the lane as smaller prototype continuity.")
+                Text("Starter proof stays in the lane as smaller prototype continuity.")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(KatieColors.gold)
             } else {
