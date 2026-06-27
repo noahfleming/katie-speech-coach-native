@@ -27,11 +27,15 @@ struct FirstBaselineView: View {
         horizontalSizeClass == .regular
     }
 
-    private var baselineContentMaxWidth: CGFloat {
-        usesWideBaselineLayout ? 1180 : 760
+    // KAT-286 fix: cap the iPhone content width to the actual screen width
+    // (minus padding). The previous `760` was wider than an iPhone 17 screen
+    // and pushed card text past the right edge.
+    private func baselineContentMaxWidth(screenWidth: CGFloat) -> CGFloat {
+        usesWideBaselineLayout ? 1180 : min(760, screenWidth - 40)
     }
 
     var body: some View {
+        GeometryReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 firstBaselineHeroCard
@@ -58,13 +62,7 @@ struct FirstBaselineView: View {
                 }
             }
             .padding(20)
-            // KAT-199: in a vertical ScrollView, chained `.frame(maxWidth:
-            // .infinity)` was being interpreted as the content's intrinsic
-            // width (400+ pt for long Text views) instead of the visible
-            // 402pt screen width — which overflowed and clipped the right
-            // edge. The simplest fix: cap to a known-good iPhone width
-            // on compact, fall through to the original behaviour on iPad.
-            .frame(maxWidth: usesWideBaselineLayout ? baselineContentMaxWidth : 420)
+            .katieContentFrame(maxWidth: baselineContentMaxWidth(screenWidth: proxy.size.width))
         }
         .background(
             LinearGradient(
@@ -102,17 +100,12 @@ struct FirstBaselineView: View {
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
+        }
     }
 
     private var firstBaselineHeroCard: some View {
         VStack(alignment: .leading, spacing: 18) {
-            // KAT-199: ViewThatFits measures "can the view be laid out" — not
-            // "does it fit the available width" — so the 330pt contract panel
-            // + .infinity hero lead HStack was being chosen on compact iPhone
-            // (402pt screen) and overflowing the right edge, clipping the
-            // "An SLP-informed speaking..." header text and other content.
-            // Use a direct conditional on usesWideBaselineLayout instead.
-            if usesWideBaselineLayout {
+            ViewThatFits(in: .horizontal) {
                 HStack(alignment: .top, spacing: 18) {
                     firstBaselineHeroLead
                         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -120,7 +113,7 @@ struct FirstBaselineView: View {
                     firstBaselineContractPanel
                         .frame(width: 330, alignment: .topLeading)
                 }
-            } else {
+
                 VStack(alignment: .leading, spacing: 18) {
                     firstBaselineHeroLead
                     firstBaselineContractPanel
@@ -158,28 +151,35 @@ struct FirstBaselineView: View {
 
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 10) {
-                    // KAT-199: removed .fixedSize(vertical: true) so the text
-                    // can wrap to fit the available card width on compact
-                    // iPhone. The 'vertical: true' modifier fixes the text
-                    // height to a single line, which prevented wrapping and
-                    // forced the card to widen past the screen edge.
                     Text(appViewModel.firstBaselineHeadline)
                         .font(usesWideBaselineLayout ? .system(size: 38, weight: .bold, design: .rounded) : .largeTitle.bold())
                         .foregroundStyle(KatieColors.textPrimary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: false)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(firstBaselineHeroSupportLine)
                         .font(usesWideBaselineLayout ? .title3.weight(.semibold) : .title2.bold())
                         .foregroundStyle(KatieColors.textPrimary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: false)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(appViewModel.firstBaselineBody)
                         .font(.body)
                         .foregroundStyle(KatieColors.textSecondary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: false)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // KAT-155: privacy as quiet signal (per MOM-130). One line, prominent,
+                    // on the first recording surface. Sets the tone: recordings stay local.
+                    HStack(spacing: 8) {
+                        Image(systemName: "lock.shield.fill")
+                            .foregroundStyle(KatieColors.mint)
+                        Text("Recordings stay on this iPhone.")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(KatieColors.textPrimary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(KatieColors.mint.opacity(0.10), in: Capsule())
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Privacy: recordings stay on this iPhone.")
                 }
 
                 if usesWideBaselineLayout {
@@ -245,7 +245,7 @@ struct FirstBaselineView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(KatieColors.cardSubtle, lineWidth: 1)
         )
     }
 
@@ -402,7 +402,7 @@ struct FirstBaselineView: View {
         .background(KatieColors.cardSecondary, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(KatieColors.cardSubtle, lineWidth: 1)
         )
         .foregroundStyle(KatieColors.textPrimary)
     }
@@ -451,7 +451,7 @@ struct FirstBaselineView: View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(index + 1)")
                 .font(.caption.weight(.bold))
-                .foregroundStyle(.black)
+                .foregroundStyle(KatieColors.textOnAccent)
                 .frame(width: 28, height: 28)
                 .background(index == 0 ? KatieColors.accent : KatieColors.cardSecondary)
                 .clipShape(Circle())

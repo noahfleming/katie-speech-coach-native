@@ -689,9 +689,15 @@ struct GoalPreset: Identifiable, Hashable {
 }
 
 struct PracticeHighlight: Identifiable, Hashable, Codable {
-    let id = UUID()
+    var id = UUID()
     let title: String
     let detail: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case detail
+    }
 }
 
 struct SessionSelfReflection: Hashable, Codable {
@@ -776,7 +782,7 @@ struct ScenarioAnalyticsSummary: Hashable {
 }
 
 struct PracticeSession: Identifiable, Hashable, Codable {
-    let id = UUID()
+    var id = UUID()
     var scenario: PracticeScenario
     var title: String
     var date: Date
@@ -802,6 +808,92 @@ struct PracticeSession: Identifiable, Hashable, Codable {
 
     var isUserOwned: Bool {
         captureSource == .recorded || captureSource == .syntheticRetake
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case scenario
+        case title
+        case date
+        case transcript
+        case benchmarkCue
+        case listenerOutcome
+        case structurePrompt
+        case highlights
+        case compareReadiness
+        case reminderLine
+        case carryoverLine
+        case protectedLine
+        case unlockedStepCount
+        case transcriptFootnote
+        case audioFileName
+        case durationSeconds
+        case captureSource
+        case selfReflection
+    }
+}
+
+extension PracticeHighlight {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        title = try container.decode(String.self, forKey: .title)
+        detail = try container.decode(String.self, forKey: .detail)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(title, forKey: .title)
+        try container.encode(detail, forKey: .detail)
+    }
+}
+
+extension PracticeSession {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        scenario = try container.decode(PracticeScenario.self, forKey: .scenario)
+        title = try container.decode(String.self, forKey: .title)
+        date = try container.decode(Date.self, forKey: .date)
+        transcript = try container.decode(String.self, forKey: .transcript)
+        benchmarkCue = try container.decode(String.self, forKey: .benchmarkCue)
+        listenerOutcome = try container.decode(String.self, forKey: .listenerOutcome)
+        structurePrompt = try container.decode(String.self, forKey: .structurePrompt)
+        highlights = try container.decode([PracticeHighlight].self, forKey: .highlights)
+        compareReadiness = try container.decode(CompareReadiness.self, forKey: .compareReadiness)
+        reminderLine = try container.decode(String.self, forKey: .reminderLine)
+        carryoverLine = try container.decode(String.self, forKey: .carryoverLine)
+        protectedLine = try container.decode(String.self, forKey: .protectedLine)
+        unlockedStepCount = try container.decode(Int.self, forKey: .unlockedStepCount)
+        transcriptFootnote = try container.decode(String.self, forKey: .transcriptFootnote)
+        audioFileName = try container.decodeIfPresent(String.self, forKey: .audioFileName)
+        durationSeconds = try container.decodeIfPresent(TimeInterval.self, forKey: .durationSeconds)
+        captureSource = try container.decode(SessionCaptureSource.self, forKey: .captureSource)
+        selfReflection = try container.decodeIfPresent(SessionSelfReflection.self, forKey: .selfReflection)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(scenario, forKey: .scenario)
+        try container.encode(title, forKey: .title)
+        try container.encode(date, forKey: .date)
+        try container.encode(transcript, forKey: .transcript)
+        try container.encode(benchmarkCue, forKey: .benchmarkCue)
+        try container.encode(listenerOutcome, forKey: .listenerOutcome)
+        try container.encode(structurePrompt, forKey: .structurePrompt)
+        try container.encode(highlights, forKey: .highlights)
+        try container.encode(compareReadiness, forKey: .compareReadiness)
+        try container.encode(reminderLine, forKey: .reminderLine)
+        try container.encode(carryoverLine, forKey: .carryoverLine)
+        try container.encode(protectedLine, forKey: .protectedLine)
+        try container.encode(unlockedStepCount, forKey: .unlockedStepCount)
+        try container.encode(transcriptFootnote, forKey: .transcriptFootnote)
+        try container.encodeIfPresent(audioFileName, forKey: .audioFileName)
+        try container.encodeIfPresent(durationSeconds, forKey: .durationSeconds)
+        try container.encode(captureSource, forKey: .captureSource)
+        try container.encodeIfPresent(selfReflection, forKey: .selfReflection)
     }
 }
 

@@ -2,16 +2,13 @@ import Foundation
 import AVFoundation
 import Speech
 
-/// Unified audio capture that simultaneously:
-/// - Records to a scratch file (for replay)
-/// - Streams to a FillerWordDetector for real-time Speech framework analysis
-/// - Reports duration in real-time
+/// Drives live microphone input for Speech analysis while AVAudioRecorder owns replay capture.
+/// Also reports duration in real time for UI and saved-session metadata.
 final class AudioCaptureEngine: ObservableObject {
     @Published private(set) var duration: TimeInterval = 0
     @Published private(set) var isCapturing = false
 
     private var audioEngine: AVAudioEngine?
-    private var audioFile: AVAudioFile?
     private var captureStartTime: Date?
     private var durationTimer: Timer?
 
@@ -19,24 +16,14 @@ final class AudioCaptureEngine: ObservableObject {
         audioEngine?.inputNode
     }
 
-    func startCapture() throws -> URL {
+    func startCapture(configureInput: ((AVAudioInputNode) throws -> Void)? = nil) throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetoothHFP])
         try session.setActive(true)
 
         let engine = AVAudioEngine()
         let input = engine.inputNode
-        let format = input.outputFormat(forBus: 0)
-
-        // Scratch file URL for replay
-        let url = makeScratchRecordingURL()
-        let file = try AVAudioFile(forWriting: url, settings: format.settings)
-        self.audioFile = file
-
-        // Mix buffer to file (recording) while keeping input available for Speech tap
-        input.installTap(onBus: 0, bufferSize: 4096, format: format) { [weak self] buffer, _ in
-            try? self?.audioFile?.write(from: buffer)
-        }
+        try configureInput?(input)
 
         try engine.start()
         self.audioEngine = engine
@@ -51,7 +38,6 @@ final class AudioCaptureEngine: ObservableObject {
             }
         }
 
-        return url
     }
 
     func stopCapture() -> TimeInterval {
@@ -64,14 +50,9 @@ final class AudioCaptureEngine: ObservableObject {
         audioEngine?.inputNode.removeTap(onBus: 0)
         audioEngine = nil
 
-        audioFile = nil
         isCapturing = false
         captureStartTime = nil
 
         return finalDuration
-    }
-
-    private func makeScratchRecordingURL() -> URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".m4a")
     }
 }

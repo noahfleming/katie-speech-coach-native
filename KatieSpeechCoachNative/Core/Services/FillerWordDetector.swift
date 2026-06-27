@@ -37,7 +37,8 @@ final class FillerWordDetector: ObservableObject {
         fillerWords: [String]? = nil
     ) {
         self.locale = locale
-        self.fillerWords = fillerWords ?? Self.defaultFillerWords[locale.identifier] ?? Self.defaultFillerWords["en-US"]!
+        let englishFallback = Self.defaultFillerWords["en-US"] ?? ["um", "uh", "like", "you know"]
+        self.fillerWords = fillerWords ?? Self.defaultFillerWords[locale.identifier] ?? englishFallback
         self.speechRecognizer = SFSpeechRecognizer(locale: locale)
     }
 
@@ -83,8 +84,8 @@ final class FillerWordDetector: ObservableObject {
 
             if let result = result {
                 let text = result.bestTranscription.formattedString
-                self.transcriptSoFar = text
                 self.processTranscript(text)
+                self.transcriptSoFar = text
             }
 
             if error != nil || result?.isFinal == true {
@@ -140,16 +141,18 @@ final class FillerWordDetector: ObservableObject {
     }
 
     private func countOccurrences(of word: String, in text: String) -> Int {
-        let lowercased = text.lowercased()
-        var count = 0
-        var searchRange = lowercased.startIndex..<lowercased.endIndex
+        let escapedTokens = word
+            .split(whereSeparator: \.isWhitespace)
+            .map { NSRegularExpression.escapedPattern(for: String($0)) }
+        guard !escapedTokens.isEmpty else { return 0 }
 
-        while let range = lowercased.range(of: word.lowercased(), range: searchRange) {
-            count += 1
-            searchRange = range.upperBound..<lowercased.endIndex
+        let pattern = "(?<![\\p{L}\\p{N}_])\(escapedTokens.joined(separator: "\\s+"))(?![\\p{L}\\p{N}_])"
+        guard let expression = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
+            return 0
         }
 
-        return count
+        let range = NSRange(text.startIndex..<text.endIndex, in: text)
+        return expression.numberOfMatches(in: text, range: range)
     }
 }
 

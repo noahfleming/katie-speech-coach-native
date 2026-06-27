@@ -11,6 +11,26 @@ enum KatieColors {
     static let cardSecondary = Color(red: 0.176, green: 0.126, blue: 0.196)
     static let cardTertiary = Color(red: 0.242, green: 0.173, blue: 0.267)
     static let cardBorder = Color.white.opacity(0.10)
+    /// Subtle wash used for inner pill/card backgrounds (slightly lighter than the
+    /// card itself). Roughly 2.5x more transparent than `cardBorder`, so it shows
+    /// as a faint highlight rather than a stroke.
+    static let cardSurface = Color.white.opacity(0.04)
+    /// Hairline stroke color for dividers, sub-cards, and the most-quiet
+    /// outlines. Use this for borders that should recede behind content.
+    static let cardStroke = Color.white.opacity(0.06)
+    /// Slightly stronger hairline stroke for accent-bordered sub-cards that
+    /// still need to read as secondary chrome. Between `cardStroke` (0.06)
+    /// and `cardBorder` (0.10).
+    static let cardSubtle = Color.white.opacity(0.08)
+    /// Background fill for large icon chips (record-button dot, primary
+    /// action icons). Three stops brighter than `cardSurface` so a 72pt
+    /// circle reads as a real button surface, not a wash.
+    static let cardIconChip = Color.white.opacity(0.12)
+    /// Warning accent: warm red, used at full opacity for the unlocked-premium
+    /// "you're in risk territory" state.
+    static let warning = Color.red.opacity(0.24)
+    /// Muted warning, used for the locked / not-yet-active premium state.
+    static let warningMuted = Color.red.opacity(0.12)
 
     static let accent = Color(red: 0.95, green: 0.69, blue: 0.47)
     static let mint = Color(red: 0.59, green: 0.87, blue: 0.81)
@@ -19,23 +39,20 @@ enum KatieColors {
     static let plum = Color(red: 0.54, green: 0.39, blue: 0.78)
     static let textPrimary = Color.white
     static let textSecondary = Color.white.opacity(0.72)
+    /// Contrast color for text and icons sitting on accent (gold / mint) backgrounds.
+    /// Used by every chip/button that flips to dark text on a light accent fill.
+    /// Keep this near-black (NOT Color.black) so a future tweak toward a slightly
+    /// warmer dark stays a single-token change.
+    static let textOnAccent = Color.black
 }
 
 struct KatieCardModifier: ViewModifier {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
     func body(content: Content) -> some View {
         content
-            .padding(KatieSpacing.xl)
-            // KAT-199: in a vertical ScrollView, `.frame(maxWidth: .infinity)`
-            // resolves to the content's intrinsic width (460+pt for a long
-            // Text + fixed-size child), which clipped the right edge on
-            // iPhone. Capping to a hard value on compact forces the card
-            // to fit the visible width. On iPad (.regular) the larger cap
-            // keeps the existing centered layout.
-            .frame(maxWidth: horizontalSizeClass == .compact ? 380 : 720, alignment: .leading)
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: KatieRadius.xl, style: .continuous)
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [KatieColors.cardBackground.opacity(0.99), KatieColors.cardSecondary.opacity(0.88), KatieColors.cardTertiary.opacity(0.58)],
@@ -44,7 +61,7 @@ struct KatieCardModifier: ViewModifier {
                         )
                     )
                     .overlay {
-                        RoundedRectangle(cornerRadius: KatieRadius.xl, style: .continuous)
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
                             .fill(
                                 LinearGradient(
                                     colors: [Color.white.opacity(0.015), Color.white.opacity(0.045), .clear, .clear],
@@ -75,7 +92,7 @@ struct KatieCardModifier: ViewModifier {
                             .offset(x: 22, y: 34)
                     }
                     .overlay(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: KatieRadius.xl, style: .continuous)
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
                             .fill(
                                 LinearGradient(
                                     colors: [Color.white.opacity(0.15), .clear, .clear],
@@ -86,7 +103,7 @@ struct KatieCardModifier: ViewModifier {
                             .padding(1)
                     }
                     .overlay(
-                        RoundedRectangle(cornerRadius: KatieRadius.xl, style: .continuous)
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
                             .strokeBorder(
                                 LinearGradient(
                                     colors: [Color.white.opacity(0.16), KatieColors.cardBorder, Color.white.opacity(0.05)],
@@ -96,8 +113,8 @@ struct KatieCardModifier: ViewModifier {
                                 lineWidth: 1
                             )
                     )
-                    .shadow(KatieShadow.card.drop)
-                    .shadow(KatieShadow.card.glow)
+                    .shadow(color: .black.opacity(0.36), radius: 30, x: 0, y: 18)
+                    .shadow(color: KatieColors.accent.opacity(0.10), radius: 36, x: 0, y: 8)
             )
     }
 }
@@ -109,7 +126,7 @@ struct KatieHeroAura: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(
-                RoundedRectangle(cornerRadius: KatieRadius.xl, style: .continuous)
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [accent.opacity(0.18), secondary.opacity(0.09), .clear],
@@ -118,7 +135,7 @@ struct KatieHeroAura: ViewModifier {
                         )
                     )
                     .overlay(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: KatieRadius.xl, style: .continuous)
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
                             .stroke(accent.opacity(0.14), lineWidth: 1)
                             .blur(radius: 1)
                     }
@@ -144,25 +161,33 @@ struct KatieSectionEyebrow: View {
     let title: String
     let systemImage: String
     var accent: Color = KatieColors.gold
+    // OPE-132: optional contrast controls. Defaults preserve the original
+    // dark-on-dark look so existing callers stay unchanged; new callers
+    // (the onboarding hero) bump `fillOpacity` and pass a brighter `endTint`
+    // to lift the badge off the deep-purple card background.
+    var fillOpacity: Double = 0.28
+    var endTint: Color = KatieColors.cardSecondary.opacity(0.9)
+    var strokeOpacity: Double = 0.28
 
     var body: some View {
         Label(title, systemImage: systemImage)
-            .font(KatieType.label)
+            .font(.caption.weight(.semibold))
             .foregroundStyle(KatieColors.textPrimary)
-            .padding(.horizontal, KatieSpacing.md)
-            .padding(.vertical, KatieSpacing.xs)
+            .shadow(color: .black.opacity(0.35), radius: 1, x: 0, y: 1)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
             .background(
                 Capsule()
                     .fill(
                         LinearGradient(
-                            colors: [accent.opacity(0.28), KatieColors.cardSecondary.opacity(0.9)],
+                            colors: [accent.opacity(fillOpacity), endTint],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
                     .overlay(
                         Capsule()
-                            .stroke(accent.opacity(0.28), lineWidth: 1)
+                            .stroke(accent.opacity(strokeOpacity), lineWidth: 1)
                     )
             )
     }
@@ -175,10 +200,10 @@ struct KatieReplayBadge: View {
 
     var body: some View {
         Label(title, systemImage: systemImage)
-            .font(KatieType.label)
+            .font(.caption.weight(.semibold))
             .foregroundStyle(KatieColors.textPrimary)
-            .padding(.horizontal, KatieSpacing.base)
-            .padding(.vertical, KatieSpacing.sm)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .background(
                 Capsule()
                     .fill(
@@ -215,11 +240,6 @@ struct KatieGlanceBoard: View {
     var metrics: [KatieGlanceMetric]
     var footnote: String? = nil
 
-    // KAT-201: when the user has Reduce Motion enabled (Settings →
-    // Accessibility → Reduce Motion), skip the 2.4s pulse entirely.
-    // The icon is rendered in its "breathing" final state — no animation,
-    // no `withAnimation` call, no repeatForever.
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isBreathing = false
 
     private var boardColumns: [GridItem] {
@@ -283,12 +303,12 @@ struct KatieGlanceBoard: View {
                             .foregroundStyle(KatieColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(KatieSpacing.base)
+                    .padding(12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(KatieColors.cardSecondary.opacity(0.92))
-                    .clipShape(RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .stroke(metric.accent.opacity(0.14), lineWidth: 1)
                     )
                 }
@@ -302,18 +322,10 @@ struct KatieGlanceBoard: View {
         }
         .katieCard()
         .onAppear {
-            // KAT-201: skip the pulse entirely when Reduce Motion is on.
-            // We still set `isBreathing = true` so the icon renders in its
-            // "breathing" final state (slightly larger + softer blur), but
-            // we don't kick off a `withAnimation` repeatForever cycle.
             guard !isBreathing else { return }
 
-            if reduceMotion {
+            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
                 isBreathing = true
-            } else {
-                withAnimation(KatieMotion.breathe) {
-                    isBreathing = true
-                }
             }
         }
     }
@@ -326,7 +338,7 @@ struct KatieScenarioArtwork: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: KatieRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [accent.opacity(0.34), secondary.opacity(0.20), KatieColors.cardBackground.opacity(0.42)],
@@ -335,7 +347,7 @@ struct KatieScenarioArtwork: View {
                     )
                 )
 
-            RoundedRectangle(cornerRadius: KatieRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [Color.white.opacity(0.20), .clear, .clear],
@@ -371,7 +383,7 @@ struct KatieScenarioArtwork: View {
         }
         .frame(width: 68, height: 68)
         .overlay(
-            RoundedRectangle(cornerRadius: KatieRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .strokeBorder(
                     LinearGradient(
                         colors: [Color.white.opacity(0.18), KatieColors.cardBorder],
@@ -381,20 +393,20 @@ struct KatieScenarioArtwork: View {
                     lineWidth: 1
                 )
         )
-        .shadow(KatieShadow.aura)
+        .shadow(color: accent.opacity(0.18), radius: 16, x: 0, y: 8)
     }
 }
 
 struct KatieActionChipStyle: ViewModifier {
     let background: Color
     let foreground: Color
-    var horizontalPadding: CGFloat = KatieSpacing.base
+    var horizontalPadding: CGFloat = 12
 
     func body(content: Content) -> some View {
         content
-            .font(KatieType.label)
+            .font(.caption.weight(.semibold))
             .padding(.horizontal, horizontalPadding)
-            .padding(.vertical, KatieSpacing.sm)
+            .padding(.vertical, 8)
             .background(
                 Capsule()
                     .fill(background)
@@ -404,7 +416,7 @@ struct KatieActionChipStyle: ViewModifier {
                     )
             )
             .foregroundStyle(foreground)
-            .shadow(KatieShadow.inline(foreground: background))
+            .shadow(color: background.opacity(0.22), radius: 10, x: 0, y: 4)
     }
 }
 
@@ -419,7 +431,7 @@ struct KatieIconBadgeStyle: ViewModifier {
             .foregroundStyle(foreground)
             .frame(width: size, height: size)
             .background(
-                RoundedRectangle(cornerRadius: KatieRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [background.opacity(0.98), background.opacity(0.74)],
@@ -428,7 +440,7 @@ struct KatieIconBadgeStyle: ViewModifier {
                         )
                     )
                     .overlay(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: KatieRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .fill(
                                 LinearGradient(
                                     colors: [Color.white.opacity(0.18), .clear],
@@ -438,11 +450,11 @@ struct KatieIconBadgeStyle: ViewModifier {
                             )
                     }
                     .overlay(
-                        RoundedRectangle(cornerRadius: KatieRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .stroke(Color.white.opacity(0.10), lineWidth: 1)
                     )
             )
-            .shadow(KatieShadow.iconBadge(foreground: foreground))
+            .shadow(color: foreground.opacity(0.22), radius: 12, x: 0, y: 5)
     }
 }
 
@@ -451,10 +463,10 @@ struct KatieCapsuleLabelStyle: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .font(KatieType.labelMini)
+            .font(.caption2.weight(.semibold))
             .foregroundStyle(accent)
-            .padding(.horizontal, KatieSpacing.sm)
-            .padding(.vertical, KatieSpacing.xxs)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
             .background(KatieColors.cardSecondary)
             .clipShape(Capsule())
     }
@@ -527,6 +539,18 @@ extension View {
     }
 
     func katieContentFrame(maxWidth: CGFloat = 760) -> some View {
+        // KAT-283 audit fix: the original pattern
+        //   `.frame(maxWidth: maxWidth).frame(maxWidth: .infinity, alignment: .center)`
+        // centers a 760pt-wide frame in the parent. On a 402pt iPhone 17
+        // screen, this means the content frame is at x=-179 (off-screen on
+        // both sides). The inner content's natural width (e.g. a 447pt text
+        // rendered by `practiceHeroSummary`) is also larger than 402pt, so
+        // the centered text bleeds past the right edge of the screen.
+        //
+        // The fix is to use a smaller max-width on iPhone (matching the
+        // screen width minus padding) so the centered frame stays within
+        // the screen. iPad gets the larger 760pt for the wide layout.
+        // The caller passes the appropriate maxWidth based on size class.
         frame(maxWidth: maxWidth, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -549,12 +573,12 @@ struct KatiePrimaryButtonStyle: ButtonStyle {
             .font(.headline.weight(.semibold))
             .foregroundStyle(foreground)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, KatieSpacing.base)
+            .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(fill)
                     .overlay(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .fill(
                                 LinearGradient(
                                     colors: [Color.white.opacity(configuration.isPressed ? 0.10 : 0.18), .clear],
@@ -564,10 +588,10 @@ struct KatiePrimaryButtonStyle: ButtonStyle {
                             )
                     }
                     .overlay(
-                        RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .stroke(Color.white.opacity(0.16), lineWidth: 1)
                     )
-                    .shadow(KatieShadow.primary(rest: !configuration.isPressed))
+                    .shadow(color: KatieColors.accent.opacity(configuration.isPressed ? 0.06 : 0.26), radius: configuration.isPressed ? 8 : 18, x: 0, y: configuration.isPressed ? 4 : 10)
             )
             .scaleEffect(configuration.isPressed ? 0.985 : 1)
     }
@@ -592,10 +616,10 @@ struct KatieInlineNotice: View {
     var onDismiss: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: KatieSpacing.md) {
-            HStack(alignment: .top, spacing: KatieSpacing.md) {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 10) {
                 Label(title, systemImage: systemImage)
-                    .font(KatieType.subhead.weight(.semibold))
+                    .font(.subheadline.bold())
                     .foregroundStyle(accent)
 
                 Spacer(minLength: 0)
@@ -604,21 +628,21 @@ struct KatieInlineNotice: View {
                     Button(dismissTitle) {
                         onDismiss()
                     }
-                    .font(KatieType.label)
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(KatieColors.textSecondary)
                 }
             }
 
             Text(message)
-                .font(KatieType.footnote)
+                .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
         }
-        .padding(KatieSpacing.lg)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             LinearGradient(colors: [KatieColors.cardSecondary, KatieColors.cardBackground], startPoint: .topLeading, endPoint: .bottomTrailing)
         )
-        .clipShape(RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
@@ -652,14 +676,14 @@ struct KatieInputStyle: ViewModifier {
         content
             .textInputAutocapitalization(.words)
             .autocorrectionDisabled(true)
-            .padding(.horizontal, KatieSpacing.lg)
-            .padding(.vertical, KatieSpacing.base)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .background(KatieColors.cardSecondary.opacity(0.94))
             .overlay(
-                RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .stroke(KatieColors.cardBorder, lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: KatieRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

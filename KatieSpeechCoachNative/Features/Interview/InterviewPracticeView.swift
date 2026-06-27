@@ -34,8 +34,13 @@ struct InterviewPracticeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button("Close") {
+                        appViewModel.requestExitInterviewMode()
+                    }
                 }
+            }
+            .onDisappear {
+                cleanupInterviewSession()
             }
         }
     }
@@ -52,6 +57,7 @@ struct InterviewPracticeView: View {
                         accent: KatieColors.gold
                     ) {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            cleanupInterviewSession()
                             selectedCategory = category
                             currentQuestionIndex = 0
                             recordedSessions = []
@@ -94,7 +100,7 @@ struct InterviewPracticeView: View {
                 prepRow(icon: "star.fill", text: "Clarity + coherence feedback")
             }
             .padding(20)
-            .background(Color.white.opacity(0.04))
+            .background(KatieColors.cardSurface)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .padding(.horizontal, 20)
 
@@ -108,7 +114,7 @@ struct InterviewPracticeView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(KatieColors.gold)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(KatieColors.textOnAccent)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .padding(.horizontal, 20)
@@ -164,7 +170,18 @@ struct InterviewPracticeView: View {
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 24)
 
-                if appViewModel.isRecording {
+                if appViewModel.isPreparingRecording {
+                    HStack(spacing: 8) {
+                        Image(systemName: "mic.badge.plus")
+                            .font(.caption.weight(.semibold))
+                        Text("Preparing microphone")
+                            .font(.caption.weight(.semibold))
+                    }
+                    .foregroundStyle(KatieColors.gold)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(KatieColors.gold.opacity(0.12), in: Capsule())
+                } else if appViewModel.isRecording {
                     HStack(spacing: 8) {
                         Circle()
                             .fill(KatieColors.blush)
@@ -189,7 +206,17 @@ struct InterviewPracticeView: View {
 
             // Recording controls
             VStack(spacing: 16) {
-                if !appViewModel.isRecording {
+                if appViewModel.isPreparingRecording {
+                    VStack(spacing: 6) {
+                        SwiftUI.ProgressView()
+                            .tint(KatieColors.gold)
+                        Text("Opening mic")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(width: 92, height: 92)
+                    .padding(.bottom, 8)
+                } else if !appViewModel.isRecording {
                     Button {
                         appViewModel.startRecording()
                     } label: {
@@ -210,7 +237,7 @@ struct InterviewPracticeView: View {
                         VStack(spacing: 6) {
                             ZStack {
                                 Circle()
-                                    .fill(Color.white.opacity(0.12))
+                                    .fill(KatieColors.cardIconChip)
                                     .frame(width: 72, height: 72)
                                 RoundedRectangle(cornerRadius: 6)
                                     .fill(Color.white)
@@ -252,7 +279,7 @@ struct InterviewPracticeView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(KatieColors.gold)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(KatieColors.textOnAccent)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
                 .padding(.horizontal, 20)
@@ -291,11 +318,11 @@ struct InterviewPracticeView: View {
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.04))
+        .background(KatieColors.cardSurface)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                .stroke(KatieColors.cardStroke, lineWidth: 1)
         )
         .padding(.horizontal, 20)
     }
@@ -326,15 +353,17 @@ struct InterviewPracticeView: View {
 
     private func showQuestion() {
         timeRemaining = timerDuration
-        timer?.invalidate()
+        stopQuestionTimer()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            } else {
-                timer?.invalidate()
-                // Auto-stop recording when time runs out
-                if appViewModel.isRecording {
-                    stopAndSave()
+            Task { @MainActor in
+                if timeRemaining > 0 {
+                    timeRemaining -= 1
+                } else {
+                    stopQuestionTimer()
+                    // Auto-stop recording when time runs out
+                    if appViewModel.isRecording {
+                        stopAndSave()
+                    }
                 }
             }
         }
@@ -344,21 +373,26 @@ struct InterviewPracticeView: View {
 
     private func stopAndSave() {
         appViewModel.stopRecording()
+        let answerTranscript = appViewModel.draftTranscript
+        let answerFillerWordCount = appViewModel.fillerWordCount
+        let answerDuration = appViewModel.latestScratchRecordingDuration ?? 0
 
         let answer = RecordedAnswer(
             question: currentQuestion,
-            transcript: appViewModel.draftTranscript,
-            fillerWordCount: appViewModel.fillerWordCount,
-            duration: appViewModel.latestScratchRecordingDuration ?? 0,
+            transcript: answerTranscript,
+            fillerWordCount: answerFillerWordCount,
+            duration: answerDuration,
             clarityScore: nil // Would be filled by AI analysis
         )
 
         recordedSessions.append(answer)
-        appViewModel.draftTranscript = ""
-        appViewModel.fillerWordCount = 0
-        appViewModel.fillerWordBreakdown = [:]
+        appViewModel.discardScratchRecording(
+            statusLine: "Interview answer saved for this practice session.",
+            clearDraft: true,
+            playWarningHaptic: false
+        )
 
-        timer?.invalidate()
+        stopQuestionTimer()
 
         if currentQuestionIndex + 1 < selectedCategory.questions.count {
             currentQuestionIndex += 1
@@ -368,6 +402,23 @@ struct InterviewPracticeView: View {
             isAnswering = false
             showingFeedback = true
         }
+    }
+
+    private func stopQuestionTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    private func cleanupInterviewSession() {
+        stopQuestionTimer()
+        guard isAnswering || appViewModel.isRecording || appViewModel.isPreparingRecording else { return }
+
+        appViewModel.discardScratchRecording(
+            statusLine: "Interview practice stopped. No scratch recording was kept.",
+            clearDraft: true,
+            playWarningHaptic: false
+        )
+        isAnswering = false
     }
 }
 
@@ -477,13 +528,13 @@ fileprivate struct KatieChip: View {
                 .background(
                     isSelected
                         ? accent.opacity(0.18)
-                        : Color.white.opacity(0.06)
+                        : KatieColors.cardStroke
                 )
                 .foregroundStyle(isSelected ? accent : .secondary)
                 .clipShape(Capsule())
                 .overlay(
                     Capsule()
-                        .stroke(isSelected ? accent.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                        .stroke(isSelected ? accent.opacity(0.4) : KatieColors.cardSubtle, lineWidth: 1)
                 )
         }
     }

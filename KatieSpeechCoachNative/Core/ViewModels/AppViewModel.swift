@@ -93,7 +93,7 @@ private enum KatieHaptic {
 @MainActor
 final class AppViewModel: ObservableObject {
     enum AppTab: String, Codable, Hashable {
-        case today, practice, progress, coach
+        case today, practice, progress, coach, interview
     }
 
     private static let persistenceKey = "katie.native.persisted-state.v1"
@@ -108,70 +108,76 @@ final class AppViewModel: ObservableObject {
         return formatter
     }()
 
+    @Published var hasCompletedOnboarding = false
+    @Published private(set) var hasDismissedFirstBaselineGate = false
+    @Published var selectedTab: AppTab = .today
     @Published var learnerProfile = LearnerProfile()
-    @Published private(set) var scenarioState = ScenarioState()
-    @Published private(set) var premiumState = PremiumState()
-    @Published private(set) var reminderState = ReminderState()
+    @Published var currentMission: PracticeScenario = .weeklyUpdate
+    @Published var availableScenarios: [PracticeScenario] = PracticeScenario.allCases
+    @Published var premiumAccessState: PremiumAccessState = .locked
+    @Published private(set) var premiumStoreStatus: PremiumStoreStatus = .idle
+    @Published private(set) var reminderPlan: ReminderPlan?
+    @Published private(set) var reminderPermissionState: ReminderPermissionState = .unknown
     @Published private(set) var microphonePermissionState: MicrophonePermissionState = .unknown
-    @Published private(set) var recordingState = RecordingState()
-    @Published private(set) var reflectionState = ReflectionState()
-    @Published private(set) var modalState = ModalState()
+    @Published private(set) var scenarioHistories: [PracticeScenario: [PracticeSession]] = [:]
+    @Published private var selectedAnchorByScenario: [PracticeScenario: UUID] = [:]
+    @Published private(set) var isRecording = false
+    @Published private(set) var isPreparingRecording = false
+    @Published var draftTranscript = ""
+    @Published var draftReflectionListenerCatchScore = 3
+    @Published var draftReflectionPaceControlScore = 3
+    @Published var draftReflectionConfidenceScore = 3
+    @Published var draftReflectionStickyMoment = "Opening line"
+    @Published private(set) var activePracticeStep = 0
+    @Published private(set) var recorderStatusLine = "Ready to record one real rep on this iPhone."
+    @Published private(set) var latestScratchRecordingDuration: TimeInterval?
+    @Published private(set) var currentlyPlayingSessionID: UUID?
+    @Published var isPremiumPreviewPresented = false
+    @Published var isReviewPresented = false
+    /// Shared sheet state for the structured interview mode view. Both the Coach
+    /// tab CTA and the Practice tab's "Try interview mode" cross-link flip this
+    /// to true; RootView listens and presents the sheet.
+    @Published var isInterviewModePresented = false
+
+    /// Centralized exit from Interview mode — used by the Interview tab's Close
+    /// button and by the legacy sheet presentation (Coach settings, Practice
+    /// "Try structured interview mode" link). Cleans up via the view's
+    /// `.onDisappear` when the tab content is removed, so we only need to
+    /// flip presentation state and return the user to Today.
+    func requestExitInterviewMode() {
+        if isInterviewModePresented {
+            isInterviewModePresented = false
+        }
+        if selectedTab == .interview {
+            selectedTab = .today
+        }
+    }
+    @Published var reminderTone: ReminderTone = .workday
+    @Published private(set) var premiumRestoreMessage: PremiumRestoreMessage?
+    @Published private(set) var pocketCopyStatusLine: String?
+    @Published private(set) var practiceReturnCue: PracticeReturnCue?
+    @Published private(set) var reminderFlowMessage: ReminderFlowMessage?
 
     private var audioRecorder: AVAudioRecorder?
     private var audioPlayer: AVAudioPlayer?
     private var reminderNotificationObserver: NSObjectProtocol?
-    private var scratchRecordingURL: URL? {
-        get { recordingState.scratchRecordingURL }
-        set { recordingState.scratchRecordingURL = newValue }
-    }
+    private var scratchRecordingURL: URL?
     private var fillerWordDetector: FillerWordDetector?
     private var audioCaptureEngine: AudioCaptureEngine?
     private var fillerCountCancellable: AnyCancellable?
     private var fillerBreakdownCancellable: AnyCancellable?
-    private var appSessionStateCancellable: AnyCancellable?
-    private var learnerProfileCancellable: AnyCancellable?
-    private var reminderStateCancellable: AnyCancellable?
-    private var scenarioStateCancellable: AnyCancellable?
-    private var premiumStateCancellable: AnyCancellable?
-    private var recordingStateCancellable: AnyCancellable?
-    private var reflectionStateCancellable: AnyCancellable?
-    private var modalStateCancellable: AnyCancellable?
-    private var fillerStateCancellable: AnyCancellable?
-    private let appSessionState = AppSessionState()
+    private var recordingStartRequestID: UUID?
 
-    @Published private(set) var fillerState = FillerState()
+    @Published var fillerWordCount: Int = 0
+    @Published var fillerWordBreakdown: [String: Int] = [:]
     private let premiumStore: PremiumStore
 
     init(premiumStore: PremiumStore? = nil) {
         self.premiumStore = premiumStore ?? PremiumStore.shared
-        // KATIE_VISUAL_SAMPLE (presence-only, like Steady's STEADY_VISUAL_SAMPLE):
-        // dev affordance to skip onboarding + first-baseline gate for visual review.
-        let isVisualSample = ProcessInfo.processInfo.arguments.contains("KATIE_VISUAL_SAMPLE")
-        // KATIE_VISUAL_TAB=today|practice|progress|coach — picks the landing tab
-        // for visual review. Pairs with KATIE_VISUAL_SAMPLE.
-        let visualTab = ProcessInfo.processInfo.arguments
-            .first(where: { $0.hasPrefix("KATIE_VISUAL_TAB=") })
-            .flatMap { $0.split(separator: "=").last.flatMap { AppTab(rawValue: String($0)) } }
         if !restorePersistedState() {
             scenarioHistories = Self.buildScenarioHistories()
             currentMission = .weeklyUpdate
         }
-        if isVisualSample {
-            hasCompletedOnboarding = true
-            hasDismissedFirstBaselineGate = true
-        }
-        if let visualTab {
-            selectedTab = visualTab
-        }
-        bindAppSessionStateChanges()
-        bindLearnerProfileChanges()
-        bindReminderStateChanges()
-        bindScenarioStateChanges()
-        bindPremiumStateChanges()
-        bindRecordingStateChanges()
-        bindReflectionStateChanges()
-        bindModalStateChanges()
-        bindFillerStateChanges()
         ensureAnchorSelection(for: currentMission)
         prepareDraftReflection()
         refreshReminderPermissionState()
@@ -190,228 +196,6 @@ final class AppViewModel: ObservableObject {
         }
     }
 
-    private func bindLearnerProfileChanges() {
-        learnerProfileCancellable?.cancel()
-        learnerProfileCancellable = learnerProfile.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindAppSessionStateChanges() {
-        appSessionStateCancellable?.cancel()
-        appSessionStateCancellable = appSessionState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindReminderStateChanges() {
-        reminderStateCancellable?.cancel()
-        reminderStateCancellable = reminderState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindScenarioStateChanges() {
-        scenarioStateCancellable?.cancel()
-        scenarioStateCancellable = scenarioState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindPremiumStateChanges() {
-        premiumStateCancellable?.cancel()
-        premiumStateCancellable = premiumState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    var premiumAccessState: PremiumAccessState {
-        get { premiumState.premiumAccessState }
-        set { premiumState.premiumAccessState = newValue }
-    }
-
-    private(set) var premiumStoreStatus: PremiumStoreStatus {
-        get { premiumState.premiumStoreStatus }
-        set { premiumState.premiumStoreStatus = newValue }
-    }
-
-    private(set) var premiumRestoreMessage: PremiumRestoreMessage? {
-        get { premiumState.premiumRestoreMessage }
-        set { premiumState.premiumRestoreMessage = newValue }
-    }
-
-    private(set) var pocketCopyStatusLine: String? {
-        get { premiumState.pocketCopyStatusLine }
-        set { premiumState.pocketCopyStatusLine = newValue }
-    }
-
-    private(set) var practiceReturnCue: PracticeReturnCue? {
-        get { premiumState.practiceReturnCue }
-        set { premiumState.practiceReturnCue = newValue }
-    }
-
-    private func bindRecordingStateChanges() {
-        recordingStateCancellable?.cancel()
-        recordingStateCancellable = recordingState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindReflectionStateChanges() {
-        reflectionStateCancellable?.cancel()
-        reflectionStateCancellable = reflectionState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindModalStateChanges() {
-        modalStateCancellable?.cancel()
-        modalStateCancellable = modalState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    private func bindFillerStateChanges() {
-        fillerStateCancellable?.cancel()
-        fillerStateCancellable = fillerState.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-    }
-
-    var fillerWordCount: Int {
-        get { fillerState.fillerWordCount }
-        set { fillerState.fillerWordCount = newValue }
-    }
-
-    var fillerWordBreakdown: [String: Int] {
-        get { fillerState.fillerWordBreakdown }
-        set { fillerState.fillerWordBreakdown = newValue }
-    }
-
-    var isPremiumPreviewPresented: Bool {
-        get { modalState.isPremiumPreviewPresented }
-        set { modalState.isPremiumPreviewPresented = newValue }
-    }
-
-    var isReviewPresented: Bool {
-        get { modalState.isReviewPresented }
-        set { modalState.isReviewPresented = newValue }
-    }
-
-    var draftTranscript: String {
-        get { reflectionState.draftTranscript }
-        set { reflectionState.draftTranscript = newValue }
-    }
-
-    var draftReflectionListenerCatchScore: Int {
-        get { reflectionState.draftReflectionListenerCatchScore }
-        set { reflectionState.draftReflectionListenerCatchScore = newValue }
-    }
-
-    var draftReflectionPaceControlScore: Int {
-        get { reflectionState.draftReflectionPaceControlScore }
-        set { reflectionState.draftReflectionPaceControlScore = newValue }
-    }
-
-    var draftReflectionConfidenceScore: Int {
-        get { reflectionState.draftReflectionConfidenceScore }
-        set { reflectionState.draftReflectionConfidenceScore = newValue }
-    }
-
-    var draftReflectionStickyMoment: String {
-        get { reflectionState.draftReflectionStickyMoment }
-        set { reflectionState.draftReflectionStickyMoment = newValue }
-    }
-
-    private(set) var activePracticeStep: Int {
-        get { reflectionState.activePracticeStep }
-        set { reflectionState.activePracticeStep = newValue }
-    }
-
-    private(set) var isRecording: Bool {
-        get { recordingState.isRecording }
-        set { recordingState.isRecording = newValue }
-    }
-
-    var recorderStatusLine: String {
-        get { recordingState.recorderStatusLine }
-        set { recordingState.recorderStatusLine = newValue }
-    }
-
-    private(set) var latestScratchRecordingDuration: TimeInterval? {
-        get { recordingState.latestScratchRecordingDuration }
-        set { recordingState.latestScratchRecordingDuration = newValue }
-    }
-
-    private(set) var currentlyPlayingSessionID: UUID? {
-        get { recordingState.currentlyPlayingSessionID }
-        set { recordingState.currentlyPlayingSessionID = newValue }
-    }
-
-    private(set) var currentMission: PracticeScenario {
-        get { scenarioState.currentMission }
-        set { scenarioState.currentMission = newValue }
-    }
-
-    private(set) var availableScenarios: [PracticeScenario] {
-        get { scenarioState.availableScenarios }
-        set { scenarioState.availableScenarios = newValue }
-    }
-
-    private(set) var scenarioHistories: [PracticeScenario: [PracticeSession]] {
-        get { scenarioState.scenarioHistories }
-        set { scenarioState.scenarioHistories = newValue }
-    }
-
-    private var selectedAnchorByScenario: [PracticeScenario: UUID] {
-        get { scenarioState.selectedAnchorByScenario }
-        set { scenarioState.selectedAnchorByScenario = newValue }
-    }
-
-    var reminderPlan: ReminderPlan? {
-        get { reminderState.reminderPlan }
-        set { reminderState.reminderPlan = newValue }
-    }
-
-    var reminderPermissionState: ReminderPermissionState {
-        get { reminderState.reminderPermissionState }
-        set { reminderState.reminderPermissionState = newValue }
-    }
-
-    var reminderTone: ReminderTone {
-        get { reminderState.reminderTone }
-        set { reminderState.reminderTone = newValue }
-    }
-
-    var reminderFlowMessage: ReminderFlowMessage? {
-        get { reminderState.reminderFlowMessage }
-        set { reminderState.reminderFlowMessage = newValue }
-    }
-
-    var hasCompletedOnboarding: Bool {
-        get { appSessionState.hasCompletedOnboarding }
-        set { appSessionState.hasCompletedOnboarding = newValue }
-    }
-
-    var hasDismissedFirstBaselineGate: Bool {
-        get { appSessionState.hasDismissedFirstBaselineGate }
-        set { appSessionState.hasDismissedFirstBaselineGate = newValue }
-    }
-
-    var selectedTab: AppTab {
-        get { appSessionState.selectedTab }
-        set { appSessionState.selectedTab = newValue }
-    }
-
     var isPremiumUnlocked: Bool {
         premiumAccessState.allowsPremiumExperience
     }
@@ -421,31 +205,47 @@ final class AppViewModel: ObservableObject {
     }
 
     var reminderDraftDate: Date {
-        reminderState.draftDate
+        reminderPlan?.fireDate ?? Self.defaultReminderDate(from: .now)
     }
 
     var reminderDraftTimeLabel: String {
-        reminderState.draftTimeLabel
+        Self.reminderFormatter.string(from: reminderDraftDate)
     }
 
     var reminderQuickPresets: [ReminderQuickPreset] {
-        reminderState.quickPresets
+        [
+            ReminderQuickPreset(title: "In 2 hours", fireDate: reminderDate(hoursFromNow: 2)),
+            ReminderQuickPreset(title: "Tomorrow 9 AM", fireDate: reminderDateTomorrow(hour: 9, minute: 0)),
+            ReminderQuickPreset(title: "Next workday 9 AM", fireDate: reminderDateNextWorkday(hour: 9, minute: 0))
+        ]
     }
 
     var localReplayCount: Int {
-        scenarioState.localReplayCount(hasPlayback: { recordingState.hasPlayback(for: $0) })
+        scenarioHistories.values
+            .flatMap { $0 }
+            .filter { hasPlayback(for: $0) }
+            .count
     }
 
     var recordedHistoryCount: Int {
-        scenarioState.recordedHistoryCount
+        scenarioHistories.values
+            .flatMap { $0 }
+            .filter { $0.captureSource == .recorded }
+            .count
     }
 
     var importedHistoryCount: Int {
-        scenarioState.importedHistoryCount
+        scenarioHistories.values
+            .flatMap { $0 }
+            .filter { $0.captureSource == .imported }
+            .count
     }
 
     var seededHistoryCount: Int {
-        scenarioState.seededHistoryCount
+        scenarioHistories.values
+            .flatMap { $0 }
+            .filter { $0.captureSource == .seeded }
+            .count
     }
 
     var exportSummaryLine: String {
@@ -493,15 +293,15 @@ final class AppViewModel: ObservableObject {
     }
 
     var currentScenarioHistory: [PracticeSession] {
-        scenarioState.currentScenarioHistory
+        scenarioHistories[currentMission] ?? []
     }
 
     var currentScenarioUserHistory: [PracticeSession] {
-        scenarioState.currentScenarioUserHistory
+        currentScenarioHistory.filter(\.isUserOwned)
     }
 
     var currentScenarioStarterHistory: [PracticeSession] {
-        scenarioState.currentScenarioStarterHistory
+        currentScenarioHistory.filter { !$0.isUserOwned }
     }
 
     var latestSession: PracticeSession {
@@ -752,11 +552,11 @@ final class AppViewModel: ObservableObject {
     }
 
     var recommendedScenarioCoachOrderLine: String {
-        "Start with \(recommendedScenarioForCurrentContext.stepLabels.first ?? recommendedScenarioForCurrentContext.title.lowercased()), protect one listener-critical line, and leave prosody polish for the second pass."
+        "Start with \(recommendedScenarioForCurrentContext.stepLabels.first ?? recommendedScenarioForCurrentContext.title.lowercased()), protect one listener-critical line, and leave pacing for the second pass."
     }
 
     var coachingFrameAdjustmentLine: String {
-        "For a \(communicationEnvironmentTitle.lowercased()) with \(listenerPressureTitle.lowercased()), Katie should stabilize the listener-critical words first, keep transfer framing hypothesis-only, and only polish prosody after the wording is easy to catch."
+        "For a \(communicationEnvironmentTitle.lowercased()) with \(listenerPressureTitle.lowercased()), Katie should stabilize the listener-critical words first, treat language carryover as a guess, and only work on pacing after the wording is easy to catch."
     }
 
     var currentSoundPatternRadar: SoundPatternRadar {
@@ -774,7 +574,7 @@ final class AppViewModel: ObservableObject {
             bullets: [
                 "Language-transfer cue: \(languageAssessmentSnapshot.transferPattern)",
                 "Sound first: \(languageAssessmentSnapshot.soundFocus)",
-                "Prosody second: \(languageAssessmentSnapshot.prosodyFocus)"
+                "Pacing second: \(languageAssessmentSnapshot.prosodyFocus)"
             ]
         )
     }
@@ -863,56 +663,58 @@ final class AppViewModel: ObservableObject {
         let replayReadyCount = currentScenarioUserHistory.filter { hasPlayback(for: $0) }.count
 
         return [
+            // KAT-157: personified names per MOM-145. Internal `proof*` / `compare*` identifiers
+            // kept on purpose (code names, not display text). Voice per MOM-143.
             ProgressAchievement(
-                title: "First proof saved",
+                title: "Saved your own voice",
                 detail: hasEarnedFirstWin
-                    ? "Your own rep is now anchoring \(currentMission.packTitle.lowercased()) instead of starter copy."
-                    : "Save one real rep so this pack starts from your own speech, not starter proof.",
+                    ? "Your real rep is now anchoring \(currentMission.packTitle.lowercased()). Starter copy stepped back."
+                    : "Save one real rep so this pack starts from your own voice, not the starter.",
                 systemImage: "mic.fill",
                 tone: .mint,
                 isUnlocked: hasEarnedFirstWin
             ),
             ProgressAchievement(
-                title: "First compare live",
+                title: "Heard the difference",
                 detail: hasEarnedCompare
-                    ? "This pack now has a before/after story Katie can replay honestly."
-                    : "One calmer retake unlocks a true before/after compare for this pack.",
+                    ? "A before-and-after story lives in this pack now. Replay it when you want to feel the shift."
+                    : "One calmer retake unlocks a real before/after for this pack.",
                 systemImage: "arrow.triangle.2.circlepath",
                 tone: .accent,
                 isUnlocked: hasEarnedCompare
             ),
             ProgressAchievement(
-                title: "Replay-ready proof",
+                title: "Saved for replay",
                 detail: replayReadyCount > 0
-                    ? "\(replayReadyCount) saved clip\(replayReadyCount == 1 ? " replays" : "s replay") on this iPhone for this pack."
-                    : "Record one local clip so progress can coach from your real sound, not transcript alone.",
+                    ? "\(replayReadyCount) saved clip\(replayReadyCount == 1 ? "" : "s") ready to replay on this iPhone for this pack."
+                    : "Record one local clip so progress can coach from your real sound.",
                 systemImage: replayReadyCount > 0 ? "waveform.circle.fill" : "speaker.slash.fill",
                 tone: .gold,
                 isUnlocked: replayReadyCount > 0
             ),
             ProgressAchievement(
-                title: "Context aligned",
+                title: "Today on the right lane",
                 detail: isRecommendedScenarioAlignedForToday
-                    ? "Today is already protecting the pack that best matches this speaking context."
+                    ? "Today is already protecting the pack that fits this moment."
                     : "Switching Today to \(recommendedScenarioForCurrentContext.packTitle) would better match the current listener load.",
                 systemImage: isRecommendedScenarioAlignedForToday ? "checkmark.seal.fill" : "arrowshape.turn.up.right.fill",
                 tone: .mint,
                 isUnlocked: isRecommendedScenarioAlignedForToday
             ),
             ProgressAchievement(
-                title: "Protected follow-through",
+                title: "A reminder is set",
                 detail: reminderPlan?.scenario == currentMission
-                    ? "Reminder continuity is now guarding this pack before the next real conversation."
+                    ? "A reminder is set for this pack so it stays warm before the next real conversation."
                     : "Add a reminder to keep this pack warm after the compare unlocks.",
                 systemImage: reminderPlan?.scenario == currentMission ? "bell.badge.fill" : "bell.badge",
                 tone: .accent,
                 isUnlocked: reminderPlan?.scenario == currentMission
             ),
             ProgressAchievement(
-                title: "Cross-pack momentum",
+                title: "Working across packs",
                 detail: activePackCount >= 2
-                    ? "\(activePackCount) packs now have user-owned proof, which makes the app feel like a reusable coach instead of a one-off demo."
-                    : "Warm one more pack so Progress shows repeatable momentum across real situations.",
+                    ? "\(activePackCount) packs now have user-owned proof. Katie feels more like a reusable coach now."
+                    : "Warm one more pack so Progress shows momentum across real situations.",
                 systemImage: activePackCount >= 2 ? "square.stack.3d.up.fill" : "square.stack.3d.up",
                 tone: .gold,
                 isUnlocked: activePackCount >= 2
@@ -1039,7 +841,99 @@ final class AppViewModel: ObservableObject {
     }
 
     static func languageAssessmentSnapshot(firstLanguage: String, otherLanguages: String) -> LanguageAssessmentSnapshot {
-        LanguageAssessment.snapshot(firstLanguage: firstLanguage, otherLanguages: otherLanguages)
+        let languageText = [firstLanguage, otherLanguages]
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+            .lowercased()
+
+        if languageText.contains("spanish") {
+            return LanguageAssessmentSnapshot(
+                title: "Spanish-English listening plan",
+                transferPattern: "Watch for final consonants and linked-word pacing to blur when the sentence speeds up.",
+                soundFocus: "Keep clear consonant endings on /t/, /d/, /s/, and /z/ before the next word takes over.",
+                prosodyFocus: "Use a small pause before the main stress so the sentence does not run too evenly.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie checks your own recordings, not a language stereotype."
+            )
+        }
+
+        if languageText.contains("mandarin") || languageText.contains("cantonese") {
+            return LanguageAssessmentSnapshot(
+                title: "Tone-language listening plan",
+                transferPattern: "Watch for vowel length and word stress to matter more than they do in a tone language.",
+                soundFocus: "Separate nearby consonants cleanly, especially contrasts like /l/ and /r/ or voiced and voiceless stops.",
+                prosodyFocus: "Give the stressed word a little more lift and a clear pitch change on the key phrase.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie checks your own recordings, not a language stereotype."
+            )
+        }
+
+        if languageText.contains("arabic") {
+            return LanguageAssessmentSnapshot(
+                title: "Arabic-English listening plan",
+                transferPattern: "Watch for short function words to blur when English rhythm speeds up.",
+                soundFocus: "Check mid-vowel clarity and consonant clusters, especially at the start or end of words.",
+                prosodyFocus: "Let the sentence fall at the end so the listener hears the completion clearly.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie checks your own recordings, not a language stereotype."
+            )
+        }
+
+        if languageText.contains("japanese") {
+            return LanguageAssessmentSnapshot(
+                title: "Japanese-English listening plan",
+                transferPattern: "Watch for English stress timing and consonant contrasts to flatten when the sentence speeds up.",
+                soundFocus: "Protect listener-critical contrasts like /l/ vs /r/, word-final consonants, and short function words that can disappear under pressure.",
+                prosodyFocus: "Use one clearer stress peak and a more definite sentence landing before adding broader melody work.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie starts with language-transfer possibilities, then checks your own recordings for what actually repeats."
+            )
+        }
+
+        if languageText.contains("korean") {
+            return LanguageAssessmentSnapshot(
+                title: "Korean-English listening plan",
+                transferPattern: "Watch for tense/lax consonant contrasts and reduced function words to blur when English rhythm gets compressed.",
+                soundFocus: "Protect word-final consonants, cluster clarity, and the exact consonant contrast that changes the listener’s meaning load.",
+                prosodyFocus: "Add one cleaner stress target and sentence ending before trying to widen pitch movement across the whole line.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie uses language background as a starting guess, then checks your own speech for repeated listener friction."
+            )
+        }
+
+        if languageText.contains("hindi") || languageText.contains("urdu") || languageText.contains("hinglish") {
+            return LanguageAssessmentSnapshot(
+                title: "South Asian English listening plan",
+                transferPattern: "Watch for dental/alveolar contrasts and unstressed function words to blur when the sentence speeds up.",
+                soundFocus: "Keep listener-critical endings and contrasts like /w/ vs /v/ or /t/ vs /th/ distinct only where they change meaning for the listener.",
+                prosodyFocus: "Protect one clear stress peak and a cleaner sentence landing before adding extra melody work.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie starts from your language background, then checks what your own recordings actually repeat."
+            )
+        }
+
+        if languageText.contains("portuguese") {
+            return LanguageAssessmentSnapshot(
+                title: "Portuguese-English listening plan",
+                transferPattern: "Watch for vowel reduction and word-final consonants to soften when English gets faster.",
+                soundFocus: "Keep the key content word crisp, especially the ending consonant and the vowel contrast that carries the meaning.",
+                prosodyFocus: "Use one deliberate pause before the main point so the sentence does not feel equally stressed all the way through.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie checks repeated patterns in your own speech instead of making a broad accent claim."
+            )
+        }
+
+        if languageText.contains("french") {
+            return LanguageAssessmentSnapshot(
+                title: "French-English listening plan",
+                transferPattern: "Watch for nasal vowels and syllable timing to carry over into English rhythm.",
+                soundFocus: "Keep the English vowel contrast a little wider so key words do not collapse together.",
+                prosodyFocus: "Add a clearer stress peak on the listener-critical word, not every word equally.",
+                caveat: "This is a coaching hypothesis, not a diagnosis. Katie checks your own recordings, not a language stereotype."
+            )
+        }
+
+        return LanguageAssessmentSnapshot(
+            title: "General listening plan",
+            transferPattern: "Katie will listen for the patterns your own recordings repeat, instead of assuming a one-size-fits-all accent issue.",
+            soundFocus: "Look for the sounds that most often blur, drop, or change when you are under pressure.",
+            prosodyFocus: "Notice where a pause, stress, or sentence ending would make the listener work less.",
+            caveat: "This is a coaching hypothesis, not a diagnosis. Katie uses your profile as a starting point, then listens to your own speech."
+        )
     }
 
     func applyGoalPreset(_ preset: GoalPreset) {
@@ -1288,7 +1182,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var todayRepConfidence: Double {
-        Double(latestSelfReflection.confidenceScore ?? 0) / 5.0
+        Double(latestSelfReflection.confidenceScore) / 5.0
     }
 
     var compareLibraryEntries: [CompareLibraryEntry] {
@@ -1534,7 +1428,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var trustBoundaryLine: String {
-        "Katie is an SLP-informed speaking coach, not therapy or diagnosis. It starts with sound-pattern coaching for your \(communicationEnvironmentTitle.lowercased()) moments, keeps language-transfer framing hypothesis-only, and treats prosody as a second pass."
+        "Katie is a speaking coach, not therapy or diagnosis. It starts with sound patterns for your \(communicationEnvironmentTitle.lowercased()) moments, treats language carryover as a guess, and saves pacing for later."
     }
 
     var trustMethodLine: String {
@@ -1713,6 +1607,15 @@ final class AppViewModel: ObservableObject {
     }
 
     var audioCaptureLane: AudioCaptureLane {
+        if isPreparingRecording {
+            return AudioCaptureLane(
+                title: "Preparing the microphone",
+                detail: "Katie is waiting on iPhone audio access before this take can become a real local clip.",
+                systemImage: "mic.badge.plus",
+                actionTitle: "Preparing local replay"
+            )
+        }
+
         if isRecording {
             return AudioCaptureLane(
                 title: "Recording live on this iPhone",
@@ -1819,7 +1722,7 @@ final class AppViewModel: ObservableObject {
         let plan = currentReminderPreviewPlan
         let ownershipLine = if let reminderPlan, reminderPlan.scenario == currentMission {
             "This scheduled nudge already belongs to this pack."
-        } else if let reminderPlan {
+        } else if reminderPlan != nil {
             "Another pack currently owns the live reminder, so this is the draft Katie would send if you move it here."
         } else {
             "This is the draft Katie would send when you protect this pack."
@@ -1855,7 +1758,7 @@ final class AppViewModel: ObservableObject {
     }
 
     var reminderClinicalBoundaryLine: String {
-        "Reminders are clinician-informed coaching support, not therapy, diagnosis, or emergency guidance."
+        "Reminders are coaching support, not therapy, diagnosis, or emergency guidance."
     }
 
     var momentumSummaryLine: String {
@@ -1884,7 +1787,7 @@ final class AppViewModel: ObservableObject {
         case 3...4:
             return "Warm"
         default:
-            return "Steady"
+            return "Sustained"
         }
     }
 
@@ -2226,6 +2129,9 @@ final class AppViewModel: ObservableObject {
     }
 
     var scratchCaptureTruthTitle: String {
+        if isPreparingRecording {
+            return "Preparing local recording"
+        }
         if isRecording {
             return "Recording locally on this iPhone"
         }
@@ -2236,6 +2142,9 @@ final class AppViewModel: ObservableObject {
     }
 
     var scratchCaptureTruthBody: String {
+        if isPreparingRecording {
+            return "Katie is opening the microphone lane now. Stay on this pack so the local clip attaches to the right proof trail."
+        }
         if isRecording {
             return "This pass is capturing a real local clip right now. Keep the draft short so the replay feels honest when you compare it later."
         }
@@ -2246,11 +2155,22 @@ final class AppViewModel: ObservableObject {
     }
 
     var hasScratchRecording: Bool {
-        recordingState.hasScratchRecording
+        scratchRecordingURL != nil
     }
 
     var quickRepHintLine: String {
-        scenarioState.quickRepHintLine
+        switch currentMission {
+        case .interviewIntro:
+            return "Quick rep: one calm 60-second intro with your name, role, and fit line."
+        case .weeklyUpdate:
+            return "Quick rep: one 60-second update with headline, blocker, and next step."
+        case .managerOneOnOne:
+            return "Quick rep: one honest 60-second 1:1 with the pattern, friction, and one answerable ask."
+        case .presentationOpening:
+            return "Quick rep: one 60-90 second opening with topic, key idea, and takeaway."
+        case .customerRepair:
+            return "Quick rep: one short repair with reset, corrected detail, and clean close."
+        }
     }
 
     var quickChallengeScenario: PracticeScenario {
@@ -2274,23 +2194,56 @@ final class AppViewModel: ObservableObject {
     }
 
     var practiceTranscriptTruthLine: String {
-        reflectionState.transcriptTruthLine
+        let transcript = draftTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if !transcript.isEmpty {
+            return "Transcript draft is live for this rep. Katie will keep the wording visible even if you do not save audio yet."
+        }
+
+        return "No fresh transcript draft yet. Katie will fall back to your latest saved wording until you edit or record a new pass."
     }
 
     var practiceReplayTruthLine: String {
-        let latestRecorded = currentScenarioUserHistory.first(where: { recordingState.hasPlayback(for: $0) })
-        return recordingState.replayTruthLine(
-            hasSavedReplay: latestRecorded != nil,
-            savedReplayFreshnessLabel: latestRecorded.map { scenarioState.freshnessLabel(for: $0.date) }
-        )
+        if isPreparingRecording {
+            return "Katie is preparing the microphone lane. Once access is ready, this draft can become replay-ready on this iPhone."
+        }
+
+        if isRecording {
+            return "Local audio is recording on this iPhone now. Release and save when you want replay-ready proof."
+        }
+
+        if hasScratchRecording, let latestScratchRecordingDuration {
+            return "A \(Int(latestScratchRecordingDuration.rounded())) second scratch clip is waiting on this iPhone. Save it to keep replay attached in Review and Progress."
+        }
+
+        if let latestRecorded = currentScenarioUserHistory.first(where: { hasPlayback(for: $0) }) {
+            return "Your latest saved proof can replay here from \(freshnessLabel(for: latestRecorded).lowercased()), but this draft still needs a fresh local clip if you want the next compare to stay listenable."
+        }
+
+        return "No fresh local clip is attached to this draft yet. Katie keeps the transcript path visible instead of implying replay exists."
     }
 
     var practiceCaptureHonestyLine: String {
-        let hasSavedReplay = currentScenarioUserHistory.contains(where: { recordingState.hasPlayback(for: $0) })
-        return recordingState.captureHonestyLine(hasSavedReplay: hasSavedReplay)
+        if isPreparingRecording {
+            return "Katie is opening the microphone lane before deciding whether this proof can carry local replay."
+        }
+
+        if hasScratchRecording {
+            return "Save now to keep transcript + local replay together."
+        }
+
+        if currentScenarioUserHistory.contains(where: { hasPlayback(for: $0) }) {
+            return "You already have saved replay in this pack, but the next compare stays transcript-first until you record again."
+        }
+
+        return "First wins still count without audio, but replay only appears after a real on-device recording."
     }
 
     var practiceSaveOutcomeTitle: String {
+        if isPreparingRecording {
+            return "Wait for the microphone before saving"
+        }
+
         if isRecording {
             return "Finish this rep before saving"
         }
@@ -2303,6 +2256,10 @@ final class AppViewModel: ObservableObject {
     }
 
     var practiceSaveOutcomeBody: String {
+        if isPreparingRecording {
+            return "Katie has not attached a local clip yet. Let the microphone finish opening before you decide whether this proof should save with replay."
+        }
+
         if isRecording {
             return "Katie has not attached the fresh local clip yet. Stop recording first so Review and Progress can keep this rep listenable on this iPhone."
         }
@@ -2315,6 +2272,10 @@ final class AppViewModel: ObservableObject {
     }
 
     var practiceSaveButtonTitle: String {
+        if isPreparingRecording {
+            return "Preparing microphone"
+        }
+
         if isRecording {
             return "Stop recording before saving"
         }
@@ -2323,6 +2284,10 @@ final class AppViewModel: ObservableObject {
     }
 
     var practiceSaveReviewOutcomeLine: String {
+        if isPreparingRecording {
+            return "Review waits until the microphone lane resolves before replay can attach."
+        }
+
         if isRecording {
             return "Review waits for the finished clip before replay can attach."
         }
@@ -2333,6 +2298,10 @@ final class AppViewModel: ObservableObject {
     }
 
     var practiceSaveProgressOutcomeLine: String {
+        if isPreparingRecording {
+            return "Progress stays on the earlier proof until this recording is ready or canceled."
+        }
+
         if isRecording {
             return "Progress will stay on the earlier saved proof until this recording finishes."
         }
@@ -2383,7 +2352,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func unlockPremiumPreview() {
-        premiumState.unlockPreview()
+        premiumAccessState = .preview
         persistState()
     }
 
@@ -2453,16 +2422,16 @@ final class AppViewModel: ObservableObject {
         await syncPremiumAccessFromStore()
     }
 
-    func clearReminderFlowMessage() {
-        reminderState.clearReminderFlowMessage()
-    }
-
     func clearPremiumRestoreMessage() {
-        premiumState.clearPremiumRestoreMessage()
+        premiumRestoreMessage = nil
     }
 
     func clearPocketCopyStatusLine() {
-        premiumState.clearPocketCopyStatusLine()
+        pocketCopyStatusLine = nil
+    }
+
+    func clearReminderFlowMessage() {
+        reminderFlowMessage = nil
     }
 
     func importPocketCopy(from url: URL) async {
@@ -2488,7 +2457,6 @@ final class AppViewModel: ObservableObject {
             clearAllLocalRecordings()
 
             learnerProfile = bundle.learnerProfile
-            bindLearnerProfileChanges()
             currentMission = bundle.currentMission
             availableScenarios = PracticeScenario.allCases
             scenarioHistories = normalizedImportedHistories(from: bundle.scenarioHistories)
@@ -2602,7 +2570,11 @@ final class AppViewModel: ObservableObject {
     }
 
     var recordingLockLine: String {
-        "Finish or stop the current recording before switching scenario packs so this take stays attached to \(currentMission.title)."
+        if isPreparingRecording {
+            return "Wait for the microphone to finish preparing before switching scenario packs so this take stays attached to \(currentMission.title)."
+        }
+
+        return "Finish or stop the current recording before switching scenario packs so this take stays attached to \(currentMission.title)."
     }
 
     var activePracticeStepPrompt: String {
@@ -2747,10 +2719,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func setActivePracticeStep(_ step: Int) {
-        let totalSteps = currentMission.stepLabels.count
-        let clampedStep = max(0, min(step, max(0, totalSteps - 1)))
+        let clampedStep = max(0, min(step, currentMission.stepLabels.count - 1))
         guard activePracticeStep != clampedStep else { return }
-        reflectionState.setActivePracticeStep(step, totalSteps: totalSteps)
+
+        activePracticeStep = clampedStep
         KatieHaptic.selection.play()
         if activePracticeStep != recommendedPracticeStep {
             practiceReturnCue = nil
@@ -2758,7 +2730,8 @@ final class AppViewModel: ObservableObject {
     }
 
     func applyRetakeDraftStarter(_ starter: String) {
-        recorderStatusLine = reflectionState.applyRetakeDraftStarter(starter)
+        draftTranscript = starter
+        recorderStatusLine = "Loaded a step starter into the draft. Shape it into your own calmer rep before saving."
         KatieHaptic.selection.play()
     }
 
@@ -2790,6 +2763,8 @@ final class AppViewModel: ObservableObject {
     }
 
     func toggleRecording() {
+        guard !isPreparingRecording else { return }
+
         if isRecording {
             stopRecording()
         } else {
@@ -2800,7 +2775,7 @@ final class AppViewModel: ObservableObject {
     let minimumQuickRepDuration: TimeInterval = 0.35
 
     func beginPressToRecord() {
-        guard !isRecording else { return }
+        guard !isRecording && !isPreparingRecording else { return }
         startRecording()
     }
 
@@ -2820,16 +2795,16 @@ final class AppViewModel: ObservableObject {
     }
 
     func clearDraftRetake() {
-        reflectionState.clearDraft()
+        draftTranscript = ""
         latestScratchRecordingDuration = nil
         scratchRecordingURL.flatMap { try? FileManager.default.removeItem(at: $0) }
         scratchRecordingURL = nil
         prepareDraftReflection(resetScores: false)
-        recorderStatusLine = reflectionState.draftClearedStatusLine
+        recorderStatusLine = "Draft cleared. Ready to record another rep."
     }
 
     func dismissPracticeReturnCue() {
-        premiumState.dismissPracticeReturnCue()
+        practiceReturnCue = nil
     }
 
     var draftSelfReflection: SessionSelfReflection {
@@ -2842,15 +2817,36 @@ final class AppViewModel: ObservableObject {
     }
 
     func stickyMomentOptions(for scenario: PracticeScenario) -> [String] {
-        ReflectionState.stickyMomentOptions(for: scenario)
+        switch scenario {
+        case .interviewIntro:
+            return ["Opening line", "Role summary", "Fit close", "Final sentence landing"]
+        case .weeklyUpdate:
+            return ["Decision line", "Tradeoff phrase", "Next-move ask", "Transition between beats"]
+        case .managerOneOnOne:
+            return ["Pattern line", "Friction sentence", "Support ask", "Decision close"]
+        case .presentationOpening:
+            return ["First sentence", "Why-it-matters phrase", "Audience handoff", "Ending the opener"]
+        case .customerRepair:
+            return ["Reset phrase", "Apology line", "Corrected next step", "Confidence in the close"]
+        }
     }
 
     func prepareDraftReflection(resetScores: Bool = false) {
-        reflectionState.prepareDraft(
-            resetScores: resetScores,
-            previousSelfReflection: currentScenarioUserHistory.first?.selfReflection,
-            currentMission: currentMission
+        let defaults = currentScenarioUserHistory.first?.selfReflection ?? SessionSelfReflection(
+            listenerCatchScore: 3,
+            paceControlScore: 3,
+            confidenceScore: 3,
+            stickyMoment: stickyMomentOptions(for: currentMission).first ?? "Opening line"
         )
+
+        if resetScores || currentScenarioUserHistory.isEmpty {
+            draftReflectionListenerCatchScore = defaults.listenerCatchScore
+            draftReflectionPaceControlScore = defaults.paceControlScore
+            draftReflectionConfidenceScore = defaults.confidenceScore
+        }
+
+        let options = stickyMomentOptions(for: currentMission)
+        draftReflectionStickyMoment = options.contains(defaults.stickyMoment) ? defaults.stickyMoment : (options.first ?? "Opening line")
     }
 
     func saveCurrentRetake() {
@@ -2948,8 +2944,22 @@ final class AppViewModel: ObservableObject {
     }
 
     func startRecording() {
+        guard !isRecording && !isPreparingRecording else { return }
+
+        let requestID = UUID()
+        recordingStartRequestID = requestID
+        isPreparingRecording = true
+
         Task {
+            defer {
+                if recordingStartRequestID == requestID {
+                    isPreparingRecording = false
+                    recordingStartRequestID = nil
+                }
+            }
+
             let permissionGranted = await requestMicrophoneAccessIfNeeded()
+            guard recordingStartRequestID == requestID else { return }
             guard permissionGranted else {
                 recorderStatusLine = "Microphone access is blocked. Katie keeps the text-only fallback visible instead of pretending replay will save."
                 KatieHaptic.warning.play()
@@ -2958,6 +2968,7 @@ final class AppViewModel: ObservableObject {
 
             // Request speech recognition auth (needed for filler word detection)
             let speechStatus = await FillerWordDetector.requestAuthorization()
+            guard recordingStartRequestID == requestID else { return }
 
             do {
                 let session = AVAudioSession.sharedInstance()
@@ -2980,17 +2991,19 @@ final class AppViewModel: ObservableObject {
                 microphonePermissionState = .granted
                 scratchRecordingURL = url
                 latestScratchRecordingDuration = nil
+                isPreparingRecording = false
                 isRecording = true
                 draftTranscript = latestSession.transcript
                 recorderStatusLine = "Recording live on this iPhone. Follow the step rail, then save the retake with replay attached."
                 KatieHaptic.softImpact.play()
 
-                // Start real-time filler word detection if speech recognition is authorized
+                // Start real-time filler word detection if speech recognition is authorized.
+                // AVAudioRecorder keeps the saved replay file; AudioCaptureEngine owns the single
+                // input-node tap used by Speech so live detection does not collide with recording.
                 if speechStatus == .authorized {
                     let detector = FillerWordDetector()
                     self.fillerWordDetector = detector
 
-                    // Observe filler count and breakdown changes
                     self.fillerCountCancellable = detector.$sessionFillerWordCount
                         .receive(on: DispatchQueue.main)
                         .sink { [weak self] count in self?.fillerWordCount = count }
@@ -2998,16 +3011,22 @@ final class AppViewModel: ObservableObject {
                         .receive(on: DispatchQueue.main)
                         .sink { [weak self] breakdown in self?.fillerWordBreakdown = breakdown }
 
-                    // Also capture audio via AVAudioEngine for Speech tap
                     let capture = AudioCaptureEngine()
-                    self.audioCaptureEngine = capture
-                    _ = try capture.startCapture()
-
-                    if let inputNode = capture.inputNode {
-                        try? detector.startDetecting(from: inputNode)
+                    do {
+                        try capture.startCapture { inputNode in
+                            try detector.startDetecting(from: inputNode)
+                        }
+                        self.audioCaptureEngine = capture
+                    } catch {
+                        detector.stopDetecting()
+                        self.fillerWordDetector = nil
+                        self.fillerCountCancellable = nil
+                        self.fillerBreakdownCancellable = nil
                     }
                 }
             } catch {
+                recordingStartRequestID = nil
+                isPreparingRecording = false
                 isRecording = false
                 refreshMicrophonePermissionState()
                 recorderStatusLine = "Microphone capture could not start. Katie keeps the draft path honest instead of faking a recording."
@@ -3017,18 +3036,19 @@ final class AppViewModel: ObservableObject {
     }
 
     func stopRecording() {
+        recordingStartRequestID = nil
+        isPreparingRecording = false
         audioRecorder?.stop()
         latestScratchRecordingDuration = audioRecorder?.currentTime
         audioRecorder = nil
         isRecording = false
 
-        // Stop filler word detection and audio capture
-        fillerWordDetector?.stopDetecting()
-        fillerWordDetector = nil
         if let capture = audioCaptureEngine {
             latestScratchRecordingDuration = capture.stopCapture()
         }
         audioCaptureEngine = nil
+        fillerWordDetector?.stopDetecting()
+        fillerWordDetector = nil
         fillerCountCancellable = nil
         fillerBreakdownCancellable = nil
 
@@ -3044,17 +3064,23 @@ final class AppViewModel: ObservableObject {
         KatieHaptic.softImpact.play()
     }
 
-    func discardScratchRecording(statusLine: String) {
+    func discardScratchRecording(
+        statusLine: String,
+        clearDraft: Bool = false,
+        playWarningHaptic: Bool = true
+    ) {
+        recordingStartRequestID = nil
+        isPreparingRecording = false
         audioRecorder?.stop()
         audioRecorder = nil
         isRecording = false
         latestScratchRecordingDuration = nil
-        fillerWordDetector?.stopDetecting()
-        fillerWordDetector = nil
         if let capture = audioCaptureEngine {
             _ = capture.stopCapture()
         }
         audioCaptureEngine = nil
+        fillerWordDetector?.stopDetecting()
+        fillerWordDetector = nil
         fillerCountCancellable = nil
         fillerBreakdownCancellable = nil
 
@@ -3062,8 +3088,15 @@ final class AppViewModel: ObservableObject {
             try? FileManager.default.removeItem(at: scratchRecordingURL)
         }
         scratchRecordingURL = nil
+        fillerWordCount = 0
+        fillerWordBreakdown = [:]
+        if clearDraft {
+            draftTranscript = ""
+        }
         recorderStatusLine = statusLine
-        KatieHaptic.warning.play()
+        if playWarningHaptic {
+            KatieHaptic.warning.play()
+        }
     }
 
     private func saveRecordedRetake() {
@@ -3136,7 +3169,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func selectScenario(_ scenario: PracticeScenario) {
-        guard !isRecording || scenario == currentMission else {
+        guard (!isRecording && !isPreparingRecording) || scenario == currentMission else {
             recorderStatusLine = recordingLockLine
             KatieHaptic.warning.play()
             return
@@ -3361,7 +3394,9 @@ final class AppViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            self?.handleReminderNotificationTap(notification)
+            Task { @MainActor [weak self] in
+                self?.handleReminderNotificationTap(notification)
+            }
         }
     }
 
@@ -3435,7 +3470,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func selectCompareAnchor(_ session: PracticeSession) {
-        scenarioState.selectCompareAnchor(session)
+        selectedAnchorByScenario[currentMission] = session.id
         persistState()
     }
 
@@ -3447,11 +3482,11 @@ final class AppViewModel: ObservableObject {
     }
 
     func isSelectedAnchor(_ session: PracticeSession) -> Bool {
-        scenarioState.isSelectedAnchor(session)
+        selectedCompareAnchor?.id == session.id
     }
 
     func userOwnedSessionCount(in scenario: PracticeScenario) -> Int {
-        scenarioState.userOwnedSessionCount(in: scenario)
+        userOwnedSessionCount(for: scenario)
     }
 
     private func todayQueuePriority(for entry: TodayQueueEntry) -> Int {
@@ -3470,7 +3505,17 @@ final class AppViewModel: ObservableObject {
     }
 
     func scenarioStatusLabel(for scenario: PracticeScenario) -> String {
-        scenarioState.statusLabel(ownedCount: userOwnedSessionCount(for: scenario))
+        let ownedCount = userOwnedSessionCount(for: scenario)
+        switch ownedCount {
+        case 0:
+            return "First proof"
+        case 1:
+            return "Benchmark saved"
+        case 2:
+            return "Live compare"
+        default:
+            return "Warm"
+        }
     }
 
     func scenarioStatusDetail(for scenario: PracticeScenario) -> String {
@@ -3631,16 +3676,28 @@ final class AppViewModel: ObservableObject {
     }
 
     func freshnessLabel(for session: PracticeSession) -> String {
-        scenarioState.freshnessLabel(for: session.date)
+        let calendar = Calendar.current
+        if calendar.isDateInToday(session.date) {
+            return "Today"
+        }
+        if calendar.isDateInYesterday(session.date) {
+            return "Yesterday"
+        }
+        if let weekAgo = calendar.date(byAdding: .day, value: -7, to: Date()), session.date >= weekAgo {
+            return "This week"
+        }
+        return "Older"
     }
 
     func hasPlayback(for session: PracticeSession) -> Bool {
-        recordingState.hasPlayback(for: session)
+        audioURL(for: session) != nil
     }
 
     func deleteAllOnDeviceData() {
         stopPlayback()
+        recordingStartRequestID = nil
         audioRecorder?.stop()
+        isPreparingRecording = false
         isRecording = false
         latestScratchRecordingDuration = nil
         draftTranscript = ""
@@ -3657,7 +3714,6 @@ final class AppViewModel: ObservableObject {
         hasCompletedOnboarding = false
         hasDismissedFirstBaselineGate = false
         learnerProfile = LearnerProfile()
-        bindLearnerProfileChanges()
         currentMission = .weeklyUpdate
         availableScenarios = PracticeScenario.allCases
         premiumAccessState = .locked
@@ -3673,11 +3729,19 @@ final class AppViewModel: ObservableObject {
     }
 
     private func clearAllLocalRecordings() {
-        recordingState.clearAllLocalRecordings()
+        let directory = recordingsDirectory()
+        if let files = try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil) {
+            for file in files {
+                try? FileManager.default.removeItem(at: file)
+            }
+        }
     }
 
     private func ensureAnchorSelection(for scenario: PracticeScenario) {
-        scenarioState.ensureAnchorSelection(for: scenario)
+        guard selectedAnchorByScenario[scenario] == nil else { return }
+        if let defaultAnchor = scenarioHistories[scenario]?.dropFirst().first {
+            selectedAnchorByScenario[scenario] = defaultAnchor.id
+        }
     }
 
     private func enableReminderForCurrentScenario() async {
@@ -3785,20 +3849,7 @@ final class AppViewModel: ObservableObject {
     }
 
     private func microphonePermissionStateFromSystem() -> MicrophonePermissionState {
-        if #available(iOS 17.0, *) {
-            switch AVAudioApplication.shared.recordPermission {
-            case .granted:
-                return .granted
-            case .denied:
-                return .denied
-            case .undetermined:
-                return .unknown
-            @unknown default:
-                return .unknown
-            }
-        }
-
-        switch AVAudioSession.sharedInstance().recordPermission {
+        switch AVAudioApplication.shared.recordPermission {
         case .granted:
             return .granted
         case .denied:
@@ -3919,7 +3970,7 @@ final class AppViewModel: ObservableObject {
     }
 
     private func userOwnedSessionCount(for scenario: PracticeScenario) -> Int {
-        scenarioState.userOwnedSessionCount(in: scenario)
+        (scenarioHistories[scenario] ?? []).filter(\.isUserOwned).count
     }
 
     private var latestSessionOptional: PracticeSession? {
@@ -3927,7 +3978,8 @@ final class AppViewModel: ObservableObject {
     }
 
     private func latestSession(in scenario: PracticeScenario) -> PracticeSession? {
-        scenarioState.latestSession(in: scenario)
+        let history = scenarioHistories[scenario] ?? []
+        return history.first(where: \.isUserOwned) ?? history.first
     }
 
     private func restorePersistedState() -> Bool {
@@ -3939,7 +3991,6 @@ final class AppViewModel: ObservableObject {
         hasCompletedOnboarding = decoded.hasCompletedOnboarding
         hasDismissedFirstBaselineGate = decoded.hasDismissedFirstBaselineGate
         learnerProfile = decoded.learnerProfile
-        bindLearnerProfileChanges()
         currentMission = decoded.currentMission
         selectedTab = decoded.selectedTab
         premiumAccessState = decoded.premiumAccessState
@@ -4016,23 +4067,72 @@ final class AppViewModel: ObservableObject {
     }
 
     private func sampleSession(for scenario: PracticeScenario) -> PracticeSession {
-        scenarioHistories[scenario]?.first ?? Self.buildScenarioHistories()[scenario]!.first!
+        if let session = scenarioHistories[scenario]?.first {
+            return session
+        }
+
+        let seededHistories = Self.buildScenarioHistories()
+        if let session = seededHistories[scenario]?.first {
+            return session
+        }
+
+        if let fallback = seededHistories[.weeklyUpdate]?.first {
+            return fallback
+        }
+
+        return Self.placeholderSampleSession(for: scenario)
+    }
+
+    private static func placeholderSampleSession(for scenario: PracticeScenario) -> PracticeSession {
+        PracticeSession(
+            scenario: scenario,
+            title: "Starter proof",
+            date: .now,
+            transcript: scenario.missionPrompt,
+            benchmarkCue: "Keep the line short enough to replay and compare later.",
+            listenerOutcome: scenario.listenerOutcome,
+            structurePrompt: scenario.structurePrompt,
+            highlights: [
+                PracticeHighlight(title: "Keep · starter line", detail: "Katie keeps this fallback visible without pretending it is earned proof."),
+                PracticeHighlight(title: "Sharpen · local replay", detail: "Record one fresh pass on this iPhone when you want replay-ready proof.")
+            ],
+            compareReadiness: .transcriptOnly,
+            reminderLine: "Record one fresh local pass when you are ready.",
+            carryoverLine: "Use one calm breath before the key line.",
+            protectedLine: scenario.missionPrompt,
+            unlockedStepCount: 1,
+            transcriptFootnote: "Fallback starter text only; no replay audio is attached.",
+            audioFileName: nil,
+            durationSeconds: nil,
+            captureSource: .seeded
+        )
     }
 
     private static func defaultReminderDate(from date: Date) -> Date {
-        ReminderState.defaultReminderDate(from: date)
+        let calendar = Calendar.current
+        let nextDay = calendar.date(byAdding: .day, value: 1, to: date) ?? date.addingTimeInterval(86_400)
+        return calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextDay) ?? nextDay
     }
 
     private func reminderDate(hoursFromNow hours: Int) -> Date {
-        reminderState.reminderDate(hoursFromNow: hours)
+        Calendar.current.date(byAdding: .hour, value: hours, to: .now) ?? .now
     }
 
     private func reminderDateTomorrow(hour: Int, minute: Int) -> Date {
-        reminderState.reminderDateTomorrow(hour: hour, minute: minute)
+        let calendar = Calendar.current
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: tomorrow) ?? tomorrow
     }
 
     private func reminderDateNextWorkday(hour: Int, minute: Int) -> Date {
-        reminderState.reminderDateNextWorkday(hour: hour, minute: minute)
+        let calendar = Calendar.current
+        var candidate = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now
+
+        while calendar.isDateInWeekend(candidate) {
+            candidate = calendar.date(byAdding: .day, value: 1, to: candidate) ?? candidate
+        }
+
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: candidate) ?? candidate
     }
 
     private static func buildScenarioHistories() -> [PracticeScenario: [PracticeSession]] {
@@ -4304,14 +4404,21 @@ final class AppViewModel: ObservableObject {
     }
 
     private func recordingsDirectory() -> URL {
-        recordingState.recordingsDirectory()
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: NSTemporaryDirectory())
+        let directory = documents.appendingPathComponent("KatieRecordings", isDirectory: true)
+        if !FileManager.default.fileExists(atPath: directory.path()) {
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        }
+        return directory
     }
 
     private func makeScratchRecordingURL() -> URL {
-        recordingState.makeScratchRecordingURL()
+        recordingsDirectory().appendingPathComponent("scratch-\(UUID().uuidString).m4a")
     }
 
     func audioURL(for session: PracticeSession) -> URL? {
-        recordingState.audioURL(for: session)
+        guard let audioFileName = session.audioFileName else { return nil }
+        let url = recordingsDirectory().appendingPathComponent(audioFileName)
+        return FileManager.default.fileExists(atPath: url.path()) ? url : nil
     }
 }

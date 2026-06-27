@@ -7,6 +7,13 @@ struct OnboardingView: View {
         GeometryReader { proxy in
             let isWideLayout = proxy.size.width >= 920
             let contentBottomPadding: CGFloat = isWideLayout ? 128 : 24
+            // KAT-286 fix: the original `maxWidth: 760` was larger than an iPhone
+            // 17 screen (~402pt). The inner content then over-flowed the right
+            // edge of every card. Cap the content width to the actual screen
+            // width on iPhone, and keep the wide 1160pt for iPad / Mac mirroring.
+            let contentMaxWidth: CGFloat = isWideLayout
+                ? 1160
+                : min(760, proxy.size.width - 32)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
@@ -63,7 +70,7 @@ struct OnboardingView: View {
                 }
                 .padding(isWideLayout ? 24 : 16)
                 .padding(.bottom, contentBottomPadding)
-                .katieContentFrame(maxWidth: isWideLayout ? 1160 : 760)
+                .katieContentFrame(maxWidth: contentMaxWidth)
             }
             .safeAreaInset(edge: .bottom) {
                 if isWideLayout {
@@ -94,33 +101,36 @@ struct OnboardingView: View {
 
     private func heroCard(isWideLayout: Bool) -> some View {
         VStack(alignment: .leading, spacing: isWideLayout ? 18 : 16) {
-            HStack(alignment: .top, spacing: 16) {
-                KatieScenarioArtwork(
-                    systemImage: "message.and.waveform.fill",
-                    accent: KatieColors.accent,
-                    secondary: KatieColors.mint
-                )
-                .frame(width: isWideLayout ? 84 : 72, height: isWideLayout ? 84 : 72)
+            if isWideLayout {
+                HStack(alignment: .top, spacing: 16) {
+                    KatieScenarioArtwork(
+                        systemImage: "message.and.waveform.fill",
+                        accent: KatieColors.accent,
+                        secondary: KatieColors.mint
+                    )
+                    .frame(width: 84, height: 84)
 
-                VStack(alignment: .leading, spacing: 10) {
-                    KatieSectionEyebrow(title: "First sample setup", systemImage: "sparkles", accent: KatieColors.gold)
-
-                    Text("Katie")
-                        .font(isWideLayout ? .system(size: 44, weight: .bold, design: .rounded) : .largeTitle.bold())
-                        .foregroundStyle(KatieColors.textPrimary)
-
-                    Text("An SLP-informed speaking coach for clearer work moments.")
-                        .font(isWideLayout ? .title3.weight(.semibold) : .headline)
-                        .foregroundStyle(KatieColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text("Work speaking · local-first · trust-forward")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(KatieColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 10) {
+                        heroLeadCopy(isWideLayout: isWideLayout)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
                 }
+            } else {
+                VStack(alignment: .leading, spacing: 16) {
+                    KatieScenarioArtwork(
+                        systemImage: "message.and.waveform.fill",
+                        accent: KatieColors.accent,
+                        secondary: KatieColors.mint
+                    )
+                    .frame(width: 72, height: 72)
 
-                Spacer(minLength: 0)
+                    VStack(alignment: .leading, spacing: 10) {
+                        heroLeadCopy(isWideLayout: isWideLayout)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             if isWideLayout {
@@ -139,6 +149,51 @@ struct OnboardingView: View {
         }
         .katieCard()
         .katieHeroAura(accent: KatieColors.accent, secondary: KatieColors.mint)
+    }
+
+    private func heroLeadCopy(isWideLayout: Bool) -> some View {
+        Group {
+            // OPE-132: brighter eyebrow so "First sample setup" reads on first screen
+            // (audit: "First sample setup" badge was dark-on-dark — gold opacity was
+            // washed out against cardSecondary. Bumped accent opacity 0.28 → 0.55,
+            // gradient end to a brighter tertiary tint, and added a soft text shadow
+            // for legibility on the deep purple hero card.)
+            KatieSectionEyebrow(
+                title: "First sample setup",
+                systemImage: "sparkles",
+                accent: KatieColors.gold,
+                fillOpacity: 0.55,
+                endTint: KatieColors.cardTertiary.opacity(0.85),
+                strokeOpacity: 0.55
+            )
+
+            Text("Katie")
+                .font(isWideLayout ? .system(size: 44, weight: .bold, design: .rounded) : .largeTitle.bold())
+                .foregroundStyle(KatieColors.textPrimary)
+
+            // OPE-132: plain-language subtitle (audit: "SLP-informed" is clinical
+            // jargon — Katie coaches how your listener hears you, not a clinical
+            // model). Keep it compact on phones so the hero never bleeds off the
+            // right edge.
+            VStack(alignment: .leading, spacing: 4) {
+                Text("A coach for clearer work moments.")
+                Text("No accent erasure.")
+            }
+            .font(isWideLayout ? .title3.weight(.semibold) : .callout.weight(.semibold))
+            .foregroundStyle(KatieColors.textPrimary)
+            .fixedSize(horizontal: false, vertical: true)
+
+            Text("Work speaking · local-first")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(KatieColors.textSecondary)
+
+            // OPE-132 + KAT-155: privacy chip on the first screen, not just the
+            // first-recording surface. Audit: "Your recordings stay on this iPhone"
+            // was invisible until after onboarding. Same capsule style as
+            // FirstBaselineView, sized for the hero row.
+            privacyChip()
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private func heroPromiseCard(isWideLayout: Bool) -> some View {
@@ -190,7 +245,7 @@ struct OnboardingView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(KatieColors.cardSubtle, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
     }
@@ -363,9 +418,17 @@ struct OnboardingView: View {
                 .font(.footnote)
                 .foregroundStyle(KatieColors.textSecondary)
 
-            Text(appViewModel.trustBoundaryLine)
-                .font(.footnote)
-                .foregroundStyle(KatieColors.textSecondary)
+            // KAT-288 labeled block (preserved) + KAT-290 shorter text.
+            // The full ASHA-aligned scope + clinical handoff lives in
+            // CoachTrustView (see KAT-292 follow-up). This block gives a
+            // short, second-language-readable signal that Katie is coaching,
+            // not therapy or diagnosis, before the learner finishes setup.
+            KatieInlineNotice(
+                title: "What Katie is — and is not",
+                message: appViewModel.trustBoundaryLine,
+                systemImage: "checkmark.shield.fill",
+                accent: KatieColors.gold
+            )
         }
         .katieCard()
     }
@@ -759,7 +822,7 @@ struct OnboardingView: View {
                             HStack(spacing: 8) {
                                 Text(isSelected ? "Active now" : "Tap to use")
                                     .font(.caption2.weight(.semibold))
-                                    .foregroundStyle(isSelected ? .black : KatieColors.textSecondary)
+                                    .foregroundStyle(isSelected ? KatieColors.textOnAccent : KatieColors.textSecondary)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
                                     .background(isSelected ? KatieColors.accent : KatieColors.cardBackground, in: Capsule())
@@ -786,6 +849,29 @@ struct OnboardingView: View {
             }
         }
         .katieCard()
+    }
+
+    // OPE-132 + KAT-155: privacy chip used on the first screen (hero card).
+    // Mirrors the FirstBaselineView chip styling so the privacy signal is
+    // consistent from the very first tap. Mint accent reads as "safe" and
+    // "local" without leaning on copy-heavy framing.
+    private func privacyChip() -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "lock.shield.fill")
+                .foregroundStyle(KatieColors.mint)
+            Text("Recordings stay on this iPhone.")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(KatieColors.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(KatieColors.mint.opacity(0.14), in: Capsule())
+        .overlay(
+            Capsule().stroke(KatieColors.mint.opacity(0.40), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Privacy: recordings stay on this iPhone.")
     }
 
     private func recommendedFirstRepStrip(isWideLayout: Bool) -> some View {
@@ -910,7 +996,7 @@ struct OnboardingView: View {
                 Label("Sound focus first: \(appViewModel.languageAssessmentSnapshot.soundFocus)", systemImage: "dot.radiowaves.left.and.right")
                 Label("Listener friction to watch: \(appViewModel.listenerFrictionPointTitle)", systemImage: "ear.fill")
                 Label(appViewModel.transferHypothesisPreviewLine, systemImage: selectedTransferHypothesisFeedback.systemImage)
-                Label("Prosody stays secondary until the core pattern is steadier", systemImage: "waveform.path")
+                Label("Pacing and stress come later, once the core pattern is steadier", systemImage: "waveform.path")
             }
             .font(.footnote)
             .foregroundStyle(KatieColors.textSecondary)
@@ -945,7 +1031,7 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
             .background(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.cardSecondary : KatieColors.accent)
-            .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textPrimary : .black)
+            .foregroundStyle(appViewModel.isRecommendedScenarioAlignedForStartingPack ? KatieColors.textPrimary : KatieColors.textOnAccent)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .disabled(appViewModel.isRecommendedScenarioAlignedForStartingPack)
         }
@@ -1037,7 +1123,7 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label("Your first saved rep becomes the real benchmark", systemImage: "person.crop.circle.badge.checkmark")
                 Label("Starter proof stays visible, but secondary", systemImage: "sparkles.rectangle.stack.fill")
-                Label("Premium copy stays tied to a believable first win", systemImage: "crown.fill")
+                Label("Save one real rep before premium features unlock", systemImage: "crown.fill")
             }
             .foregroundStyle(KatieColors.textSecondary)
 
@@ -1077,7 +1163,7 @@ struct OnboardingView: View {
             sectionHeader(
                 eyebrow: "Coaching order",
                 title: "What Katie listens for",
-                detail: "Sound patterns first. Likely transfer patterns second. Prosody matters, but it stays in the second pass."
+                detail: "Sound patterns first. Pacing and stress come later, once the core sound is steady."
             )
         }
         .katieCard()
