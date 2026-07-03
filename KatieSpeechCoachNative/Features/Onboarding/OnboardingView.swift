@@ -10,6 +10,14 @@ struct OnboardingView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
+                    // KAT-293 (OPE-362): the launch state used to read as a
+                    // single onboarding wall with no menu signal. The first
+                    // thing the user sees is now a peek of the five main
+                    // tabs they're about to land in (Today · Practice ·
+                    // Progress · Coach · Interview), so the existence of a
+                    // menu system is visible even before they finish setup.
+                    onboardingMenuPeek(isWideLayout: isWideLayout)
+
                     heroCard(isWideLayout: isWideLayout)
 
                     recommendedFirstRepStrip(isWideLayout: isWideLayout)
@@ -61,9 +69,16 @@ struct OnboardingView: View {
                         bottomCTA(isWideLayout: false)
                     }
                 }
-                .padding(isWideLayout ? 24 : 16)
+                // KAT-294 (OPE-363): replace the hardcoded 760-pt cap with
+                // proper SwiftUI layout — `.frame(maxWidth: .infinity)`
+                // inside a parent that supplies ~20-pt horizontal padding
+                // on iPhone. The previous `maxWidth: 760` was wider than
+                // a 402-pt iPhone 17 Pro screen, which let long Text
+                // blocks wrap past the right edge of every card.
+                .padding(isWideLayout ? 24 : 20)
                 .padding(.bottom, contentBottomPadding)
-                .katieContentFrame(maxWidth: isWideLayout ? 1160 : 760)
+                .frame(maxWidth: 1160)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
             .safeAreaInset(edge: .bottom) {
                 if isWideLayout {
@@ -92,6 +107,91 @@ struct OnboardingView: View {
         .ignoresSafeArea()
     }
 
+    // KAT-293 (OPE-362): visible "tab peek" shown on the first onboarding
+    // screen. Reads as a faint, sub-row of the five main tabs the user is
+    // about to land in (Today, Practice, Progress, Coach, Interview),
+    // plus a small "Skip to Katie" affordance that jumps them straight to
+    // the real `MainTabView`. The goal is "clear without being loud":
+    // chip-style, transparent, no takeover of the hero card.
+    private func onboardingMenuPeek(isWideLayout: Bool) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Once you begin, your main tabs")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(KatieColors.mint)
+                    .textCase(.uppercase)
+                    .tracking(0.35)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("Your menu is always at the bottom — onboarding just meets you here first.")
+                    .font(isWideLayout ? .footnote : .caption)
+                    .foregroundStyle(KatieColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+            }
+
+            Spacer(minLength: 8)
+
+            onboardingTabPeekChips()
+
+            Button(action: appViewModel.completeOnboarding) {
+                Text("Skip to Katie")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(KatieColors.textPrimary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(KatieColors.mint.opacity(0.18), in: Capsule())
+                    .overlay(
+                        Capsule().stroke(KatieColors.mint.opacity(0.55), lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Finish onboarding now and open the main menu.")
+        }
+        .padding(.horizontal, isWideLayout ? 16 : 14)
+        .padding(.vertical, isWideLayout ? 12 : 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(KatieColors.cardSecondary.opacity(0.42), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(KatieColors.cardBorder.opacity(0.55), lineWidth: 1)
+        )
+    }
+
+    @ViewBuilder
+    private func onboardingTabPeekChips() -> some View {
+        // Five chips match MainTabView's five tabs (Today · Practice ·
+        // Progress · Coach · Interview) so the peek is a faithful
+        // preview of the post-onboarding menu, not a separate nav set.
+        HStack(spacing: 8) {
+            onboardingTabPeekChip(label: "Today", systemImage: "sun.max.circle.fill", accent: KatieColors.gold)
+            onboardingTabPeekChip(label: "Practice", systemImage: "waveform.path.ecg.circle.fill", accent: KatieColors.accent)
+            onboardingTabPeekChip(label: "Progress", systemImage: "chart.line.uptrend.xyaxis.circle.fill", accent: KatieColors.mint)
+            onboardingTabPeekChip(label: "Coach", systemImage: "person.crop.circle.badge.checkmark", accent: KatieColors.plum)
+            onboardingTabPeekChip(label: "Interview", systemImage: "person.wave.2.fill", accent: KatieColors.blush)
+        }
+    }
+
+    private func onboardingTabPeekChip(label: String, systemImage: String, accent: Color) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: systemImage)
+                .font(.caption2)
+                .foregroundStyle(accent)
+            Text(label)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(KatieColors.textSecondary)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(KatieColors.cardBackground.opacity(0.6), in: Capsule())
+        .overlay(
+            Capsule().stroke(KatieColors.cardBorder.opacity(0.6), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Tab: \(label)")
+    }
+
     private func heroCard(isWideLayout: Bool) -> some View {
         VStack(alignment: .leading, spacing: isWideLayout ? 18 : 16) {
             HStack(alignment: .top, spacing: 16) {
@@ -113,11 +213,13 @@ struct OnboardingView: View {
                         .font(isWideLayout ? .title3.weight(.semibold) : .headline)
                         .foregroundStyle(KatieColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
 
                     Text("Work speaking · local-first · trust-forward")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(KatieColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
                 }
 
                 Spacer(minLength: 0)
@@ -151,6 +253,7 @@ struct OnboardingView: View {
                 .foregroundStyle(KatieColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: isWideLayout ? 560 : .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
 
             LazyVGrid(
                 columns: isWideLayout
@@ -1207,10 +1310,10 @@ struct OnboardingView: View {
                 }
                 .buttonStyle(.katiePrimary())
             }
-            .padding(.horizontal, isWideLayout ? 24 : 16)
+            .padding(.horizontal, isWideLayout ? 24 : 20)
             .padding(.top, isWideLayout ? 10 : 8)
             .padding(.bottom, isWideLayout ? 12 : 10)
-            .frame(maxWidth: isWideLayout ? 1160 : 760)
+            .frame(maxWidth: 1160)
             .frame(maxWidth: .infinity)
             .background(.ultraThinMaterial.opacity(0.96))
             .overlay(Rectangle().fill(KatieColors.cardBorder.opacity(0.4)), alignment: .top)

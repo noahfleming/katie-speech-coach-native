@@ -28,7 +28,11 @@ struct FirstBaselineView: View {
     }
 
     private var baselineContentMaxWidth: CGFloat {
-        usesWideBaselineLayout ? 1180 : 760
+        // KAT-294 (OPE-363): cap only the wide layout (iPad). The compact
+        // (iPhone) layout uses `.frame(maxWidth: .infinity)` below instead
+        // of a hardcoded width — content fills the parent within the
+        // 20-pt horizontal padding so text never clips the right edge.
+        usesWideBaselineLayout ? 1180 : .infinity
     }
 
     var body: some View {
@@ -58,13 +62,14 @@ struct FirstBaselineView: View {
                 }
             }
             .padding(20)
-            // KAT-199: in a vertical ScrollView, chained `.frame(maxWidth:
-            // .infinity)` was being interpreted as the content's intrinsic
-            // width (400+ pt for long Text views) instead of the visible
-            // 402pt screen width — which overflowed and clipped the right
-            // edge. The simplest fix: cap to a known-good iPhone width
-            // on compact, fall through to the original behaviour on iPad.
-            .frame(maxWidth: usesWideBaselineLayout ? baselineContentMaxWidth : 420)
+            // KAT-294 (OPE-363): on iPhone, use `.frame(maxWidth: .infinity)`
+            // so the content fills the parent within the 20-pt horizontal
+            // padding (no hardcoded 420-pt cap that was narrower than the
+            // actual screen). iPad still gets the 1180-pt cap from
+            // `baselineContentMaxWidth` so the centered, multi-column
+            // layout stays readable.
+            .frame(maxWidth: baselineContentMaxWidth)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
         .background(
             LinearGradient(
