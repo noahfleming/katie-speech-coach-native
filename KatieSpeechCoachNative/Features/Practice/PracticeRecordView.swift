@@ -45,6 +45,13 @@ struct PracticeRecordView: View {
     @State private var isReminderOptionsPresented = false
     @State private var isRetakeDraftExpanded = false
     @State private var holdToSpeakStartedAt: Date?
+    // MOM-257 (OPE-277): wire the orphan InterviewPracticeView (517 lines,
+    // 4 question categories, 2-min timer, per-question feedback) as a sheet
+    // off the Practice tab. Was previously unreachable from navigation —
+    // no MainTabView or PracticeRecordView reference existed. Sheet
+    // presentation matches the rest of the Practice tab's modal pattern
+    // (reminder flow, scenario switcher).
+    @State private var isInterviewModePresented = false
 
     private let practiceDraftAnchor = "practice-draft"
 
@@ -160,6 +167,14 @@ struct PracticeRecordView: View {
                 scenarioSwitcherCard
                 reminderContinuityCard
                 reminderFlowBanner
+
+                // MOM-257 (OPE-277): wire InterviewPracticeView (517-line
+                // orphan feature: 4 categories, 2-min timer, per-question
+                // feedback) into the Practice tab. Was previously
+                // unreachable — no MainTabView or PracticeRecordView
+                // reference. Surfaces as a quiet card with a sheet CTA so
+                // it doesn't compete with the primary recording flow.
+                interviewModeEntryCard
 
                 if let cue = appViewModel.practiceReturnCue {
                     VStack(alignment: .leading, spacing: Layout.inlineSpacing) {
@@ -505,6 +520,53 @@ struct PracticeRecordView: View {
                 statusPill(title: appViewModel.hasScratchRecording ? "Local clip attached" : "No local clip yet", accent: appViewModel.hasScratchRecording ? KatieColors.mint : KatieColors.gold)
                 statusPill(title: appViewModel.draftTranscript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Draft empty" : "Transcript draft ready", accent: KatieColors.accent)
             }
+        }
+        .padding(Layout.cardSpacing)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(KatieColors.cardBackground.opacity(0.78))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
+    }
+
+    // MOM-257 (OPE-277): quiet entry card for InterviewPracticeView.
+    // Doesn't compete with the primary recording flow — sits below the
+    // reminder section as an opt-in lane for structured interview reps.
+    // The view itself owns prep → question → feedback states + 4
+    // categories + 2-min timer; we just present it.
+    private var interviewModeEntryCard: some View {
+        VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+            HStack(alignment: .top, spacing: Layout.innerSpacing) {
+                VStack(alignment: .leading, spacing: 4) {
+                    KatieSectionEyebrow(title: "Try interview mode", systemImage: "person.wave.2.fill", accent: KatieColors.gold)
+                    Text("Structured reps for live interviews")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(KatieColors.textPrimary)
+                    Text("4 question banks, 2-minute timer per answer, real-time clarity feedback.")
+                        .font(.footnote)
+                        .foregroundStyle(KatieColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "person.wave.2.fill")
+                    .font(.title2)
+                    .foregroundStyle(KatieColors.gold)
+            }
+
+            Button {
+                isInterviewModePresented = true
+            } label: {
+                Label("Open interview mode", systemImage: "play.circle.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, KatieSpacing.base)
+                    .padding(.vertical, KatieSpacing.sm)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(KatieColors.gold.opacity(0.18))
+                    .foregroundStyle(KatieColors.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.innerCardCornerRadius, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            // MOM-309: VoiceOver hint so the button reads as the action it
+            // is, not just the label.
+            .accessibilityHint("Opens structured interview practice with 4 question categories.")
         }
         .padding(Layout.cardSpacing)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -1675,6 +1737,14 @@ struct PracticeRecordView: View {
                     .foregroundStyle(KatieColors.mint)
                     .popover(isPresented: $isReminderOptionsPresented, attachmentAnchor: .rect(.bounds), arrowEdge: .bottom) {
                         reminderOptionsPopover
+                    }
+                    // MOM-257 (OPE-277): sheet for the orphan
+                    // InterviewPracticeView. Half-height presentation
+                    // matches the reminder options flow.
+                    .sheet(isPresented: $isInterviewModePresented) {
+                        InterviewPracticeView()
+                            .environmentObject(appViewModel)
+                            .presentationDetents([.large])
                     }
                 }
             }
