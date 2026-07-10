@@ -64,10 +64,6 @@ struct OnboardingView: View {
                     }
 
                     Spacer(minLength: 12)
-
-                    if !isWideLayout {
-                        bottomCTA(isWideLayout: false)
-                    }
                 }
                 // KAT-294 (OPE-363): replace the hardcoded 760-pt cap with
                 // proper SwiftUI layout — `.frame(maxWidth: .infinity)`
@@ -80,10 +76,13 @@ struct OnboardingView: View {
                 .frame(maxWidth: 1160)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
+            // KAT-138 (OPE-72): SwiftUI ScrollView traps Tab-key focus
+            // inside its content. Moving `bottomCTA` out of the ScrollView
+            // and into this `.safeAreaInset(edge: .bottom)` (which renders
+            // outside the ScrollView's focus hierarchy) lets keyboard
+            // navigation reach the Next button on iPhone too.
             .safeAreaInset(edge: .bottom) {
-                if isWideLayout {
-                    bottomCTA(isWideLayout: true)
-                }
+                bottomCTA(isWideLayout: isWideLayout)
             }
             .background(appBackground)
             .navigationBarHidden(true)
