@@ -113,39 +113,62 @@ struct OnboardingView: View {
     // the real `MainTabView`. The goal is "clear without being loud":
     // chip-style, transparent, no takeover of the hero card.
     private func onboardingMenuPeek(isWideLayout: Bool) -> some View {
-        HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Once you begin, your main tabs")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(KatieColors.mint)
-                    .textCase(.uppercase)
-                    .tracking(0.35)
-                    .fixedSize(horizontal: false, vertical: true)
+        // KAT-320 (OPE-385): the previous single-HStack layout squeezed the
+        // caption + body text into a narrow column on iPhone (chips + Skip
+        // button took the rest), forcing `Once you begin, your main tabs`
+        // to wrap one word per line with mid-word hyphenation and clipping
+        // the body text on the right edge. Restructured as two rows on
+        // narrow so the caption + body get full width and the chip peek +
+        // Skip button live on their own row.
+        Group {
+            if isWideLayout {
+                // Wide: chips + Skip sit beside the caption.
+                HStack(alignment: .center, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Once you begin, your main tabs")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(KatieColors.mint)
+                            .textCase(.uppercase)
+                            .tracking(0.35)
+                            .fixedSize(horizontal: false, vertical: true)
 
-                Text("Your menu is always at the bottom — onboarding just meets you here first.")
-                    .font(isWideLayout ? .footnote : .caption)
-                    .foregroundStyle(KatieColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .multilineTextAlignment(.leading)
+                        Text("Your menu is always at the bottom — onboarding just meets you here first.")
+                            .font(.footnote)
+                            .foregroundStyle(KatieColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.leading)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    onboardingTabPeekChips()
+                    skipToKatieButton()
+                }
+            } else {
+                // Narrow: caption + body on top row, chip peek + Skip on bottom row.
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Once you begin, your main tabs")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(KatieColors.mint)
+                        .textCase(.uppercase)
+                        .tracking(0.35)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("Your menu is always at the bottom — onboarding just meets you here first.")
+                        .font(.caption)
+                        .foregroundStyle(KatieColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+
+                    HStack(alignment: .center, spacing: 12) {
+                        onboardingTabPeekChips()
+                    }
+                    HStack {
+                        Spacer(minLength: 8)
+                        skipToKatieButton()
+                    }
+                }
             }
-
-            Spacer(minLength: 8)
-
-            onboardingTabPeekChips()
-
-            Button(action: appViewModel.completeOnboarding) {
-                Text("Skip to Katie")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(KatieColors.textPrimary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(KatieColors.mint.opacity(0.18), in: Capsule())
-                    .overlay(
-                        Capsule().stroke(KatieColors.mint.opacity(0.55), lineWidth: 1)
-                    )
-            }
-            .buttonStyle(.plain)
-            .accessibilityHint("Finish onboarding now and open the main menu.")
         }
         .padding(.horizontal, isWideLayout ? 16 : 14)
         .padding(.vertical, isWideLayout ? 12 : 10)
@@ -155,6 +178,23 @@ struct OnboardingView: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(KatieColors.cardBorder.opacity(0.55), lineWidth: 1)
         )
+    }
+
+    @ViewBuilder
+    private func skipToKatieButton() -> some View {
+        Button(action: appViewModel.completeOnboarding) {
+            Text("Skip to Katie")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(KatieColors.textPrimary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(KatieColors.mint.opacity(0.18), in: Capsule())
+                .overlay(
+                    Capsule().stroke(KatieColors.mint.opacity(0.55), lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint("Finish onboarding now and open the main menu.")
     }
 
     @ViewBuilder
@@ -180,6 +220,7 @@ struct OnboardingView: View {
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(KatieColors.textSecondary)
                 .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
